@@ -1,5 +1,10 @@
 package com.anrisoftware.groovybash.core
 
+import net.xeoh.plugins.base.PluginManager
+import net.xeoh.plugins.base.impl.PluginManagerFactory
+import net.xeoh.plugins.base.util.JSPFProperties
+import net.xeoh.plugins.base.util.uri.ClassURI
+
 import org.junit.Before
 
 import com.anrisoftware.globalpom.utils.TestUtils
@@ -29,6 +34,14 @@ class CommandTestUtils extends TestUtils {
 	def byteErrorStream
 	
 	Injector injector
+
+	def cacheEnabled = "false"
+	
+	def cacheMode = "weak"
+	
+	def cacheFile = "jspf.cache"
+	
+	def cacheLoggingLevel = "WARNING"
 
 	static class BuildinsTestModule extends BuildinsModule {
 
@@ -68,4 +81,17 @@ class CommandTestUtils extends TestUtils {
 	String getOutput() {
 		byteOutputStream.toString()
 	}
+	
+	PluginManager createPluginManager() {
+		def props = new JSPFProperties()
+		props.setProperty PluginManager, "cache.enabled", cacheEnabled
+		props.setProperty PluginManager, "cache.mode", cacheMode
+		props.setProperty PluginManager, "cache.file", cacheFile
+		props.setProperty PluginManager, "logging.level", cacheLoggingLevel
+
+		def manager = PluginManagerFactory.createPluginManager(props)
+		manager.addPluginsFrom ClassURI.CLASSPATH
+		manager
+	}
+
 }
