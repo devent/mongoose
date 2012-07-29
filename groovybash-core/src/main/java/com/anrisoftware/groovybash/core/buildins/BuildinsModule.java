@@ -17,7 +17,7 @@ public class BuildinsModule extends AbstractModule {
 	 *         output streams.
 	 */
 	@Provides
-	StandardStreams getStandardStreams() {
+	protected StandardStreams getStandardStreams() {
 		return new StandardStreams(System.in, System.out, System.err);
 	}
 }

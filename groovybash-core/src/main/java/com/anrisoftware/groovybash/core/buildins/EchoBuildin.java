@@ -25,11 +25,12 @@ class EchoBuildin extends AbstractBuildin {
 	@Inject
 	EchoBuildin(StandardStreams streams) {
 		super(streams);
+		setArguments("");
 	}
 
 	@Override
 	public EchoBuildin call() {
-		getOutputStream().println(join(getArgs(), ","));
+		getOutputStream().println(join(getArgs(), " "));
 		getOutputStream().flush();
 		return this;
 	}
@@ -40,8 +41,7 @@ class EchoBuildin extends AbstractBuildin {
 	 * @return this {@link EchoBuildin}.
 	 */
 	public EchoBuildin nonewline() {
-		return new EchoNoNewLine(new StandardStreams(getInputStream(),
-				getOutputStream(), getErrorStream()));
+		return new EchoNoNewLine(this);
 	}
 
 	/**
@@ -53,8 +53,10 @@ class EchoBuildin extends AbstractBuildin {
 	 */
 	private static class EchoNoNewLine extends EchoBuildin {
 
-		private EchoNoNewLine(StandardStreams streams) {
-			super(streams);
+		private EchoNoNewLine(AbstractBuildin parent) {
+			super(new StandardStreams(parent.getInputStream(),
+					parent.getOutputStream(), parent.getErrorStream()));
+			setArguments(parent.getArgs());
 		}
 
 		@Override
