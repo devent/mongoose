@@ -36,6 +36,14 @@ class EchoBuildin extends AbstractBuildin {
 	}
 
 	/**
+	 * Returns the name {@code echo}.
+	 */
+	@Override
+	public String getName() {
+		return "echo";
+	}
+
+	/**
 	 * Specify that no newline should be followed the specified arguments.
 	 * 
 	 * @return this {@link EchoBuildin}.

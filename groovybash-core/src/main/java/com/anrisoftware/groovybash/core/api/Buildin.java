@@ -19,6 +19,13 @@ public interface Buildin extends Callable<Buildin> {
 	Buildin call() throws Exception;
 
 	/**
+	 * Returns the name of the build-in command.
+	 * 
+	 * @return the name of the build-in command.
+	 */
+	String getName();
+
+	/**
 	 * Sets the arguments for the build-in command.
 	 * 
 	 * @param args
