@@ -37,6 +37,9 @@ public interface Buildin extends Callable<Buildin> {
 	/**
 	 * Sets the arguments for the build-in command.
 	 * 
+	 * @param flags
+	 *            a {@link Map} with the flags for the build-in command.
+	 * 
 	 * @param args
 	 *            the arguments.
 	 */
