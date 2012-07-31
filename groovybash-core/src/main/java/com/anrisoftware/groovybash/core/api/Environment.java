@@ -35,4 +35,12 @@ public interface Environment {
 	 */
 	File getWorkingDirectory();
 
+	/**
+	 * Returns the user home directory.
+	 * 
+	 * @return the user home directory {@link File}.
+	 * @see System#getProperty(String)
+	 */
+	File getUserHome();
+
 }

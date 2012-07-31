@@ -20,6 +20,23 @@ public interface Buildin extends Callable<Buildin> {
 	Buildin call() throws Exception;
 
 	/**
+	 * Sets the environment of the build-in command. The environment contains
+	 * the global variables.
+	 * 
+	 * @param environment
+	 *            the {@link Environment}.
+	 */
+	void setEnvironment(Environment environment);
+
+	/**
+	 * Returns the environment of the build-in command. The environment contains
+	 * the global variables.
+	 * 
+	 * @return the {@link Environment}.
+	 */
+	Environment getEnvironment();
+
+	/**
 	 * Returns the name of the build-in command.
 	 * 
 	 * @return the name of the build-in command.

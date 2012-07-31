@@ -87,12 +87,18 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	}
 
 	@Override
+	public File getUserHome() {
+		return new File(System.getProperty("user.home"));
+	}
+
+	@Override
 	public Object invokeMethod(String name, Object args) {
 		Object[] uargs = InvokerHelper.asUnwrappedArray(args);
 		if (getMetaClass().getMetaMethod(name, uargs) != null) {
 			return super.invokeMethod(name, args);
 		}
 		Buildin buildin = buildinPlugins.get(name).getBuildin(injector);
+		buildin.setEnvironment(this);
 		buildin.setArguments(uargs);
 		try {
 			return buildin.call();

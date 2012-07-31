@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.anrisoftware.groovybash.core.api.Buildin;
+import com.anrisoftware.groovybash.core.api.Environment;
 import com.google.common.collect.Maps;
 
 /**
@@ -27,6 +28,8 @@ public abstract class AbstractBuildin implements Buildin {
 
 	private Map<?, ?> flags;
 
+	private Environment environment;
+
 	/**
 	 * Sets the standard input and output streams.
 	 * 
@@ -40,6 +43,16 @@ public abstract class AbstractBuildin implements Buildin {
 		this.errorStream = streams.getErrorStream();
 		this.args = new Object[] {};
 		this.flags = Maps.newHashMap();
+	}
+
+	@Override
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+	}
+
+	@Override
+	public Environment getEnvironment() {
+		return environment;
 	}
 
 	@Override
@@ -70,7 +83,7 @@ public abstract class AbstractBuildin implements Buildin {
 	 * 
 	 * @return the arguments array.
 	 */
-	protected Object[] getArgs() {
+	public Object[] getArgs() {
 		return args;
 	}
 
@@ -86,7 +99,7 @@ public abstract class AbstractBuildin implements Buildin {
 	 * @return the value of the flag or the specified default value if no such
 	 *         flag with the specified key was found.
 	 */
-	protected <T> T getFlag(Object key, T defaultValue) {
+	public <T> T getFlag(Object key, T defaultValue) {
 		// value in flags is of type T
 		@SuppressWarnings("unchecked")
 		T value = (T) flags.get(key);
