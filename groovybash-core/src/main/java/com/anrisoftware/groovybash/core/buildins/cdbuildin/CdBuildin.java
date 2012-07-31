@@ -35,14 +35,14 @@ class CdBuildin extends AbstractBuildin {
 	}
 
 	@Override
-	public ReturnValue call() {
+	public ReturnValue call() throws Exception {
 		if (getArgs().length == 0) {
 			buildin = new UserHomeCd(this);
 		}
 		return buildin.callBuildin();
 	}
 
-	ReturnValue callBuildin() {
+	ReturnValue callBuildin() throws Exception {
 		return SUCCESS_VALUE;
 	}
 

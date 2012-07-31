@@ -13,12 +13,12 @@ import com.anrisoftware.groovybash.core.api.Buildin;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class EnvironmentImplLogger extends AbstractLogger {
+class CallCommandWorkerLogger extends AbstractLogger {
 
 	/**
 	 * Creates logger for {@link EnvironmentImpl}.
 	 */
-	EnvironmentImplLogger() {
+	CallCommandWorkerLogger() {
 		super(EnvironmentImpl.class);
 	}
 

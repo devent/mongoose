@@ -36,16 +36,20 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private Injector injector;
 
+	private final CallCommandWorker callCommandWorker;
+
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
 			@Named("environmentProperties") Properties properties,
-			BuildinPluginsLoaderFactory loaderFactory) {
+			BuildinPluginsLoaderFactory loaderFactory,
+			CallCommandWorker callCommandWorker) {
 		super();
 		this.log = logger;
 		this.properties = new ContextProperties(this, properties);
 		this.loaderFactory = loaderFactory;
 		this.workingDirectory = new File(".");
 		this.buildinPlugins = Maps.newHashMap();
+		this.callCommandWorker = callCommandWorker;
 		loadBuildins();
 	}
 
@@ -105,13 +109,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		Buildin buildin = buildinPlugins.get(name).getBuildin(injector);
 		buildin.setEnvironment(this);
 		buildin.setArguments(uargs);
-		try {
-			return buildin.call();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
+		return callCommandWorker.call(buildin);
 	}
 
 	@Override

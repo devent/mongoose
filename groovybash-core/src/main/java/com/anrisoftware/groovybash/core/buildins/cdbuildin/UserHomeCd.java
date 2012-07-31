@@ -6,7 +6,6 @@ import java.io.File;
 
 import com.anrisoftware.groovybash.core.api.ReturnValue;
 import com.anrisoftware.groovybash.core.buildins.AbstractBuildin;
-import com.anrisoftware.groovybash.core.buildins.DefaultReturnValue;
 import com.anrisoftware.groovybash.core.buildins.StandardStreams;
 import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFound;
 
@@ -26,10 +25,10 @@ class UserHomeCd extends CdBuildin {
 	}
 
 	@Override
-	ReturnValue callBuildin() {
+	ReturnValue callBuildin() throws Exception {
 		File dir = getEnvironment().getUserHome();
 		if (!dir.isDirectory()) {
-			return new DefaultReturnValue(false, new DirectoryNotFound(dir));
+			throw new DirectoryNotFound(dir);
 		}
 		getEnvironment().setWorkingDirectory(dir);
 		return SUCCESS_VALUE;
