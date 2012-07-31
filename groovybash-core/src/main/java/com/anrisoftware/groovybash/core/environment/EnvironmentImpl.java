@@ -102,4 +102,12 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public Object getProperty(String name) {
+		if (getMetaClass().hasProperty(this, name) != null) {
+			return super.getProperty(name);
+		}
+		return invokeMethod(name, null);
+	}
 }
