@@ -1,9 +1,12 @@
 package com.anrisoftware.groovybash.core.buildins.cdbuildin;
 
+import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.SUCCESS_VALUE;
+
 import java.io.File;
 
 import javax.inject.Inject;
 
+import com.anrisoftware.groovybash.core.api.ReturnValue;
 import com.anrisoftware.groovybash.core.buildins.AbstractBuildin;
 import com.anrisoftware.groovybash.core.buildins.StandardStreams;
 
@@ -32,15 +35,15 @@ class CdBuildin extends AbstractBuildin {
 	}
 
 	@Override
-	public CdBuildin call() {
+	public ReturnValue call() {
 		if (getArgs().length == 0) {
 			buildin = new UserHomeCd(this);
 		}
 		return buildin.callBuildin();
 	}
 
-	CdBuildin callBuildin() {
-		return this;
+	ReturnValue callBuildin() {
+		return SUCCESS_VALUE;
 	}
 
 	@Override

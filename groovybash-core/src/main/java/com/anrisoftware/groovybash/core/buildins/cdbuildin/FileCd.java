@@ -1,9 +1,14 @@
 package com.anrisoftware.groovybash.core.buildins.cdbuildin;
 
+import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.SUCCESS_VALUE;
+
 import java.io.File;
 
+import com.anrisoftware.groovybash.core.api.ReturnValue;
 import com.anrisoftware.groovybash.core.buildins.AbstractBuildin;
+import com.anrisoftware.groovybash.core.buildins.DefaultReturnValue;
 import com.anrisoftware.groovybash.core.buildins.StandardStreams;
+import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFound;
 
 class FileCd extends CdBuildin {
 
@@ -17,8 +22,11 @@ class FileCd extends CdBuildin {
 	}
 
 	@Override
-	CdBuildin callBuildin() {
+	ReturnValue callBuildin() {
+		if (!dir.isDirectory()) {
+			return new DefaultReturnValue(false, new DirectoryNotFound(dir));
+		}
 		getEnvironment().setWorkingDirectory(dir);
-		return this;
+		return SUCCESS_VALUE;
 	}
 }

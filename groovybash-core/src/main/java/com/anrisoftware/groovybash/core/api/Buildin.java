@@ -11,13 +11,18 @@ import java.util.concurrent.Callable;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public interface Buildin extends Callable<Buildin> {
+public interface Buildin extends Callable<ReturnValue> {
 
 	/**
 	 * Execute the build-in command.
+	 * 
+	 * @return the {@link ReturnValue} of the command.
+	 * 
+	 * @throws Exception
+	 *             if there was an error executing the command.
 	 */
 	@Override
-	Buildin call() throws Exception;
+	ReturnValue call() throws Exception;
 
 	/**
 	 * Sets the environment of the build-in command. The environment contains

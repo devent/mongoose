@@ -1,10 +1,13 @@
 package com.anrisoftware.groovybash.core.buildins;
 
+import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.SUCCESS_VALUE;
 import static org.apache.commons.lang3.StringUtils.join;
 
 import java.util.Map;
 
 import javax.inject.Inject;
+
+import com.anrisoftware.groovybash.core.api.ReturnValue;
 
 /**
  * The build-in command {@code echo [nonewline] arguments…}. Outputs the
@@ -35,14 +38,14 @@ class EchoBuildin extends AbstractBuildin {
 	}
 
 	@Override
-	public EchoBuildin call() {
+	public ReturnValue call() {
 		return buidlin.callBuildin();
 	}
 
-	EchoBuildin callBuildin() {
+	ReturnValue callBuildin() {
 		getOutputStream().println(join(getArgs(), SEPARATOR));
 		getOutputStream().flush();
-		return this;
+		return SUCCESS_VALUE;
 	}
 
 	@Override
@@ -86,10 +89,10 @@ class EchoBuildin extends AbstractBuildin {
 		}
 
 		@Override
-		EchoBuildin callBuildin() {
+		ReturnValue callBuildin() {
 			getOutputStream().print(join(getArgs(), SEPARATOR));
 			getOutputStream().flush();
-			return this;
+			return SUCCESS_VALUE;
 		}
 	}
 

@@ -37,6 +37,22 @@ cd
 	}
 
 	@Test
+	void "parse cd buildin with no arguments return value"() {
+		def script = """
+ret = cd
+echo ret
+"""
+
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assert parser.environment.workingDirectory == System.getProperty("user.home")as File
+		assertStringContent "0\n", output
+	}
+
+	@Test
 	void "parse cd buildin with directory"() {
 		def tmp = createTempDirectory()
 		def script = """
