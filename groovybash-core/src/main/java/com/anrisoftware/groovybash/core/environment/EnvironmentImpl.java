@@ -24,6 +24,8 @@ import com.google.inject.Injector;
 
 class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
+	private final EnvironmentImplLogger log;
+
 	private final BuildinPluginsLoaderFactory loaderFactory;
 
 	private final ContextProperties properties;
@@ -35,9 +37,11 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	private Injector injector;
 
 	@Inject
-	EnvironmentImpl(@Named("environmentProperties") Properties properties,
+	EnvironmentImpl(EnvironmentImplLogger logger,
+			@Named("environmentProperties") Properties properties,
 			BuildinPluginsLoaderFactory loaderFactory) {
 		super();
+		this.log = logger;
 		this.properties = new ContextProperties(this, properties);
 		this.loaderFactory = loaderFactory;
 		this.workingDirectory = new File(".");
@@ -79,6 +83,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	@Override
 	public void setWorkingDirectory(File directory) {
 		workingDirectory = directory;
+		log.workingDirectorySet(directory);
 	}
 
 	@Override

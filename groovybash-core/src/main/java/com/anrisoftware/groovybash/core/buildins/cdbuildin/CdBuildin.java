@@ -1,5 +1,7 @@
 package com.anrisoftware.groovybash.core.buildins.cdbuildin;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import com.anrisoftware.groovybash.core.buildins.AbstractBuildin;
@@ -39,6 +41,14 @@ class CdBuildin extends AbstractBuildin {
 
 	CdBuildin callBuildin() {
 		return this;
+	}
+
+	@Override
+	public void setArguments(Object[] args) {
+		super.setArguments(args);
+		if (args.length == 1) {
+			buildin = new FileCd(this, new File(args[0].toString()));
+		}
 	}
 
 	/**
