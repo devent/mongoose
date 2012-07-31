@@ -2,8 +2,12 @@ package com.anrisoftware.groovybash.core.buildins;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Map;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import com.anrisoftware.groovybash.core.api.Buildin;
+import com.google.common.collect.Maps;
 
 /**
  * Implements the standard input and output streams.
@@ -21,6 +25,8 @@ public abstract class AbstractBuildin implements Buildin {
 
 	private Object[] args;
 
+	private Map<?, ?> flags;
+
 	/**
 	 * Sets the standard input and output streams.
 	 * 
@@ -32,10 +38,23 @@ public abstract class AbstractBuildin implements Buildin {
 		this.inputStream = streams.getInputStream();
 		this.outputStream = streams.getOutputStream();
 		this.errorStream = streams.getErrorStream();
+		this.args = new Object[] {};
+		this.flags = Maps.newHashMap();
 	}
 
 	@Override
-	public void setArguments(Object... args) {
+	public void setArguments(Object[] args) {
+		if (args[0] instanceof Map) {
+			setArguments((Map<?, ?>) args[0],
+					ArrayUtils.subarray(args, 1, args.length));
+		} else {
+			this.args = args;
+		}
+	}
+
+	@Override
+	public void setArguments(Map<?, ?> flags, Object[] args) {
+		this.flags = flags;
 		this.args = args;
 	}
 
@@ -46,6 +65,12 @@ public abstract class AbstractBuildin implements Buildin {
 	 */
 	protected Object[] getArgs() {
 		return args;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected <T> T getFlag(Object key, T defaultValue) {
+		T value = (T) flags.get(key);
+		return value != null ? value : defaultValue;
 	}
 
 	@Override

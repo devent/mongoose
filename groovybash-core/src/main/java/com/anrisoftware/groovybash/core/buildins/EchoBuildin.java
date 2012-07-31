@@ -2,6 +2,8 @@ package com.anrisoftware.groovybash.core.buildins;
 
 import static org.apache.commons.lang3.StringUtils.join;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 /**
@@ -15,6 +17,10 @@ import javax.inject.Inject;
  */
 class EchoBuildin extends AbstractBuildin {
 
+	private static final String SEPARATOR = " ";
+
+	private EchoBuildin buidlin;
+
 	/**
 	 * Sets the standard input and output streams.
 	 * 
@@ -25,14 +31,26 @@ class EchoBuildin extends AbstractBuildin {
 	@Inject
 	EchoBuildin(StandardStreams streams) {
 		super(streams);
-		setArguments("");
+		this.buidlin = this;
 	}
 
 	@Override
 	public EchoBuildin call() {
-		getOutputStream().println(join(getArgs(), " "));
+		return buidlin.callBuildin();
+	}
+
+	EchoBuildin callBuildin() {
+		getOutputStream().println(join(getArgs(), SEPARATOR));
 		getOutputStream().flush();
 		return this;
+	}
+
+	@Override
+	public void setArguments(Map<?, ?> flags, Object[] args) {
+		super.setArguments(flags, args);
+		if (getFlag("nonewline", false)) {
+			buidlin = nonewline();
+		}
 	}
 
 	/**
@@ -68,8 +86,8 @@ class EchoBuildin extends AbstractBuildin {
 		}
 
 		@Override
-		public EchoBuildin call() {
-			getOutputStream().print(join(getArgs(), ","));
+		EchoBuildin callBuildin() {
+			getOutputStream().print(join(getArgs(), SEPARATOR));
 			getOutputStream().flush();
 			return this;
 		}

@@ -2,6 +2,7 @@ package com.anrisoftware.groovybash.core.api;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
@@ -31,7 +32,15 @@ public interface Buildin extends Callable<Buildin> {
 	 * @param args
 	 *            the arguments.
 	 */
-	void setArguments(Object... args);
+	void setArguments(Object[] args);
+
+	/**
+	 * Sets the arguments for the build-in command.
+	 * 
+	 * @param args
+	 *            the arguments.
+	 */
+	void setArguments(Map<?, ?> flags, Object[] args);
 
 	/**
 	 * Sets the standard input stream.

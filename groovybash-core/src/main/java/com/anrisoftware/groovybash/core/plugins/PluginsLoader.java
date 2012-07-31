@@ -1,4 +1,4 @@
-package com.anrisoftware.groovybash.core;
+package com.anrisoftware.groovybash.core.plugins;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -25,7 +25,7 @@ import com.google.inject.assistedinject.Assisted;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class PluginsLoader<PluginType extends Plugin> implements
+public class PluginsLoader<PluginType extends Plugin> implements
 		Callable<List<PluginType>> {
 
 	private final PluginsLoaderLogger log;

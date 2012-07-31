@@ -1,4 +1,4 @@
-package com.anrisoftware.groovybash.core;
+package com.anrisoftware.groovybash.core.plugins;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
 
