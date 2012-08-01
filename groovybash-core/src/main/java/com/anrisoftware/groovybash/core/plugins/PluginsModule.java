@@ -19,6 +19,7 @@
 package com.anrisoftware.groovybash.core.plugins;
 
 import static com.google.common.io.Resources.getResource;
+import static java.lang.String.format;
 import static net.xeoh.plugins.base.impl.PluginManagerFactory.createPluginManager;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -50,6 +51,27 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @since 1.0
  */
 public class PluginsModule extends AbstractModule {
+
+	private static final String PACKAGE_NAME = PluginsModule.class.getPackage()
+			.getName();
+
+	private static final String PROPERTIES_RESOURCE_NAME = "plugins_properties_resource";
+
+	/**
+	 * The name of the system property for the URL location of the plug-ins
+	 * properties file.
+	 */
+	public static final String PLUGINS_PROPERTIES_RESOURCE = format("%s.%s",
+			PROPERTIES_RESOURCE_NAME, PACKAGE_NAME);
+
+	private static final String PROPERTIES_FILE_NAME = "plugins_properties_file";
+
+	/**
+	 * The name of the system property for the file path of the plug-ins
+	 * properties file.
+	 */
+	public static final String PLUGINS_PROPERTIES_FILE = format("%s.%s",
+			PROPERTIES_FILE_NAME, PACKAGE_NAME);
 
 	private static final URL PLUGINS_PROPERTIES = getResource(
 			PluginsModule.class, "plugins.properties");
@@ -138,8 +160,8 @@ public class PluginsModule extends AbstractModule {
 		ContextProperties system;
 		ContextProperties defaultProperties;
 		system = new ContextProperties(context, System.getProperties());
-		URI resource = system.getURIProperty("plugins_properties_resource");
-		File file = system.getFileProperty("plugins_properties_file");
+		URI resource = system.getURIProperty(PROPERTIES_RESOURCE_NAME);
+		File file = system.getFileProperty(PROPERTIES_FILE_NAME);
 		defaultProperties = new ContextPropertiesFactory(context)
 				.fromResource(PLUGINS_PROPERTIES);
 
