@@ -1,4 +1,4 @@
-package com.anrisoftware.groovybash.core
+package com.anrisoftware.groovybash.parameter
 
 echo
 
