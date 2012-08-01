@@ -1,35 +1,78 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    
-    <modelVersion>4.0.0</modelVersion>
-    
-    <parent>
-        <groupId>com.anrisoftware.globalpom</groupId>
-        <artifactId>globalpom-groovy</artifactId>
-        <version>1.11</version>
-        <relativePath />
-    </parent>
-    
-    <groupId>com.anrisoftware.groovybash</groupId>
-    <artifactId>groovybash-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>Groovybash Parent</name>
-    <description>Parent POM for the Groovybash modules</description>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.anrisoftware.globalpom</groupId>
-                <artifactId>globalpom-groovytestutils</artifactId>
-                <version>${project.custom.globalpom.groovytestutils.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.anrisoftware.globalpom</groupId>
-                <artifactId>globalpom-log</artifactId>
-                <version>${project.custom.globalpom.log.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-            
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.anrisoftware.globalpom</groupId>
+		<artifactId>globalpom-groovy</artifactId>
+		<version>1.11</version>
+		<relativePath />
+	</parent>
+
+	<groupId>com.anrisoftware.groovybash</groupId>
+	<artifactId>groovybash-parent</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Groovybash Parent</name>
+	<description>Parent POM for the Groovybash modules</description>
+
+	<developers>
+		<developer>
+			<id>EM</id>
+			<name>Erwin Müller</name>
+			<organization>Advanced Natural Research Insitute GmbH</organization>
+			<email>erwin.mueller@deventm.org</email>
+			<roles>
+				<role>Owner</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>GPLv3</name>
+			<url>http://www.gnu.org/licenses/gpl.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:${custom.gitpublic.url}groovybash.git</connection>
+		<developerConnection>scm:git:${custom.gitpublic.url}groovybash.git</developerConnection>
+		<url>scm:git:${custom.gitpublic.url}groovybash.git</url>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>${custom.repository.anrispublic.id}</id>
+			<url>${custom.repository.root}${custom.repository.anrispublic.path}</url>
+		</repository>
+		<snapshotRepository>
+			<id>${custom.repository.anrispublicsnapshots.id}</id>
+			<url>${custom.repository.root}${custom.repository.anrispublicsnapshots.path}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.anrisoftware.globalpom</groupId>
+				<artifactId>globalpom-groovytestutils</artifactId>
+				<version>${project.custom.globalpom.groovytestutils.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.anrisoftware.globalpom</groupId>
+				<artifactId>globalpom-log</artifactId>
+				<version>${project.custom.globalpom.log.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.anrisoftware.propertiesutils</groupId>
+				<artifactId>propertiesutils</artifactId>
+				<version>1.1.1</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 </project>
