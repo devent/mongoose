@@ -92,7 +92,6 @@ cd "$tmp"
 		assert tmp.deleteDir()
 
 		def script = """
-import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFound
 try {
 	cd "$tmp"
 } catch (DirectoryNotFound e) {
