@@ -29,7 +29,8 @@ import com.anrisoftware.groovybash.core.api.ReturnValue;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public class DefaultReturnValue implements ReturnValue {
+@SuppressWarnings("serial")
+public class DefaultReturnValue extends Number implements ReturnValue {
 
 	public static final ReturnValue SUCCESS_VALUE = new DefaultReturnValue(true);
 
@@ -67,6 +68,41 @@ public class DefaultReturnValue implements ReturnValue {
 	@Override
 	public Exception getException() {
 		return exception;
+	}
+
+	@Override
+	public int intValue() {
+		return number.intValue();
+	}
+
+	@Override
+	public long longValue() {
+		return number.longValue();
+	}
+
+	@Override
+	public int hashCode() {
+		return number.hashCode();
+	}
+
+	@Override
+	public float floatValue() {
+		return number.floatValue();
+	}
+
+	@Override
+	public double doubleValue() {
+		return number.doubleValue();
+	}
+
+	@Override
+	public byte byteValue() {
+		return number.byteValue();
+	}
+
+	@Override
+	public short shortValue() {
+		return number.shortValue();
 	}
 
 	@Override

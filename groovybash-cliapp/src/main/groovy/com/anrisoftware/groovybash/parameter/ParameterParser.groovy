@@ -53,6 +53,7 @@ class ParameterParser {
 	ParameterParser parseParameter(String[] args, Injector injector) {
 		parseAppParameter(args)
 		bashParser = bashParserFactory.create script
+		bashParser.injector = injector
 		return this
 	}
 
@@ -67,7 +68,7 @@ class ParameterParser {
 		Files.toString parameter.script, parameter.charset
 	}
 
-	BashParser getbashParser() {
+	BashParser getBashParser() {
 		bashParser
 	}
 }

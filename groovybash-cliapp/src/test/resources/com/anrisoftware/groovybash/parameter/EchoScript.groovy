@@ -4,8 +4,13 @@ echo
 
 echo "Hello World"
 
-def var = "Hello Var"
+echo "Hello World", "Hello again"
+
+var = "Hello Var"
 echo var
 
 echo "$var in String"
 
+ret = echo "Something"
+echo ret
+assert ret == 0
