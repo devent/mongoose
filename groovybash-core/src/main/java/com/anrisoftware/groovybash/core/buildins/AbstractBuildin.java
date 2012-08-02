@@ -18,14 +18,22 @@
  */
 package com.anrisoftware.groovybash.core.buildins;
 
+import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.createSuccessValue;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.anrisoftware.groovybash.core.api.Buildin;
 import com.anrisoftware.groovybash.core.api.Environment;
+import com.anrisoftware.groovybash.core.api.ReturnValue;
 import com.google.common.collect.Maps;
 
 /**
@@ -36,6 +44,8 @@ import com.google.common.collect.Maps;
  * @since 1.0
  */
 public abstract class AbstractBuildin implements Buildin {
+
+	private AbstractBuildinLogger log;
 
 	private InputStream inputStream;
 
@@ -62,6 +72,17 @@ public abstract class AbstractBuildin implements Buildin {
 		this.errorStream = streams.getErrorStream();
 		this.args = new Object[] {};
 		this.flags = Maps.newHashMap();
+	}
+
+	/**
+	 * Injects the logger.
+	 * 
+	 * @param logger
+	 *            the {@link AbstractBuildinLogger}.
+	 */
+	@Inject
+	public void setAbstractBuildinLogger(AbstractBuildinLogger logger) {
+		this.log = logger;
 	}
 
 	@Override
@@ -153,6 +174,40 @@ public abstract class AbstractBuildin implements Buildin {
 	@Override
 	public PrintStream getErrorStream() {
 		return errorStream;
+	}
+
+	@Override
+	public ReturnValue call() throws Exception {
+		setupOutput();
+		return createSuccessValue(inputStream, outputStream, errorStream);
+	}
+
+	private void setupOutput() throws FileNotFoundException {
+		Object flag = getFlag("out", null);
+		if (flag == null) {
+			return;
+		}
+		setOutput(flag);
+	}
+
+	private void setOutput(Object flag) throws FileNotFoundException {
+		if (flag instanceof File) {
+			setOutput((File) flag);
+		} else if (flag instanceof OutputStream) {
+			setOutput((OutputStream) flag);
+		} else {
+			setOutput(new File(flag.toString()));
+		}
+	}
+
+	private void setOutput(File file) throws FileNotFoundException {
+		outputStream = new PrintStream(file);
+		log.outputFileSet(this, file);
+	}
+
+	private void setOutput(OutputStream stream) throws FileNotFoundException {
+		outputStream = new PrintStream(stream);
+		log.outputStreamSet(this, stream);
 	}
 
 }

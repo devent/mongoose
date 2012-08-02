@@ -114,5 +114,56 @@ echo nonewline: true, "Hello World", "Hello Again"
 
 Hello World Hello Again""", output
 	}
+
+	@Test
+	void "parse echo re-direct stdout to file"() {
+		def tmp = createTempFile()
+		tmp.delete()
+
+		def script = """
+file = "$tmp" as File
+echo out: file, "Hello World"
+"""
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertFileContent tmp, "Hello World\n"
+	}
+
+	@Test
+	void "parse echo re-direct stdout to file name"() {
+		def tmp = createTempFile()
+		tmp.delete()
+
+		def script = """
+file = "$tmp"
+echo out: file, "Hello World"
+"""
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertFileContent tmp, "Hello World\n"
+	}
+
+	@Test
+	void "parse echo re-direct stdout to stream"() {
+		def tmp = createTempFile()
+		tmp.delete()
+
+		def script = """
+stream = new PrintStream(new File("$tmp"))
+echo out: stream, "Hello World"
+"""
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertFileContent tmp, "Hello World\n"
+	}
 }
 

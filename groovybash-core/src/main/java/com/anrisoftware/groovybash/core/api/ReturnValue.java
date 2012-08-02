@@ -18,6 +18,9 @@
  */
 package com.anrisoftware.groovybash.core.api;
 
+import java.io.InputStream;
+import java.io.PrintStream;
+
 /**
  * The return value from a command.
  * 
@@ -25,6 +28,27 @@ package com.anrisoftware.groovybash.core.api;
  * @since 1.0
  */
 public interface ReturnValue extends Comparable<ReturnValue> {
+
+	/**
+	 * Returns the standard input stream of the command.
+	 * 
+	 * @return the {@link InputStream} for standard input.
+	 */
+	InputStream getInputStream();
+
+	/**
+	 * Returns the standard output stream of the command.
+	 * 
+	 * @return the {@link PrintStream} for standard output.
+	 */
+	PrintStream getOutputStream();
+
+	/**
+	 * Returns the standard error stream of the command.
+	 * 
+	 * @return the {@link PrintStream} for standard errors.
+	 */
+	PrintStream getErrorStream();
 
 	/**
 	 * Returns the number value of the return value.
@@ -41,14 +65,6 @@ public interface ReturnValue extends Comparable<ReturnValue> {
 	boolean getAsBoolean();
 
 	/**
-	 * Returns the thrown exception from the command.
-	 * 
-	 * @return the thrown {@link Exception} or {@code null} if no exception was
-	 *         thrown.
-	 */
-	Exception getException();
-
-	/**
 	 * Compare this return value and the specified return value.
 	 */
 	@Override
@@ -56,8 +72,8 @@ public interface ReturnValue extends Comparable<ReturnValue> {
 
 	/**
 	 * Compare this return value and a different return value if they are
-	 * equals. Two return values are equals if they represent the same exception
-	 * or they have the same number value.
+	 * equals. Two return values are equals if they represent the same number
+	 * value.
 	 */
 	@Override
 	boolean equals(Object obj);

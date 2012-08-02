@@ -18,6 +18,9 @@
  */
 package com.anrisoftware.groovybash.core.buildins;
 
+import java.io.InputStream;
+import java.io.PrintStream;
+
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
@@ -32,27 +35,46 @@ import com.anrisoftware.groovybash.core.api.ReturnValue;
 @SuppressWarnings("serial")
 public class DefaultReturnValue extends Number implements ReturnValue {
 
-	public static final ReturnValue SUCCESS_VALUE = new DefaultReturnValue(true);
+	public static ReturnValue createSuccessValue(InputStream inputStream,
+			PrintStream outputStream, PrintStream errorStream) {
+		return new DefaultReturnValue(true, inputStream, outputStream,
+				errorStream);
+	}
 
 	private final Number number;
 
-	private final Exception exception;
+	private final InputStream inputStream;
 
-	public DefaultReturnValue(boolean bool) {
-		this(bool, null);
+	private final PrintStream outputStream;
+
+	private final PrintStream errorStream;
+
+	public DefaultReturnValue(boolean bool, InputStream inputStream,
+			PrintStream outputStream, PrintStream errorStream) {
+		this(bool ? 0 : 1, inputStream, outputStream, errorStream);
 	}
 
-	public DefaultReturnValue(boolean bool, Exception exception) {
-		this(bool ? 0 : 1, exception);
-	}
-
-	public DefaultReturnValue(Number number) {
-		this(number, null);
-	}
-
-	public DefaultReturnValue(Number number, Exception exception) {
+	public DefaultReturnValue(Number number, InputStream inputStream,
+			PrintStream outputStream, PrintStream errorStream) {
 		this.number = number;
-		this.exception = exception;
+		this.inputStream = inputStream;
+		this.outputStream = outputStream;
+		this.errorStream = errorStream;
+	}
+
+	@Override
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	@Override
+	public PrintStream getOutputStream() {
+		return outputStream;
+	}
+
+	@Override
+	public PrintStream getErrorStream() {
+		return errorStream;
 	}
 
 	@Override
@@ -63,11 +85,6 @@ public class DefaultReturnValue extends Number implements ReturnValue {
 	@Override
 	public boolean getAsBoolean() {
 		return number.intValue() == 0;
-	}
-
-	@Override
-	public Exception getException() {
-		return exception;
 	}
 
 	@Override
@@ -117,32 +134,17 @@ public class DefaultReturnValue extends Number implements ReturnValue {
 			return false;
 		}
 		ReturnValue o = (ReturnValue) obj;
-		if (exception != null || o.getException() != null) {
-			return new EqualsBuilder().append(exception, o.getException())
-					.isEquals();
-		} else {
-			return new EqualsBuilder().append(number, o.getAsNumber())
-					.isEquals();
-		}
+		return new EqualsBuilder().append(number, o.getAsNumber()).isEquals();
 	}
 
 	@Override
 	public int compareTo(ReturnValue o) {
-		if (exception != null || o.getException() != null) {
-			return new CompareToBuilder().append(exception, o.getException())
-					.toComparison();
-		} else {
-			return new CompareToBuilder().append(number, o.getAsNumber())
-					.toComparison();
-		}
+		return new CompareToBuilder().append(number, o.getAsNumber())
+				.toComparison();
 	}
 
 	@Override
 	public String toString() {
-		if (exception != null) {
-			return exception.getLocalizedMessage();
-		} else {
-			return number.toString();
-		}
+		return number.toString();
 	}
 }

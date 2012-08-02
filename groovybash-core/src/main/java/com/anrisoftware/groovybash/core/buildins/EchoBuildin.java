@@ -18,7 +18,6 @@
  */
 package com.anrisoftware.groovybash.core.buildins;
 
-import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.SUCCESS_VALUE;
 import static org.apache.commons.lang3.StringUtils.join;
 
 import java.util.Map;
@@ -56,14 +55,16 @@ class EchoBuildin extends AbstractBuildin {
 	}
 
 	@Override
-	public ReturnValue call() {
+	public ReturnValue call() throws Exception {
+		super.call();
 		return buidlin.callBuildin();
 	}
 
 	ReturnValue callBuildin() {
 		getOutputStream().println(join(getArgs(), SEPARATOR));
 		getOutputStream().flush();
-		return SUCCESS_VALUE;
+		return DefaultReturnValue.createSuccessValue(getInputStream(),
+				getOutputStream(), getErrorStream());
 	}
 
 	@Override
@@ -110,7 +111,8 @@ class EchoBuildin extends AbstractBuildin {
 		ReturnValue callBuildin() {
 			getOutputStream().print(join(getArgs(), SEPARATOR));
 			getOutputStream().flush();
-			return SUCCESS_VALUE;
+			return DefaultReturnValue.createSuccessValue(getInputStream(),
+					getOutputStream(), getErrorStream());
 		}
 	}
 
