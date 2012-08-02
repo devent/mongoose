@@ -16,40 +16,21 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.buildins;
-
-import static java.lang.String.format;
-import net.xeoh.plugins.base.annotations.Capabilities;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
+package com.anrisoftware.groovybash.core.buildins.echobuildin;
 
 import com.anrisoftware.groovybash.core.api.Buildin;
-import com.anrisoftware.groovybash.core.api.BuildinPlugin;
-import com.google.inject.Injector;
+import com.google.inject.AbstractModule;
 
 /**
- * Returns the echo build-in as a plug-in.
+ * Binds the echo build-in command.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-@PluginImplementation
-public class EchoPlugin implements BuildinPlugin {
+public class EchoModule extends AbstractModule {
 
 	@Override
-	@Capabilities
-	public String[] getCapabilities() {
-		return new String[] { format("buildin:%s", getName()) };
+	protected void configure() {
+		bind(Buildin.class).to(EchoBuildin.class);
 	}
-
-	@Override
-	public Buildin getBuildin(Injector injector) {
-		Injector childInjector = injector.createChildInjector(new EchoModule());
-		return childInjector.getInstance(Buildin.class);
-	}
-
-	@Override
-	public String getName() {
-		return "echo";
-	}
-
 }

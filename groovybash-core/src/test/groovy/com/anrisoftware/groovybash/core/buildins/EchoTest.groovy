@@ -21,6 +21,7 @@ package com.anrisoftware.groovybash.core.buildins
 import org.junit.Test
 
 import com.anrisoftware.groovybash.core.CommandTestUtils
+import com.anrisoftware.groovybash.core.buildins.echobuildin.EchoBuildin;
 
 /**
  * Test the build-in command {@link EchoBuildin}.
