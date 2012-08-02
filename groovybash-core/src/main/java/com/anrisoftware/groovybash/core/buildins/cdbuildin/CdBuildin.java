@@ -1,6 +1,6 @@
 package com.anrisoftware.groovybash.core.buildins.cdbuildin;
 
-import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.SUCCESS_VALUE;
+import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.createSuccessValue;
 
 import java.io.File;
 
@@ -36,6 +36,7 @@ class CdBuildin extends AbstractBuildin {
 
 	@Override
 	public ReturnValue call() throws Exception {
+		super.call();
 		if (getArgs().length == 0) {
 			buildin = new UserHomeCd(this);
 		}
@@ -43,7 +44,8 @@ class CdBuildin extends AbstractBuildin {
 	}
 
 	ReturnValue callBuildin() throws Exception {
-		return SUCCESS_VALUE;
+		return createSuccessValue(getInputStream(), getOutputStream(),
+				getErrorStream());
 	}
 
 	@Override
