@@ -12,7 +12,8 @@ import com.anrisoftware.groovybash.core.buildins.StandardStreams;
 
 /**
  * The build-in command {@code cd [DIR]}. Change the current working directory
- * to the specified directory {@code DIR}.
+ * to the specified directory {@code DIR}. {@code DIR} defaults to the user home
+ * directory.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
