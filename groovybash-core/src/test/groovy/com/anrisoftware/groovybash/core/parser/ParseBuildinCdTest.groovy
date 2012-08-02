@@ -88,6 +88,23 @@ cd "$tmp"
 	}
 
 	@Test
+	void "parse cd buildin with file"() {
+		def tmp = createTempDirectory()
+		def script = """
+dir = new File("$tmp")
+cd dir
+"""
+
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assert parser.environment.workingDirectory == tmp
+		tmp.deleteDir()
+	}
+
+	@Test
 	void "parse cd buildin with not existent directory"() {
 		def tmp = createTempDirectory()
 		assert tmp.deleteDir()
