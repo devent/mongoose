@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +36,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import com.anrisoftware.groovybash.core.api.Buildin;
 import com.anrisoftware.groovybash.core.api.BuildinPlugin;
 import com.anrisoftware.groovybash.core.api.Environment;
+import com.anrisoftware.groovybash.core.api.ExecutorServiceHandler;
 import com.anrisoftware.groovybash.core.factories.BuildinPluginsLoaderFactory;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.common.collect.Maps;
@@ -62,11 +64,14 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private final CallCommandWorker callCommandWorker;
 
+	private final ExecutorServiceHandler executorServiceHandler;
+
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
 			@Named("environmentProperties") Properties properties,
 			BuildinPluginsLoaderFactory loaderFactory,
-			CallCommandWorker callCommandWorker) {
+			CallCommandWorker callCommandWorker,
+			ExecutorServiceHandler executorServiceHandler) {
 		super();
 		this.log = logger;
 		this.properties = new ContextProperties(this, properties);
@@ -74,6 +79,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		this.workingDirectory = new File(".");
 		this.buildinPlugins = Maps.newHashMap();
 		this.callCommandWorker = callCommandWorker;
+		this.executorServiceHandler = executorServiceHandler;
 		loadBuildins();
 	}
 
@@ -130,7 +136,20 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		if (getMetaClass().getMetaMethod(name, uargs) != null) {
 			return super.invokeMethod(name, args);
 		}
-		Buildin buildin = buildinPlugins.get(name).getBuildin(injector);
+		BuildinPlugin buildinPlugin = buildinPlugins.get(name);
+		if (buildinPlugin != null) {
+			return callBuildin(uargs, buildinPlugin);
+		} else {
+			return callCommand(uargs);
+		}
+	}
+
+	private Object callCommand(Object[] uargs) {
+		return null;
+	}
+
+	private Object callBuildin(Object[] uargs, BuildinPlugin buildinPlugin) {
+		Buildin buildin = buildinPlugin.getBuildin(injector);
 		buildin.setEnvironment(this);
 		buildin.setArguments(uargs);
 		return callCommandWorker.call(buildin);
@@ -142,5 +161,10 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 			return super.getProperty(name);
 		}
 		return invokeMethod(name, null);
+	}
+
+	@Override
+	public Future<?> submitTask(Runnable task) {
+		return executorServiceHandler.submitTask(task);
 	}
 }

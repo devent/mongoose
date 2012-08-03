@@ -16,52 +16,40 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.api;
+package com.anrisoftware.groovybash.core.buildins.runbuildin;
 
-import java.io.File;
-import java.util.concurrent.Future;
+import static java.lang.String.format;
+import net.xeoh.plugins.base.annotations.Capabilities;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
+import com.anrisoftware.groovybash.core.api.Buildin;
+import com.anrisoftware.groovybash.core.api.BuildinPlugin;
 import com.google.inject.Injector;
 
 /**
- * The environment of the script.
+ * Returns the run build-in as a plug-in.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public interface Environment {
+@PluginImplementation
+public class RunPlugin implements BuildinPlugin {
 
-	/**
-	 * Sets the parent injector for the environment.
-	 * 
-	 * @param injector
-	 *            the parent {@link Injector}.
-	 */
-	void setInjector(Injector injector);
+	@Override
+	@Capabilities
+	public String[] getCapabilities() {
+		return new String[] { format("buildin:%s", getName()) };
+	}
 
-	/**
-	 * Sets the current working directory.
-	 * 
-	 * @param directory
-	 *            the {@link File} of the directory.
-	 */
-	void setWorkingDirectory(File directory);
+	@Override
+	public Buildin getBuildin(Injector injector) {
+		Injector childInjector = injector.createChildInjector(new RunModule());
+		return childInjector.getInstance(Buildin.class);
+	}
 
-	/**
-	 * Returns the current working directory.
-	 * 
-	 * @return the {@link File} of the directory.
-	 */
-	File getWorkingDirectory();
-
-	/**
-	 * Returns the user home directory.
-	 * 
-	 * @return the user home directory {@link File}.
-	 * @see System#getProperty(String)
-	 */
-	File getUserHome();
-
-	Future<?> submitTask(Runnable task);
+	@Override
+	public String getName() {
+		return "run";
+	}
 
 }

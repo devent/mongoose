@@ -206,4 +206,8 @@ public abstract class AbstractBuildin implements Buildin {
 		log.outputStreamSet(this, flag);
 	}
 
+	@Override
+	public String toString() {
+		return String.format("%s %s %s", getName(), flags, args);
+	}
 }

@@ -22,6 +22,7 @@ import org.junit.Test
 
 import com.anrisoftware.groovybash.core.CommandTestUtils
 import com.anrisoftware.groovybash.core.environment.EnvironmentModule
+import com.anrisoftware.groovybash.core.executor.ExecutorModule
 import com.anrisoftware.groovybash.core.factories.BashParserFactory
 import com.anrisoftware.groovybash.core.plugins.PluginsModule
 import com.google.inject.Injector
@@ -37,7 +38,9 @@ class ParseBuildinEchoTest extends CommandTestUtils {
 	@Override
 	Injector createInjector() {
 		def injector = super.createInjector()
-		injector.createChildInjector new ParserModule(), new EnvironmentModule(), new PluginsModule()
+		injector.createChildInjector new ParserModule(),
+						new EnvironmentModule(), new PluginsModule(),
+						new ExecutorModule()
 	}
 
 	@Test
@@ -194,6 +197,20 @@ echo in: "$tmp", nonewline: true
 		parser.run()
 
 		assertStringContent "Hello World", output
+	}
+
+	@Test
+	void "parse echo with number"() {
+		def script = """
+n = 0
+echo n
+"""
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertStringContent "0\n", output
 	}
 
 	//@Test
