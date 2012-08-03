@@ -31,7 +31,7 @@ import java.io.FileNotFoundException;
  * @since 1.0
  */
 @SuppressWarnings("serial")
-public class DirectoryNotFound extends FileNotFoundException {
+public class DirectoryNotFoundException extends FileNotFoundException {
 
 	private final File dir;
 
@@ -41,7 +41,7 @@ public class DirectoryNotFound extends FileNotFoundException {
 	 * @param dir
 	 *            the {@link File} path of the directory.
 	 */
-	public DirectoryNotFound(File dir) {
+	public DirectoryNotFoundException(File dir) {
 		super(format("The directory %s could not be found.", dir));
 		this.dir = dir;
 	}

@@ -5,7 +5,7 @@ import java.io.File;
 import com.anrisoftware.groovybash.core.api.ReturnValue;
 import com.anrisoftware.groovybash.core.buildins.AbstractBuildin;
 import com.anrisoftware.groovybash.core.buildins.StandardStreams;
-import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFound;
+import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFoundException;
 
 /**
  * The {@code cd} build-in command that will change the current working
@@ -26,7 +26,7 @@ class UserHomeCd extends CdBuildin {
 	ReturnValue callBuildin() throws Exception {
 		File dir = getEnvironment().getUserHome();
 		if (!dir.isDirectory()) {
-			throw new DirectoryNotFound(dir);
+			throw new DirectoryNotFoundException(dir);
 		}
 		getEnvironment().setWorkingDirectory(dir);
 		return super.callBuildin();

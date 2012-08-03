@@ -22,7 +22,7 @@ import org.junit.Test
 
 import com.anrisoftware.groovybash.core.CommandTestUtils
 import com.anrisoftware.groovybash.core.environment.EnvironmentModule
-import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFound
+import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFoundException
 import com.anrisoftware.groovybash.core.factories.BashParserFactory
 import com.anrisoftware.groovybash.core.plugins.PluginsModule
 import com.google.inject.Injector
@@ -116,7 +116,7 @@ cd "$tmp"
 		BashParserFactory factory = injector.getInstance BashParserFactory
 		BashParser parser = factory.create script
 		parser.injector = injector
-		shouldFailWith DirectoryNotFound, { parser.run() }
+		shouldFailWith DirectoryNotFoundException, { parser.run() }
 
 		assert parser.environment.workingDirectory == new File(".")
 	}
@@ -129,7 +129,7 @@ cd "$tmp"
 		def script = """
 try {
 	cd "$tmp"
-} catch (DirectoryNotFound e) {
+} catch (DirectoryNotFoundException e) {
     echo e
 }
 """
@@ -140,6 +140,6 @@ try {
 		parser.run()
 
 		assert parser.environment.workingDirectory == new File(".")
-		assert output =~ /^com\.anrisoftware\.groovybash\.core\.exceptions\.DirectoryNotFound: The directory \/tmp\/\d+-\d+ could not be found\./
+		assert output =~ /^com\.anrisoftware\.groovybash\.core\.exceptions\.DirectoryNotFoundException: The directory \/tmp\/\d+-\d+ could not be found\./
 	}
 }
