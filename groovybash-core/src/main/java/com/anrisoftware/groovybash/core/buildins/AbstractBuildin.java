@@ -20,11 +20,7 @@ package com.anrisoftware.groovybash.core.buildins;
 
 import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.createSuccessValue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Map;
 
@@ -56,8 +52,17 @@ public abstract class AbstractBuildin implements Buildin {
 
 	private final StandardStreams streams;
 
+	/**
+	 * Sets the standard streams, the arguments and the flags from a parent
+	 * build-in.
+	 * 
+	 * @param parent
+	 *            the parent {@link AbstractBuildin}.
+	 */
 	protected AbstractBuildin(AbstractBuildin parent) {
 		this(parent.streams);
+		this.args = parent.args;
+		this.flags = parent.flags;
 	}
 
 	/**
@@ -175,10 +180,6 @@ public abstract class AbstractBuildin implements Buildin {
 		return streams.errorStream;
 	}
 
-	public StandardStreams getStreams() {
-		return streams;
-	}
-
 	@Override
 	public ReturnValue call() throws Exception {
 		setupInput();
@@ -187,60 +188,22 @@ public abstract class AbstractBuildin implements Buildin {
 				streams.errorStream);
 	}
 
-	private void setupInput() throws FileNotFoundException {
+	private void setupInput() throws Exception {
 		Object flag = getFlag("in", null);
 		if (flag == null) {
 			return;
 		}
-		setInput(flag);
+		streams.setInputStream(flag);
+		log.inputStreamSet(this, flag);
 	}
 
-	private void setInput(Object flag) throws FileNotFoundException {
-		if (flag instanceof File) {
-			setInput((File) flag);
-		} else if (flag instanceof InputStream) {
-			setInput((InputStream) flag);
-		} else {
-			setInput(new File(flag.toString()));
-		}
-	}
-
-	private void setInput(InputStream stream) throws FileNotFoundException {
-		streams.inputStream = stream;
-		log.inputStreamSet(this, stream);
-	}
-
-	private void setInput(File file) throws FileNotFoundException {
-		streams.inputStream = new FileInputStream(file);
-		log.inputFileSet(this, file);
-	}
-
-	private void setupOutput() throws FileNotFoundException {
+	private void setupOutput() throws Exception {
 		Object flag = getFlag("out", null);
 		if (flag == null) {
 			return;
 		}
-		setOutput(flag);
-	}
-
-	private void setOutput(Object flag) throws FileNotFoundException {
-		if (flag instanceof File) {
-			setOutput((File) flag);
-		} else if (flag instanceof OutputStream) {
-			setOutput((OutputStream) flag);
-		} else {
-			setOutput(new File(flag.toString()));
-		}
-	}
-
-	private void setOutput(File file) throws FileNotFoundException {
-		streams.outputStream = new PrintStream(file);
-		log.outputFileSet(this, file);
-	}
-
-	private void setOutput(OutputStream stream) throws FileNotFoundException {
-		streams.outputStream = new PrintStream(stream);
-		log.outputStreamSet(this, stream);
+		streams.setOutputStream(flag);
+		log.outputStreamSet(this, flag);
 	}
 
 }

@@ -18,7 +18,11 @@
  */
 package com.anrisoftware.groovybash.core.buildins;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 import com.anrisoftware.groovybash.core.api.Buildin;
@@ -71,8 +75,48 @@ public class StandardStreams {
 		return inputStream;
 	}
 
-	public void setInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
+	/**
+	 * Sets the standard input stream.
+	 * 
+	 * @param stream
+	 *            the {@link InputStream} for the standard input.
+	 */
+	public void setInputStream(InputStream stream) {
+		this.inputStream = stream;
+	}
+
+	/**
+	 * Creates an input stream from different sources and uses it as the
+	 * standard input.
+	 * 
+	 * @param obj
+	 *            the source {@link Object}.
+	 * 
+	 * @throws Exception
+	 *             the there was an error opening or reading the source.
+	 * 
+	 */
+	public void setInputStream(Object obj) throws Exception {
+		if (obj instanceof File) {
+			setInputStream((File) obj);
+		} else if (obj instanceof InputStream) {
+			setInputStream((InputStream) obj);
+		} else {
+			setInputStream(new File(obj.toString()));
+		}
+	}
+
+	/**
+	 * Read the file for the standard input.
+	 * 
+	 * @param file
+	 *            the {@link File} to read.
+	 * 
+	 * @throws FileNotFoundException
+	 *             if the file was not found.
+	 */
+	public void setInputStream(File file) throws FileNotFoundException {
+		inputStream = new FileInputStream(file);
 	}
 
 	/**
@@ -84,8 +128,58 @@ public class StandardStreams {
 		return outputStream;
 	}
 
+	/**
+	 * Sets the standard output stream.
+	 * 
+	 * @param stream
+	 *            the {@link PrintStream} for the standard output.
+	 */
 	public void setOutputStream(PrintStream outputStream) {
 		this.outputStream = outputStream;
+	}
+
+	/**
+	 * Creates an input stream from different targets and uses it as the
+	 * standard output.
+	 * 
+	 * @param obj
+	 *            the target {@link Object}.
+	 * 
+	 * @throws Exception
+	 *             the there was an error opening or writing to the target.
+	 * 
+	 */
+	public void setOutputStream(Object obj) throws Exception {
+		if (obj instanceof File) {
+			setOutputStream((File) obj);
+		} else if (obj instanceof OutputStream) {
+			setOutputStream((OutputStream) obj);
+		} else {
+			setOutputStream(new File(obj.toString()));
+		}
+	}
+
+	/**
+	 * The file is used for the standard output.
+	 * 
+	 * @param file
+	 *            the {@link File} to write to.
+	 * 
+	 * @throws FileNotFoundException
+	 *             if the file was not found.
+	 */
+	public void setOutputStream(File file) throws FileNotFoundException {
+		outputStream = new PrintStream(file);
+	}
+
+	/**
+	 * The stream is used for the standard output.
+	 * 
+	 * @param stream
+	 *            the {@link OutputStream} to write to.
+	 */
+	public void setOutputStream(OutputStream stream) {
+		outputStream = new PrintStream(stream);
 	}
 
 	/**
@@ -97,7 +191,14 @@ public class StandardStreams {
 		return errorStream;
 	}
 
+	/**
+	 * Sets the standard error stream.
+	 * 
+	 * @param stream
+	 *            the {@link PrintStream} for the error output.
+	 */
 	public void setErrorStream(PrintStream errorStream) {
 		this.errorStream = errorStream;
 	}
+
 }
