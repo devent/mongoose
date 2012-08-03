@@ -165,5 +165,48 @@ echo out: stream, "Hello World"
 
 		assertFileContent tmp, "Hello World\n"
 	}
+
+	@Test
+	void "parse echo re-direct stdin from file"() {
+		def tmp = createTempFile "Hello World"
+
+		def script = """
+echo in: "$tmp"
+"""
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertStringContent "Hello World\n", output
+	}
+
+	@Test
+	void "parse echo re-direct stdin from file no newline"() {
+		def tmp = createTempFile "Hello World"
+
+		def script = """
+echo in: "$tmp", nonewline: true
+"""
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertStringContent "Hello World", output
+	}
+
+	//@Test
+	void "parse echo re-direct stdin from stream"() {
+		def script = """
+echo in: System.in
+"""
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertStringContent "1234\n\n", output
+	}
 }
 

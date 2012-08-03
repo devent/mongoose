@@ -21,6 +21,8 @@ package com.anrisoftware.groovybash.core.buildins;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import com.anrisoftware.groovybash.core.api.Buildin;
+
 /**
  * Bundles the standart input and outputs of a command.
  * 
@@ -29,11 +31,16 @@ import java.io.PrintStream;
  */
 public class StandardStreams {
 
-	private final InputStream inputStream;
+	public static StandardStreams copy(Buildin buildin) {
+		return new StandardStreams(buildin.getInputStream(),
+				buildin.getOutputStream(), buildin.getErrorStream());
+	}
 
-	private final PrintStream outputStream;
+	InputStream inputStream;
 
-	private final PrintStream errorStream;
+	PrintStream outputStream;
+
+	PrintStream errorStream;
 
 	/**
 	 * Sets the standard input stream, standard output stream and standard error
@@ -64,6 +71,10 @@ public class StandardStreams {
 		return inputStream;
 	}
 
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
 	/**
 	 * Returns the standard output stream.
 	 * 
@@ -73,6 +84,10 @@ public class StandardStreams {
 		return outputStream;
 	}
 
+	public void setOutputStream(PrintStream outputStream) {
+		this.outputStream = outputStream;
+	}
+
 	/**
 	 * Returns the standard error stream.
 	 * 
@@ -80,5 +95,9 @@ public class StandardStreams {
 	 */
 	public PrintStream getErrorStream() {
 		return errorStream;
+	}
+
+	public void setErrorStream(PrintStream errorStream) {
+		this.errorStream = errorStream;
 	}
 }

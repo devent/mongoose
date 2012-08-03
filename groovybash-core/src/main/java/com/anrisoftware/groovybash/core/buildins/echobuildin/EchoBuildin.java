@@ -20,6 +20,7 @@ package com.anrisoftware.groovybash.core.buildins.echobuildin;
 
 import static org.apache.commons.lang3.StringUtils.join;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -40,9 +41,9 @@ import com.anrisoftware.groovybash.core.buildins.StandardStreams;
  */
 class EchoBuildin extends AbstractBuildin {
 
-	private static final String SEPARATOR = " ";
+	static final String SEPARATOR = " ";
 
-	private EchoBuildin buidlin;
+	private EchoBuildin buildin;
 
 	/**
 	 * Sets the standard input and output streams.
@@ -54,27 +55,38 @@ class EchoBuildin extends AbstractBuildin {
 	@Inject
 	EchoBuildin(StandardStreams streams) {
 		super(streams);
-		this.buidlin = this;
+		this.buildin = this;
+	}
+
+	protected EchoBuildin(AbstractBuildin parent) {
+		super(parent);
 	}
 
 	@Override
 	public ReturnValue call() throws Exception {
 		super.call();
-		return buidlin.callBuildin();
-	}
-
-	ReturnValue callBuildin() {
-		getOutputStream().println(join(getArgs(), SEPARATOR));
-		getOutputStream().flush();
+		buildin.outputText(buildin.getOutput());
 		return DefaultReturnValue.createSuccessValue(getInputStream(),
 				getOutputStream(), getErrorStream());
+	}
+
+	void outputText(String text) throws IOException {
+		getOutputStream().println(text);
+		getOutputStream().flush();
+	}
+
+	String getOutput() throws IOException {
+		return join(getArgs(), SEPARATOR);
 	}
 
 	@Override
 	public void setArguments(Map<?, ?> flags, Object[] args) {
 		super.setArguments(flags, args);
 		if (getFlag("nonewline", false)) {
-			buidlin = nonewline();
+			buildin = new EchoNoNewLine(this);
+		}
+		if (getFlag("in", null) != null && args.length == 0) {
+			buildin = new FromInput(buildin);
 		}
 	}
 
@@ -84,39 +96,6 @@ class EchoBuildin extends AbstractBuildin {
 	@Override
 	public String getName() {
 		return "echo";
-	}
-
-	/**
-	 * Specify that no newline should be followed the specified arguments.
-	 * 
-	 * @return this {@link EchoBuildin}.
-	 */
-	public EchoBuildin nonewline() {
-		return new EchoNoNewLine(this);
-	}
-
-	/**
-	 * The {@code echo} build-in command that will not output a newline after
-	 * the arguments.
-	 * 
-	 * @author Erwin Mueller, erwin.mueller@deventm.org
-	 * @since 1.0
-	 */
-	private static class EchoNoNewLine extends EchoBuildin {
-
-		private EchoNoNewLine(AbstractBuildin parent) {
-			super(new StandardStreams(parent.getInputStream(),
-					parent.getOutputStream(), parent.getErrorStream()));
-			setArguments(parent.getArgs());
-		}
-
-		@Override
-		ReturnValue callBuildin() {
-			getOutputStream().print(join(getArgs(), SEPARATOR));
-			getOutputStream().flush();
-			return DefaultReturnValue.createSuccessValue(getInputStream(),
-					getOutputStream(), getErrorStream());
-		}
 	}
 
 	@Override

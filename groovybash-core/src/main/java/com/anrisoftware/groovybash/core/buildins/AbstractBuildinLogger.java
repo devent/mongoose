@@ -19,6 +19,7 @@
 package com.anrisoftware.groovybash.core.buildins;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
@@ -45,6 +46,16 @@ class AbstractBuildinLogger extends AbstractLogger {
 
 	void outputStreamSet(AbstractBuildin buildin, OutputStream stream) {
 		log.debug("Set output stream {} for the build-in command {}.", stream,
+				buildin);
+	}
+
+	void inputFileSet(AbstractBuildin buildin, File file) {
+		log.debug("Set input file {} for the build-in command {}.", file,
+				buildin);
+	}
+
+	void inputStreamSet(AbstractBuildin buildin, InputStream stream) {
+		log.debug("Set input stream {} for the build-in command {}.", stream,
 				buildin);
 	}
 }

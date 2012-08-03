@@ -21,6 +21,7 @@ package com.anrisoftware.groovybash.core.buildins;
 import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.createSuccessValue;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,17 +48,17 @@ public abstract class AbstractBuildin implements Buildin {
 
 	private AbstractBuildinLogger log;
 
-	private InputStream inputStream;
-
-	private PrintStream outputStream;
-
-	private PrintStream errorStream;
-
 	private Object[] args;
 
 	private Map<?, ?> flags;
 
 	private Environment environment;
+
+	private final StandardStreams streams;
+
+	protected AbstractBuildin(AbstractBuildin parent) {
+		this(parent.streams);
+	}
 
 	/**
 	 * Sets the standard input and output streams.
@@ -67,9 +68,7 @@ public abstract class AbstractBuildin implements Buildin {
 	 *            and output streams.
 	 */
 	protected AbstractBuildin(StandardStreams streams) {
-		this.inputStream = streams.getInputStream();
-		this.outputStream = streams.getOutputStream();
-		this.errorStream = streams.getErrorStream();
+		this.streams = streams;
 		this.args = new Object[] {};
 		this.flags = Maps.newHashMap();
 	}
@@ -148,38 +147,72 @@ public abstract class AbstractBuildin implements Buildin {
 
 	@Override
 	public void setInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
+		streams.inputStream = inputStream;
 	}
 
 	@Override
 	public InputStream getInputStream() {
-		return inputStream;
+		return streams.inputStream;
 	}
 
 	@Override
 	public void setOutputStream(PrintStream outputStream) {
-		this.outputStream = outputStream;
+		streams.outputStream = outputStream;
 	}
 
 	@Override
 	public PrintStream getOutputStream() {
-		return outputStream;
+		return streams.outputStream;
 	}
 
 	@Override
 	public void setErrorStream(PrintStream errorStream) {
-		this.errorStream = errorStream;
+		streams.errorStream = errorStream;
 	}
 
 	@Override
 	public PrintStream getErrorStream() {
-		return errorStream;
+		return streams.errorStream;
+	}
+
+	public StandardStreams getStreams() {
+		return streams;
 	}
 
 	@Override
 	public ReturnValue call() throws Exception {
+		setupInput();
 		setupOutput();
-		return createSuccessValue(inputStream, outputStream, errorStream);
+		return createSuccessValue(streams.inputStream, streams.outputStream,
+				streams.errorStream);
+	}
+
+	private void setupInput() throws FileNotFoundException {
+		Object flag = getFlag("in", null);
+		if (flag == null) {
+			return;
+		}
+		setInput(flag);
+	}
+
+	private void setInput(Object flag) throws FileNotFoundException {
+		if (flag instanceof File) {
+			setInput((File) flag);
+		} else if (flag instanceof InputStream) {
+			setInput((InputStream) flag);
+		} else {
+			setInput(new File(flag.toString()));
+		}
+	}
+
+	private void setInput(InputStream stream) throws FileNotFoundException {
+		streams.inputStream = stream;
+		log.inputStreamSet(this, stream);
+	}
+
+	private void setInput(File file) throws FileNotFoundException {
+		streams.inputStream = new FileInputStream(file);
+		log.inputFileSet(this, file);
 	}
 
 	private void setupOutput() throws FileNotFoundException {
@@ -201,12 +234,12 @@ public abstract class AbstractBuildin implements Buildin {
 	}
 
 	private void setOutput(File file) throws FileNotFoundException {
-		outputStream = new PrintStream(file);
+		streams.outputStream = new PrintStream(file);
 		log.outputFileSet(this, file);
 	}
 
 	private void setOutput(OutputStream stream) throws FileNotFoundException {
-		outputStream = new PrintStream(stream);
+		streams.outputStream = new PrintStream(stream);
 		log.outputStreamSet(this, stream);
 	}
 
