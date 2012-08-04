@@ -13,7 +13,6 @@ class EchoNoNewLine extends EchoBuildin {
 
 	public EchoNoNewLine(AbstractBuildin parent) {
 		super(parent);
-		setArguments(parent.getArgs());
 	}
 
 	@Override
