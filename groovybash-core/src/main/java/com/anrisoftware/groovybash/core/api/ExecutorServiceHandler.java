@@ -14,4 +14,9 @@ public interface ExecutorServiceHandler {
 	 */
 	Future<?> submitTask(Runnable task);
 
+	/**
+	 * Shutdown the executor service.
+	 */
+	void shutdown();
+
 }

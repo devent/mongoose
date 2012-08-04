@@ -69,6 +69,7 @@ public class BashParser implements Runnable {
 	@Override
 	public void run() {
 		script.run();
+		environment.close();
 	}
 
 }

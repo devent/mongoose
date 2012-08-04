@@ -64,4 +64,9 @@ public interface Environment {
 
 	Future<?> submitTask(Runnable task);
 
+	/**
+	 * Close the environment.
+	 */
+	void close();
+
 }

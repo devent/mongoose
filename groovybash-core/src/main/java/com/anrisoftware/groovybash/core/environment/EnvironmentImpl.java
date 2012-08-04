@@ -194,4 +194,9 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	public Future<?> submitTask(Runnable task) {
 		return executorServiceHandler.submitTask(task);
 	}
+
+	@Override
+	public void close() {
+		executorServiceHandler.shutdown();
+	}
 }

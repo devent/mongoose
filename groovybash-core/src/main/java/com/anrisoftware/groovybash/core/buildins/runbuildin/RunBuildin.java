@@ -79,9 +79,9 @@ class RunBuildin extends AbstractBuildin {
 				outputTaskFactory.create(process, getOutputStream()));
 		Future<?> errorTask = getEnvironment().submitTask(
 				errorTaskFactory.create(process, getErrorStream()));
-		int ret = process.waitFor();
 		outputTask.get();
 		errorTask.get();
+		int ret = process.waitFor();
 		return new DefaultReturnValue(ret, getInputStream(), getOutputStream(),
 				getErrorStream());
 	}

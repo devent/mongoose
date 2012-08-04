@@ -19,4 +19,8 @@ class FixedThreadPoolExecutorServiceHandler implements ExecutorServiceHandler {
 		return service.submit(task);
 	}
 
+	@Override
+	public void shutdown() {
+		service.shutdown();
+	}
 }
