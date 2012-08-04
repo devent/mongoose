@@ -39,7 +39,6 @@ class CallCommandWorkerLogger extends AbstractLogger {
 	}
 
 	void errorCallBuildin(Buildin buildin, Exception e) {
-		log.error(format("Build-in command %s throws an exception:", buildin),
-				e);
+		log.error(format("Command %s throws an exception:", buildin), e);
 	}
 }

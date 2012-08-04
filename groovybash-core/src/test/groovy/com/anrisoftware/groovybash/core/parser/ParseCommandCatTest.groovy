@@ -18,6 +18,8 @@
  */
 package com.anrisoftware.groovybash.core.parser
 
+import groovy.util.logging.Slf4j
+
 import org.junit.Test
 
 import com.anrisoftware.groovybash.core.CommandTestUtils
@@ -33,6 +35,7 @@ import com.google.inject.Injector
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
+@Slf4j
 class ParseCommandCatTest extends CommandTestUtils {
 
 	@Override
@@ -57,5 +60,49 @@ echo ret
 		parser.run()
 
 		assertStringContent "Hello World0\n", output
+	}
+
+	@Test
+	void "parse cat command with file with newline"() {
+		def tmp = createTempFile "Hello World\n"
+		def script = """
+cat "$tmp"
+"""
+
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertStringContent "Hello World\n", output
+	}
+
+	@Test
+	void "parse cat command with file with no newline"() {
+		def tmp = createTempFile "Hello World"
+		def script = """
+cat "$tmp"
+"""
+
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertStringContent "Hello World", output
+	}
+
+	@Test
+	void "parse ls command"() {
+		def script = """
+ls "-lh"
+"""
+
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		log.info "``{}''", output
 	}
 }

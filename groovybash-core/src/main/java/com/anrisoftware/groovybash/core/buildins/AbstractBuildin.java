@@ -208,6 +208,7 @@ public abstract class AbstractBuildin implements Buildin {
 
 	@Override
 	public String toString() {
-		return String.format("%s %s %s", getName(), flags, args);
+		return String.format("%s %s %s", getName(), ArrayUtils.toString(flags),
+				args);
 	}
 }

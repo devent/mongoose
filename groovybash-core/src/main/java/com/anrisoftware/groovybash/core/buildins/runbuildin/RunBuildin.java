@@ -150,6 +150,6 @@ class RunBuildin extends AbstractBuildin {
 	 */
 	@Override
 	public String getName() {
-		return "cd";
+		return "run";
 	}
 }

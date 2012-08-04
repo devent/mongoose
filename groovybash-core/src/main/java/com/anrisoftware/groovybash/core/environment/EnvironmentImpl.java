@@ -19,6 +19,7 @@
 package com.anrisoftware.groovybash.core.environment;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.join;
 import groovy.lang.GroovyObjectSupport;
 
 import java.io.File;
@@ -140,12 +141,25 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		if (buildinPlugin != null) {
 			return callBuildin(uargs, buildinPlugin);
 		} else {
-			return callCommand(uargs);
+			return callCommand(name, uargs);
 		}
 	}
 
-	private Object callCommand(Object[] uargs) {
-		return null;
+	private Object callCommand(String name, Object[] uargs) {
+		BuildinPlugin buildinPlugin = buildinPlugins.get("run");
+		Buildin buildin = buildinPlugin.getBuildin(injector);
+		String command = getCommandString(name, uargs);
+		buildin.setEnvironment(this);
+		buildin.setArguments(new Object[] { command });
+		return callCommandWorker.call(buildin);
+	}
+
+	private String getCommandString(String name, Object[] uargs) {
+		if (uargs.length > 0) {
+			return join(new Object[] { name, uargs[uargs.length - 1] }, " ");
+		} else {
+			return name;
+		}
 	}
 
 	private Object callBuildin(Object[] uargs, BuildinPlugin buildinPlugin) {
