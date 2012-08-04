@@ -103,7 +103,7 @@ ls "-lh"
 		parser.injector = injector
 		parser.run()
 
-		log.info "``{}''", output
+		log.info "output: ``{}''", output
 	}
 
 	@Test
@@ -120,5 +120,21 @@ cat out: "$outputFile", "$inputFile"
 		parser.run()
 
 		assertFileContent outputFile, "Hello World"
+	}
+
+	@Test
+	void "cat command with output and error"() {
+		def tmp = createTempFile "Hello World"
+		def script = """
+cat "nofile $tmp"
+"""
+
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		log.info "output: ``{}''", output
+		log.info "error: ``{}''", error
 	}
 }

@@ -100,6 +100,10 @@ class CommandTestUtils extends TestUtils {
 		byteOutputStream.toString()
 	}
 	
+	String getError() {
+		byteErrorStream.toString()
+	}
+	
 	PluginManager createPluginManager() {
 		def props = new JSPFProperties()
 		props.setProperty PluginManager, "cache.enabled", cacheEnabled
