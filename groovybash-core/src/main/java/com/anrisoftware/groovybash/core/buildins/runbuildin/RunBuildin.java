@@ -22,6 +22,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.StringUtils.split;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -73,12 +74,7 @@ class RunBuildin extends AbstractBuildin {
 	@Override
 	public ReturnValue call() throws Exception {
 		super.call();
-		ProcessBuilder builder = new ProcessBuilder(command);
-		Map<String, String> parentEnvironment = builder.environment();
-		parentEnvironment.putAll(environment);
-		builder.directory(workingDirectory);
-		builder.redirectErrorStream(redirectErrorStream);
-		final Process process = builder.start();
+		Process process = startProcess();
 		Future<?> outputTask = getEnvironment().submitTask(
 				outputTaskFactory.create(process, getOutputStream()));
 		Future<?> errorTask = getEnvironment().submitTask(
@@ -90,17 +86,22 @@ class RunBuildin extends AbstractBuildin {
 				getErrorStream());
 	}
 
-	@Override
-	public void setArguments(Object[] args) {
-		super.setArguments(args);
-		command = getCommand(args);
-		environment = getEnvironment(args);
-		workingDirectory = getWorkingDir(args);
+	private Process startProcess() throws IOException {
+		ProcessBuilder builder = new ProcessBuilder(command);
+		Map<String, String> parentEnvironment = builder.environment();
+		parentEnvironment.putAll(environment);
+		builder.directory(workingDirectory);
+		builder.redirectErrorStream(redirectErrorStream);
+		Process process = builder.start();
+		return process;
 	}
 
 	@Override
 	public void setArguments(Map<?, ?> flags, Object[] args) {
 		super.setArguments(flags, args);
+		command = getCommand(args);
+		environment = getEnvironment(args);
+		workingDirectory = getWorkingDir(args);
 		redirectErrorStream = getFlag("redirectErrorStream", false);
 	}
 

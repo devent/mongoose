@@ -18,6 +18,8 @@
  */
 package com.anrisoftware.groovybash.core.environment;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.join;
 import groovy.lang.GroovyObjectSupport;
@@ -148,18 +150,29 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	private Object callCommand(String name, Object[] uargs) {
 		BuildinPlugin buildinPlugin = buildinPlugins.get("run");
 		Buildin buildin = buildinPlugin.getBuildin(injector);
-		String command = getCommandString(name, uargs);
+		Map<String, String> flags = newHashMap();
+		String command = getCommandString(name, uargs, flags);
 		buildin.setEnvironment(this);
-		buildin.setArguments(new Object[] { command });
+		buildin.setArguments(flags, new Object[] { command });
 		return callCommandWorker.call(buildin);
 	}
 
-	private String getCommandString(String name, Object[] uargs) {
-		if (uargs.length > 0) {
-			return join(new Object[] { name, uargs[uargs.length - 1] }, " ");
-		} else {
-			return name;
+	private String getCommandString(String name, Object[] uargs,
+			Map<String, String> flags) {
+		List<String> args = newArrayList(name);
+		for (int i = 0; i < uargs.length; i++) {
+			if (uargs[i] instanceof Map) {
+				flags.putAll(asMap(uargs[i]));
+				continue;
+			}
+			args.add(uargs[i].toString());
 		}
+		return join(args, " ");
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, String> asMap(Object obj) {
+		return (Map<String, String>) obj;
 	}
 
 	private Object callBuildin(Object[] uargs, BuildinPlugin buildinPlugin) {

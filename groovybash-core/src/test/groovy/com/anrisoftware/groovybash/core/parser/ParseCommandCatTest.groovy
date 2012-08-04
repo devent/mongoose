@@ -105,4 +105,20 @@ ls "-lh"
 
 		log.info "``{}''", output
 	}
+
+	@Test
+	void "cat command with file output to file"() {
+		def outputFile = createTempFile()
+		def inputFile = createTempFile "Hello World"
+		def script = """
+cat out: "$outputFile", "$inputFile"
+"""
+
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertFileContent outputFile, "Hello World"
+	}
 }

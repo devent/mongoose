@@ -19,6 +19,7 @@
 package com.anrisoftware.groovybash.core.buildins;
 
 import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.createSuccessValue;
+import static org.apache.commons.lang3.StringUtils.join;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -108,7 +109,7 @@ public abstract class AbstractBuildin implements Buildin {
 			Map<?, ?> flags = (Map<?, ?>) args[0];
 			setArguments(flags, args.length > 1 ? tail(args) : this.args);
 		} else {
-			this.args = args;
+			setArguments(flags, args);
 		}
 	}
 
@@ -208,7 +209,6 @@ public abstract class AbstractBuildin implements Buildin {
 
 	@Override
 	public String toString() {
-		return String.format("%s %s %s", getName(), ArrayUtils.toString(flags),
-				args);
+		return String.format("%s %s \"%s\"", getName(), flags, join(args, " "));
 	}
 }
