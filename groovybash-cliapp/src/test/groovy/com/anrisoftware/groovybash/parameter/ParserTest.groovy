@@ -20,7 +20,7 @@ class ParserTest extends CommandTestUtils {
 	}
 
 	@Test
-	void "parse script"() {
+	void "parse echo script"() {
 		def file = File.createTempFile("EchoScript", "groovy")
 		file.deleteOnExit()
 		copyResourceToFile "com/anrisoftware/groovybash/parameter/EchoScript.groovy", file
