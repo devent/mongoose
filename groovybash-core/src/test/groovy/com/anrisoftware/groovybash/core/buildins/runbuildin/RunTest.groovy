@@ -1,4 +1,4 @@
-package com.anrisoftware.groovybash.core.buildins
+package com.anrisoftware.groovybash.core.buildins.runbuildin
 
 import org.junit.Test
 

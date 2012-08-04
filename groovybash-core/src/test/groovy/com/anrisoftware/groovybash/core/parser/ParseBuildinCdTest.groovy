@@ -23,6 +23,7 @@ import org.junit.Test
 import com.anrisoftware.groovybash.core.CommandTestUtils
 import com.anrisoftware.groovybash.core.environment.EnvironmentModule
 import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFoundException
+import com.anrisoftware.groovybash.core.executor.ExecutorModule
 import com.anrisoftware.groovybash.core.factories.BashParserFactory
 import com.anrisoftware.groovybash.core.plugins.PluginsModule
 import com.google.inject.Injector
@@ -38,7 +39,9 @@ class ParseBuildinCdTest extends CommandTestUtils {
 	@Override
 	Injector createInjector() {
 		def injector = super.createInjector()
-		injector.createChildInjector new ParserModule(), new EnvironmentModule(), new PluginsModule()
+		injector.createChildInjector new ParserModule(),
+						new EnvironmentModule(), new PluginsModule(),
+						new ExecutorModule()
 	}
 
 	@Test

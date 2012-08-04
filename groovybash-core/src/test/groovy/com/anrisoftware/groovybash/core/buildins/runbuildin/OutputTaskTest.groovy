@@ -74,8 +74,7 @@ class OutputTaskTest {
 
 	def process
 
-	@Bench(runs = 1000, beforeFirstRun = "setup before read from input and output with big text")
-	@Test
+	@Bench(runs = 100, beforeFirstRun = "setup before read from input and output with big text")
 	void "read from input and output with big text"() {
 		def task = new OutputTask(process, outputStream)
 		task.run()
@@ -87,8 +86,7 @@ class OutputTaskTest {
 		process = new DummyProcess(bigtext)
 	}
 
-	@Bench(runs = 1000, beforeFirstRun = "setup before read from input and output with small text")
-	@Test
+	@Bench(runs = 100, beforeFirstRun = "setup before read from input and output with small text")
 	void "read from input and output with small text"() {
 		def task = new OutputTask(process, outputStream)
 		task.run()
