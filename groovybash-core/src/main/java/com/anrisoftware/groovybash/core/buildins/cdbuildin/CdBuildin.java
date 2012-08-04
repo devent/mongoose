@@ -3,6 +3,7 @@ package com.anrisoftware.groovybash.core.buildins.cdbuildin;
 import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.createSuccessValue;
 
 import java.io.File;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -50,8 +51,8 @@ class CdBuildin extends AbstractBuildin {
 	}
 
 	@Override
-	public void setArguments(Object[] args) {
-		super.setArguments(args);
+	public void setArguments(Map<?, ?> flags, Object[] args) {
+		super.setArguments(flags, args);
 		if (args.length == 1) {
 			buildin = new FileCd(this, new File(args[0].toString()));
 		}
