@@ -35,17 +35,9 @@ import org.apache.commons.lang3.StringUtils;
  */
 class ArgumentsWorker {
 
-	private final ArrayList<Object> args;
+	private ArrayList<Object> args;
 
-	private final Map<String, String> flags;
-
-	/**
-	 * Sets the arguments and flags to an empty list and map, respectively.
-	 */
-	ArgumentsWorker() {
-		this.args = newArrayList();
-		this.flags = newHashMap();
-	}
+	private Map<String, String> flags;
 
 	/**
 	 * Creates the flags and arguments for the run build-in command.
@@ -65,6 +57,8 @@ class ArgumentsWorker {
 	 * @return this {@link ArgumentsWorker} with the arguments and flags.
 	 */
 	public ArgumentsWorker createCommandArgs(String name, Object[] uargs) {
+		args = newArrayList();
+		flags = newHashMap();
 		List<Object> command = newArrayList();
 		command.add(name);
 		int index = 0;

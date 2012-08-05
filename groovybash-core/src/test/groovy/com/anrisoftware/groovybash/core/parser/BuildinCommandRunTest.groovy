@@ -99,6 +99,16 @@ run "bash $pwdScript", [:], "$tmp"
 	}
 
 	@Test
+	void "run build-in with custom working directory passed as string using pwd"() {
+		def tmp = createTempDirectory()
+		def script = """
+run 'bash -c "pwd"', [:], "$tmp"
+"""
+		runParser script
+		assertStringContent "$tmp\n", output
+	}
+
+	@Test
 	void "run build-in with custom working directory passed as file"() {
 		def pwdScript = createTempFile 'pwd'
 		def tmp = createTempDirectory()
@@ -187,6 +197,16 @@ bash "$tmp", [ENV_1: "foo"]
 		def tmp = createTempDirectory()
 		def script = """
 bash "$pwdScript", [:], "$tmp"
+"""
+		runParser script
+		assertStringContent "$tmp\n", output
+	}
+
+	@Test
+	void "run command with custom working directory passed as string using pwd"() {
+		def tmp = createTempDirectory()
+		def script = """
+bash "-c 'pwd'", [:], "$tmp"
 """
 		runParser script
 		assertStringContent "$tmp\n", output
