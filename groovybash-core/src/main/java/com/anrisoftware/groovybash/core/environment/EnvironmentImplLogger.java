@@ -19,6 +19,7 @@
 package com.anrisoftware.groovybash.core.environment;
 
 import java.io.File;
+import java.util.Arrays;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
 
@@ -39,5 +40,9 @@ class EnvironmentImplLogger extends AbstractLogger {
 
 	void workingDirectorySet(File directory) {
 		log.info("Set working directory {}.", directory);
+	}
+
+	void argumentsSet(String[] args) {
+		log.info("Set command line arguments {}.", Arrays.toString(args));
 	}
 }

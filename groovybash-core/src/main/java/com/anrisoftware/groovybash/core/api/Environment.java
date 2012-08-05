@@ -40,6 +40,14 @@ public interface Environment {
 	void setInjector(Injector injector);
 
 	/**
+	 * Sets the specified command line arguments for the script.
+	 * 
+	 * @param args
+	 *            the command line arguments.
+	 */
+	void setArguments(String[] args);
+
+	/**
 	 * Sets the current working directory.
 	 * 
 	 * @param directory

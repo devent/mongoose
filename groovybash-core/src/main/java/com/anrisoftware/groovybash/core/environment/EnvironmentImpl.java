@@ -18,6 +18,8 @@
  */
 package com.anrisoftware.groovybash.core.environment;
 
+import static com.google.common.collect.ImmutableList.copyOf;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.String.format;
 import groovy.lang.GroovyObjectSupport;
 
@@ -39,7 +41,6 @@ import com.anrisoftware.groovybash.core.api.Environment;
 import com.anrisoftware.groovybash.core.api.ExecutorServiceHandler;
 import com.anrisoftware.groovybash.core.factories.BuildinPluginsLoaderFactory;
 import com.anrisoftware.propertiesutils.ContextProperties;
-import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 
 /**
@@ -56,17 +57,21 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private final ContextProperties properties;
 
-	private File workingDirectory;
-
 	private final Map<String, BuildinPlugin> buildinPlugins;
-
-	private Injector injector;
 
 	private final CallCommandWorker callCommandWorker;
 
 	private final ExecutorServiceHandler executorServiceHandler;
 
 	private final ArgumentsWorker argumentsWorker;
+
+	private final Map<String, Object> variables;
+
+	private File workingDirectory;
+
+	private Injector injector;
+
+	private List<String> args;
 
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
@@ -80,10 +85,11 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		this.properties = new ContextProperties(this, properties);
 		this.loaderFactory = loaderFactory;
 		this.workingDirectory = new File(".");
-		this.buildinPlugins = Maps.newHashMap();
+		this.buildinPlugins = newHashMap();
 		this.callCommandWorker = callCommandWorker;
 		this.argumentsWorker = argumentsWorker;
 		this.executorServiceHandler = executorServiceHandler;
+		this.variables = newHashMap();
 		loadBuildins();
 	}
 
@@ -116,6 +122,13 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	@Override
 	public void setInjector(Injector injector) {
 		this.injector = injector;
+	}
+
+	@Override
+	public void setArguments(String[] args) {
+		this.args = copyOf(args);
+		variables.put("ARGS", this.args);
+		log.argumentsSet(args);
 	}
 
 	@Override
@@ -172,6 +185,11 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	public Object getProperty(String name) {
 		if (getMetaClass().hasProperty(this, name) != null) {
 			return super.getProperty(name);
+		} else {
+			Object var = variables.get(name);
+			if (var != null) {
+				return var;
+			}
 		}
 		return invokeMethod(name, null);
 	}
