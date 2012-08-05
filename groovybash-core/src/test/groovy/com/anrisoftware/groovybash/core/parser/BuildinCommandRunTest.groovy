@@ -29,13 +29,13 @@ import com.anrisoftware.groovybash.core.plugins.PluginsModule
 import com.google.inject.Injector
 
 /**
- * Test the build-in command cd.
+ * Test the build-in command run.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
 @Slf4j
-class ParseCommandCatTest extends CommandTestUtils {
+class BuildinCommandRunTest extends CommandTestUtils {
 
 	@Override
 	Injector createInjector() {
@@ -85,6 +85,29 @@ run "bash -x $tmp", [ENV_1: "foo"]
 """
 		runParser script
 		assertStringContent "foo\n", output
+	}
+
+	@Test
+	void "run build-in with custom working directory passed as string"() {
+		def pwdScript = createTempFile 'pwd'
+		def tmp = createTempDirectory()
+		def script = """
+run "bash $pwdScript", [:], "$tmp"
+"""
+		runParser script
+		assertStringContent "$tmp\n", output
+	}
+
+	@Test
+	void "run build-in with custom working directory passed as file"() {
+		def pwdScript = createTempFile 'pwd'
+		def tmp = createTempDirectory()
+		def script = """
+workingDir = "$tmp" as File
+run "bash $pwdScript", [:], workingDir
+"""
+		runParser script
+		assertStringContent "$tmp\n", output
 	}
 
 	@Test
@@ -156,5 +179,28 @@ bash "$tmp", [ENV_1: "foo"]
 """
 		runParser script
 		assertStringContent "foo\n", output
+	}
+
+	@Test
+	void "run command with custom working directory passed as string"() {
+		def pwdScript = createTempFile 'pwd'
+		def tmp = createTempDirectory()
+		def script = """
+bash "$pwdScript", [:], "$tmp"
+"""
+		runParser script
+		assertStringContent "$tmp\n", output
+	}
+
+	@Test
+	void "run command with custom working directory passed as file"() {
+		def pwdScript = createTempFile 'pwd'
+		def tmp = createTempDirectory()
+		def script = """
+workingDir = "$tmp" as File
+bash "$pwdScript", [:], workingDir
+"""
+		runParser script
+		assertStringContent "$tmp\n", output
 	}
 }
