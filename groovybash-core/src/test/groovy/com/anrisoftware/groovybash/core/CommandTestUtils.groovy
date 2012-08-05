@@ -28,6 +28,8 @@ import org.junit.Before
 import com.anrisoftware.globalpom.utils.TestUtils
 import com.anrisoftware.groovybash.core.buildins.BuildinsModule
 import com.anrisoftware.groovybash.core.buildins.StandardStreams
+import com.anrisoftware.groovybash.core.factories.BashParserFactory
+import com.anrisoftware.groovybash.core.parser.BashParser
 import com.google.inject.Guice
 import com.google.inject.Injector
 
@@ -114,6 +116,23 @@ class CommandTestUtils extends TestUtils {
 		def manager = PluginManagerFactory.createPluginManager(props)
 		manager.addPluginsFrom ClassURI.CLASSPATH
 		manager
+	}
+
+	/**
+	 * Create a bash parser and run it with the specified script.
+	 * 
+	 * @param script
+	 * 			  the script to run.
+	 * 
+	 * @param injector
+	 * 			  the optional {@link Injector} which creates the 
+	 * 			  bash parser.
+	 */
+	def runParser(String script, Injector injector = injector) {
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
 	}
 
 }

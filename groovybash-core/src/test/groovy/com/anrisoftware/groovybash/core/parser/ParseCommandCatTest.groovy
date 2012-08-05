@@ -47,7 +47,7 @@ class ParseCommandCatTest extends CommandTestUtils {
 	}
 
 	@Test
-	void "parse run build-in with cat command with file"() {
+	void "run build-in with cat command with file"() {
 		def tmp = createTempFile "Hello World"
 		def script = """
 ret = run "cat $tmp"
@@ -60,6 +60,45 @@ echo ret
 		parser.run()
 
 		assertStringContent "Hello World0\n", output
+	}
+
+	@Test
+	void "run build-in with custom environment passed as string"() {
+		def tmp = createTempFile 'echo $ENV_1'
+		def script = """
+run "bash -x $tmp", "ENV_1=foo"
+"""
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertStringContent "foo\n", output
+	}
+
+	@Test
+	void "run build-in with custom environment passed as map variable"() {
+		def tmp = createTempFile 'echo $ENV_1'
+		def script = """
+environment = [ENV_1: "foo"]
+run "bash -x $tmp", environment
+"""
+		BashParserFactory factory = injector.getInstance BashParserFactory
+		BashParser parser = factory.create script
+		parser.injector = injector
+		parser.run()
+
+		assertStringContent "foo\n", output
+	}
+
+	@Test
+	void "run build-in with custom environment passed as map argument"() {
+		def tmp = createTempFile 'echo $ENV_1'
+		def script = """
+run "bash -x $tmp", [ENV_1: "foo"]
+"""
+		runParser script
+		assertStringContent "foo\n", output
 	}
 
 	@Test
@@ -136,5 +175,25 @@ cat "nofile $tmp"
 
 		log.info "output: ``{}''", output
 		log.info "error: ``{}''", error
+	}
+
+	@Test
+	void "echo command with custom environment as string"() {
+		def tmp = createTempFile 'echo $ENV_1'
+		def script = """
+bash "$tmp", "ENV_1=foo"
+"""
+		runParser script
+		assertStringContent "foo\n", output
+	}
+
+	@Test
+	void "echo command with custom environment as map"() {
+		def tmp = createTempFile 'echo $ENV_1'
+		def script = """
+bash "$tmp", [ENV_1: "foo"]
+"""
+		runParser script
+		assertStringContent "foo\n", output
 	}
 }

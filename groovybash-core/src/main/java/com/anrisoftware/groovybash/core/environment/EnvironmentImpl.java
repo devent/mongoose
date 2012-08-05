@@ -18,10 +18,7 @@
  */
 package com.anrisoftware.groovybash.core.environment;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.join;
 import groovy.lang.GroovyObjectSupport;
 
 import java.io.File;
@@ -69,10 +66,13 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private final ExecutorServiceHandler executorServiceHandler;
 
+	private final ArgumentsWorker argumentsWorker;
+
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
 			@Named("environmentProperties") Properties properties,
 			BuildinPluginsLoaderFactory loaderFactory,
+			ArgumentsWorker argumentsWorker,
 			CallCommandWorker callCommandWorker,
 			ExecutorServiceHandler executorServiceHandler) {
 		super();
@@ -82,6 +82,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		this.workingDirectory = new File(".");
 		this.buildinPlugins = Maps.newHashMap();
 		this.callCommandWorker = callCommandWorker;
+		this.argumentsWorker = argumentsWorker;
 		this.executorServiceHandler = executorServiceHandler;
 		loadBuildins();
 	}
@@ -133,6 +134,9 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		return new File(System.getProperty("user.home"));
 	}
 
+	/**
+	 * Call the specified command.
+	 */
 	@Override
 	public Object invokeMethod(String name, Object args) {
 		Object[] uargs = InvokerHelper.asUnwrappedArray(args);
@@ -147,38 +151,20 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		}
 	}
 
-	private Object callCommand(String name, Object[] uargs) {
-		BuildinPlugin buildinPlugin = buildinPlugins.get("run");
-		Buildin buildin = buildinPlugin.getBuildin(injector);
-		Map<String, String> flags = newHashMap();
-		String command = getCommandString(name, uargs, flags);
-		buildin.setEnvironment(this);
-		buildin.setArguments(flags, new Object[] { command });
-		return callCommandWorker.call(buildin);
-	}
-
-	private String getCommandString(String name, Object[] uargs,
-			Map<String, String> flags) {
-		List<String> args = newArrayList(name);
-		for (int i = 0; i < uargs.length; i++) {
-			if (uargs[i] instanceof Map) {
-				flags.putAll(asMap(uargs[i]));
-				continue;
-			}
-			args.add(uargs[i].toString());
-		}
-		return join(args, " ");
-	}
-
-	@SuppressWarnings("unchecked")
-	private Map<String, String> asMap(Object obj) {
-		return (Map<String, String>) obj;
-	}
-
 	private Object callBuildin(Object[] uargs, BuildinPlugin buildinPlugin) {
 		Buildin buildin = buildinPlugin.getBuildin(injector);
 		buildin.setEnvironment(this);
 		buildin.setArguments(uargs);
+		return callCommandWorker.call(buildin);
+	}
+
+	private Object callCommand(String name, Object[] uargs) {
+		BuildinPlugin buildinPlugin = buildinPlugins.get("run");
+		Buildin buildin = buildinPlugin.getBuildin(injector);
+		buildin.setEnvironment(this);
+		ArgumentsWorker arguments;
+		arguments = argumentsWorker.createCommandArgs(name, uargs);
+		buildin.setArguments(arguments.getFlags(), arguments.getArgs());
 		return callCommandWorker.call(buildin);
 	}
 
