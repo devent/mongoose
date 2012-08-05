@@ -24,7 +24,6 @@ import com.anrisoftware.groovybash.core.CommandTestUtils
 import com.anrisoftware.groovybash.core.environment.EnvironmentModule
 import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFoundException
 import com.anrisoftware.groovybash.core.executor.ExecutorModule
-import com.anrisoftware.groovybash.core.factories.BashParserFactory
 import com.anrisoftware.groovybash.core.plugins.PluginsModule
 import com.google.inject.Injector
 
@@ -49,12 +48,7 @@ class ParseBuildinCdTest extends CommandTestUtils {
 		def script = """
 cd
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		def parser = runParser script
 		assert parser.environment.workingDirectory == System.getProperty("user.home")as File
 	}
 
@@ -64,12 +58,7 @@ cd
 ret = cd
 echo ret
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		def parser = runParser script
 		assert parser.environment.workingDirectory == System.getProperty("user.home")as File
 		assertStringContent "0\n", output
 	}
@@ -80,12 +69,7 @@ echo ret
 		def script = """
 cd "$tmp"
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		def parser = runParser script
 		assert parser.environment.workingDirectory == tmp
 		tmp.deleteDir()
 	}
@@ -97,12 +81,7 @@ cd "$tmp"
 dir = new File("$tmp")
 cd dir
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		def parser = runParser script
 		assert parser.environment.workingDirectory == tmp
 		tmp.deleteDir()
 	}
@@ -111,16 +90,11 @@ cd dir
 	void "parse cd buildin with not existent directory"() {
 		def tmp = createTempDirectory()
 		assert tmp.deleteDir()
-
 		def script = """
 cd "$tmp"
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		shouldFailWith DirectoryNotFoundException, { parser.run() }
-
+		def parser = runParser script, { parser ->
+			shouldFailWith DirectoryNotFoundException, { parser.run() } }
 		assert parser.environment.workingDirectory == new File(".")
 	}
 
@@ -128,7 +102,6 @@ cd "$tmp"
 	void "parse cd buildin with not existent directory catch exception"() {
 		def tmp = createTempDirectory()
 		assert tmp.deleteDir()
-
 		def script = """
 try {
 	cd "$tmp"
@@ -136,12 +109,7 @@ try {
     echo e
 }
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		def parser = runParser script
 		assert parser.environment.workingDirectory == new File(".")
 		assert output =~ /^com\.anrisoftware\.groovybash\.core\.exceptions\.DirectoryNotFoundException: The directory \/tmp\/\d+-\d+ could not be found\./
 	}

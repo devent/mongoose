@@ -23,7 +23,6 @@ import org.junit.Test
 import com.anrisoftware.groovybash.core.CommandTestUtils
 import com.anrisoftware.groovybash.core.environment.EnvironmentModule
 import com.anrisoftware.groovybash.core.executor.ExecutorModule
-import com.anrisoftware.groovybash.core.factories.BashParserFactory
 import com.anrisoftware.groovybash.core.plugins.PluginsModule
 import com.google.inject.Injector
 
@@ -48,12 +47,7 @@ class ParseBuildinEchoTest extends CommandTestUtils {
 		def script = """
 echo
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "\n", output
 	}
 
@@ -62,12 +56,7 @@ echo
 		def script = """
 echo "Hello World", "Hello Again"
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "Hello World Hello Again\n", output
 	}
 
@@ -76,12 +65,7 @@ echo "Hello World", "Hello Again"
 		def script = """
 echo nonewline: true, "Hello World", "Hello Again"
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "Hello World Hello Again", output
 	}
 
@@ -90,12 +74,7 @@ echo nonewline: true, "Hello World", "Hello Again"
 		def script = """
 echo nonewline: true
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "", output
 	}
 
@@ -107,12 +86,7 @@ echo
 echo nonewline: true
 echo nonewline: true, "Hello World", "Hello Again"
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent """Hello World
 
 Hello World Hello Again""", output
@@ -122,16 +96,11 @@ Hello World Hello Again""", output
 	void "parse echo re-direct stdout to file"() {
 		def tmp = createTempFile()
 		tmp.delete()
-
 		def script = """
 file = "$tmp" as File
 echo out: file, "Hello World"
 """
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertFileContent tmp, "Hello World\n"
 	}
 
@@ -139,16 +108,11 @@ echo out: file, "Hello World"
 	void "parse echo re-direct stdout to file name"() {
 		def tmp = createTempFile()
 		tmp.delete()
-
 		def script = """
 file = "$tmp"
 echo out: file, "Hello World"
 """
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertFileContent tmp, "Hello World\n"
 	}
 
@@ -156,46 +120,31 @@ echo out: file, "Hello World"
 	void "parse echo re-direct stdout to stream"() {
 		def tmp = createTempFile()
 		tmp.delete()
-
 		def script = """
 stream = new PrintStream(new File("$tmp"))
 echo out: stream, "Hello World"
 """
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertFileContent tmp, "Hello World\n"
 	}
 
 	@Test
 	void "parse echo re-direct stdin from file"() {
 		def tmp = createTempFile "Hello World"
-
 		def script = """
 echo in: "$tmp"
 """
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "Hello World\n", output
 	}
 
 	@Test
 	void "parse echo re-direct stdin from file no newline"() {
 		def tmp = createTempFile "Hello World"
-
 		def script = """
 echo in: "$tmp", nonewline: true
 """
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "Hello World", output
 	}
 
@@ -205,11 +154,7 @@ echo in: "$tmp", nonewline: true
 n = 0
 echo n
 """
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "0\n", output
 	}
 
@@ -218,11 +163,7 @@ echo n
 		def script = """
 echo in: System.in
 """
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "1234\n\n", output
 	}
 }

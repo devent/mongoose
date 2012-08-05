@@ -25,7 +25,6 @@ import org.junit.Test
 import com.anrisoftware.groovybash.core.CommandTestUtils
 import com.anrisoftware.groovybash.core.environment.EnvironmentModule
 import com.anrisoftware.groovybash.core.executor.ExecutorModule
-import com.anrisoftware.groovybash.core.factories.BashParserFactory
 import com.anrisoftware.groovybash.core.plugins.PluginsModule
 import com.google.inject.Injector
 
@@ -53,12 +52,7 @@ class ParseCommandCatTest extends CommandTestUtils {
 ret = run "cat $tmp"
 echo ret
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "Hello World0\n", output
 	}
 
@@ -68,11 +62,7 @@ echo ret
 		def script = """
 run "bash -x $tmp", "ENV_1=foo"
 """
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "foo\n", output
 	}
 
@@ -83,11 +73,7 @@ run "bash -x $tmp", "ENV_1=foo"
 environment = [ENV_1: "foo"]
 run "bash -x $tmp", environment
 """
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "foo\n", output
 	}
 
@@ -107,12 +93,7 @@ run "bash -x $tmp", [ENV_1: "foo"]
 		def script = """
 cat "$tmp"
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "Hello World\n", output
 	}
 
@@ -122,12 +103,7 @@ cat "$tmp"
 		def script = """
 cat "$tmp"
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertStringContent "Hello World", output
 	}
 
@@ -136,12 +112,7 @@ cat "$tmp"
 		def script = """
 ls "-lh"
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		log.info "output: ``{}''", output
 	}
 
@@ -152,12 +123,7 @@ ls "-lh"
 		def script = """
 cat out: "$outputFile", "$inputFile"
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		assertFileContent outputFile, "Hello World"
 	}
 
@@ -167,12 +133,7 @@ cat out: "$outputFile", "$inputFile"
 		def script = """
 cat "nofile $tmp"
 """
-
-		BashParserFactory factory = injector.getInstance BashParserFactory
-		BashParser parser = factory.create script
-		parser.injector = injector
-		parser.run()
-
+		runParser script
 		log.info "output: ``{}''", output
 		log.info "error: ``{}''", error
 	}

@@ -124,15 +124,26 @@ class CommandTestUtils extends TestUtils {
 	 * @param script
 	 * 			  the script to run.
 	 * 
+	 * @param runClosure
+	 * 			  an optional {@link Closure} in which context to run 
+	 * 			  the parser.
+	 * 
 	 * @param injector
 	 * 			  the optional {@link Injector} which creates the 
 	 * 			  bash parser.
+	 * 
+	 * @return the {@link BashParser}.
 	 */
-	def runParser(String script, Injector injector = injector) {
+	BashParser runParser(String script, def runClosure = null, Injector injector = injector) {
 		BashParserFactory factory = injector.getInstance BashParserFactory
 		BashParser parser = factory.create script
 		parser.injector = injector
-		parser.run()
+		if (runClosure != null) {
+			runClosure(parser)
+		} else {
+			parser.run()
+		}
+		parser
 	}
 
 }
