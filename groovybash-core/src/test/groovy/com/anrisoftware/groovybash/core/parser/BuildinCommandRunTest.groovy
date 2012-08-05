@@ -162,7 +162,7 @@ cat "nofile $tmp"
 	}
 
 	@Test
-	void "echo command with custom environment as string"() {
+	void "run command with custom environment as string"() {
 		def tmp = createTempFile 'echo $ENV_1'
 		def script = """
 bash "$tmp", "ENV_1=foo"
@@ -172,7 +172,7 @@ bash "$tmp", "ENV_1=foo"
 	}
 
 	@Test
-	void "echo command with custom environment as map"() {
+	void "run command with custom environment as map"() {
 		def tmp = createTempFile 'echo $ENV_1'
 		def script = """
 bash "$tmp", [ENV_1: "foo"]
