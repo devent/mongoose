@@ -55,6 +55,8 @@ public class BashParser implements Runnable {
 	private Script createScript(String scriptText) {
 		ImportCustomizer imports = new ImportCustomizer()
 				.addStarImports("com.anrisoftware.groovybash.core.exceptions");
+		imports.addImports("org.kohsuke.args4j.Argument");
+		imports.addImports("org.kohsuke.args4j.Option");
 		CompilerConfiguration config = new CompilerConfiguration();
 		config.addCompilationCustomizers(imports);
 		Script script = new GroovyShell(config).parse(scriptText);
@@ -64,6 +66,10 @@ public class BashParser implements Runnable {
 
 	public void setInjector(Injector injector) {
 		environment.setInjector(injector);
+	}
+
+	public void setArguments(String[] args) {
+		environment.setArguments(args);
 	}
 
 	@Override

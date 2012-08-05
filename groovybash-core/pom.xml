@@ -50,8 +50,12 @@
 		<dependency>
 			<groupId>org.perfidix</groupId>
 			<artifactId>perfidix</artifactId>
-			<version>3.6.6</version>
+            <scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>args4j</groupId>
+            <artifactId>args4j</artifactId>
+        </dependency>
 	</dependencies>
 
 </project>
