@@ -32,8 +32,8 @@ import javax.inject.Inject;
 
 import com.anrisoftware.groovybash.core.api.ReturnValue;
 import com.anrisoftware.groovybash.core.buildins.AbstractBuildin;
-import com.anrisoftware.groovybash.core.buildins.DefaultReturnValue;
 import com.anrisoftware.groovybash.core.buildins.StandardStreams;
+import com.anrisoftware.groovybash.core.buildins.returns.ReturnCodeFactory;
 
 /**
  * Executes the specified command in a separate process with the specified
@@ -56,6 +56,8 @@ class RunBuildin extends AbstractBuildin {
 
 	private final ErrorTaskFactory errorTaskFactory;
 
+	private final ReturnCodeFactory returnCodeFactory;
+
 	/**
 	 * Sets the standard input and output streams.
 	 * 
@@ -64,9 +66,11 @@ class RunBuildin extends AbstractBuildin {
 	 *            and output streams.
 	 */
 	@Inject
-	RunBuildin(StandardStreams streams, OutputTaskFactory outputTaskFactory,
+	RunBuildin(StandardStreams streams, ReturnCodeFactory returnCodeFactory,
+			OutputTaskFactory outputTaskFactory,
 			ErrorTaskFactory errorTaskFactory) {
 		super(streams);
+		this.returnCodeFactory = returnCodeFactory;
 		this.outputTaskFactory = outputTaskFactory;
 		this.errorTaskFactory = errorTaskFactory;
 	}
@@ -82,8 +86,7 @@ class RunBuildin extends AbstractBuildin {
 		outputTask.get();
 		errorTask.get();
 		int ret = process.waitFor();
-		return new DefaultReturnValue(ret, getInputStream(), getOutputStream(),
-				getErrorStream());
+		return returnCodeFactory.create(ret);
 	}
 
 	private Process startProcess() throws IOException {

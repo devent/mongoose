@@ -1,6 +1,5 @@
 package com.anrisoftware.groovybash.core.buildins.echobuildin;
 
-import com.anrisoftware.groovybash.core.buildins.AbstractBuildin;
 
 /**
  * The {@code echo} build-in command that will not output a newline after the
@@ -11,7 +10,7 @@ import com.anrisoftware.groovybash.core.buildins.AbstractBuildin;
  */
 class EchoNoNewLine extends EchoBuildin {
 
-	public EchoNoNewLine(AbstractBuildin parent) {
+	public EchoNoNewLine(EchoBuildin parent) {
 		super(parent);
 	}
 

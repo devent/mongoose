@@ -21,10 +21,7 @@ package com.anrisoftware.groovybash.core.parser
 import org.junit.Test
 
 import com.anrisoftware.groovybash.core.CommandTestUtils
-import com.anrisoftware.groovybash.core.environment.EnvironmentModule
 import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFoundException
-import com.anrisoftware.groovybash.core.executor.ExecutorModule
-import com.anrisoftware.groovybash.core.plugins.PluginsModule
 import com.google.inject.Injector
 
 /**
@@ -38,9 +35,7 @@ class ParseBuildinCdTest extends CommandTestUtils {
 	@Override
 	Injector createInjector() {
 		def injector = super.createInjector()
-		injector.createChildInjector new ParserModule(),
-						new EnvironmentModule(), new PluginsModule(),
-						new ExecutorModule()
+		injector.createChildInjector()
 	}
 
 	@Test
@@ -94,7 +89,8 @@ cd dir
 cd "$tmp"
 """
 		def parser = runParser script, { parser ->
-			shouldFailWith DirectoryNotFoundException, { parser.run() } }
+			shouldFailWith DirectoryNotFoundException, { parser.run()
+			} }
 		assert parser.environment.workingDirectory == new File(".")
 	}
 

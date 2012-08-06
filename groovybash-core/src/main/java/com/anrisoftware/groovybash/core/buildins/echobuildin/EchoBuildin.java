@@ -27,8 +27,8 @@ import javax.inject.Inject;
 
 import com.anrisoftware.groovybash.core.api.ReturnValue;
 import com.anrisoftware.groovybash.core.buildins.AbstractBuildin;
-import com.anrisoftware.groovybash.core.buildins.DefaultReturnValue;
 import com.anrisoftware.groovybash.core.buildins.StandardStreams;
+import com.anrisoftware.groovybash.core.buildins.returns.ReturnCodeFactory;
 
 /**
  * The build-in command {@code echo [nonewline] arguments…}. Outputs the
@@ -43,6 +43,8 @@ class EchoBuildin extends AbstractBuildin {
 
 	static final String SEPARATOR = " ";
 
+	private final ReturnCodeFactory returnCodeFactory;
+
 	private EchoBuildin buildin;
 
 	/**
@@ -53,21 +55,22 @@ class EchoBuildin extends AbstractBuildin {
 	 *            and output streams.
 	 */
 	@Inject
-	EchoBuildin(StandardStreams streams) {
+	EchoBuildin(StandardStreams streams, ReturnCodeFactory returnCodeFactory) {
 		super(streams);
 		this.buildin = this;
+		this.returnCodeFactory = returnCodeFactory;
 	}
 
-	protected EchoBuildin(AbstractBuildin parent) {
+	protected EchoBuildin(EchoBuildin parent) {
 		super(parent);
+		this.returnCodeFactory = parent.returnCodeFactory;
 	}
 
 	@Override
 	public ReturnValue call() throws Exception {
 		super.call();
 		buildin.outputText(buildin.getOutput());
-		return DefaultReturnValue.createSuccessValue(getInputStream(),
-				getOutputStream(), getErrorStream());
+		return returnCodeFactory.createSuccess();
 	}
 
 	void outputText(String text) throws IOException {

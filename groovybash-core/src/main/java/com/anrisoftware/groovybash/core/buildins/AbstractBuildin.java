@@ -18,7 +18,6 @@
  */
 package com.anrisoftware.groovybash.core.buildins;
 
-import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.createSuccessValue;
 import static org.apache.commons.lang3.StringUtils.join;
 
 import java.io.InputStream;
@@ -32,6 +31,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.anrisoftware.groovybash.core.api.Buildin;
 import com.anrisoftware.groovybash.core.api.Environment;
 import com.anrisoftware.groovybash.core.api.ReturnValue;
+import com.anrisoftware.groovybash.core.buildins.returns.ReturnCodeFactory;
 import com.google.common.collect.Maps;
 
 /**
@@ -52,6 +52,8 @@ public abstract class AbstractBuildin implements Buildin {
 	private Environment environment;
 
 	private final StandardStreams streams;
+
+	private ReturnCodeFactory returnCodeFactory;
 
 	/**
 	 * Sets the standard streams, the arguments and the flags from a parent
@@ -88,6 +90,17 @@ public abstract class AbstractBuildin implements Buildin {
 	@Inject
 	public void setAbstractBuildinLogger(AbstractBuildinLogger logger) {
 		this.log = logger;
+	}
+
+	/**
+	 * Injects the factory to create a success return code.
+	 * 
+	 * @param returnCodeFactory
+	 *            the {@link ReturnCodeFactory}.
+	 */
+	@Inject
+	public void setReturnCodeFactory(ReturnCodeFactory returnCodeFactory) {
+		this.returnCodeFactory = returnCodeFactory;
 	}
 
 	@Override
@@ -185,8 +198,7 @@ public abstract class AbstractBuildin implements Buildin {
 	public ReturnValue call() throws Exception {
 		setupInput();
 		setupOutput();
-		return createSuccessValue(streams.inputStream, streams.outputStream,
-				streams.errorStream);
+		return returnCodeFactory.createSuccess();
 	}
 
 	private void setupInput() throws Exception {

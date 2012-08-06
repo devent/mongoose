@@ -28,8 +28,13 @@ import org.junit.Before
 import com.anrisoftware.globalpom.utils.TestUtils
 import com.anrisoftware.groovybash.core.buildins.BuildinsModule
 import com.anrisoftware.groovybash.core.buildins.StandardStreams
+import com.anrisoftware.groovybash.core.buildins.returns.ReturnsModule
+import com.anrisoftware.groovybash.core.environment.EnvironmentModule
+import com.anrisoftware.groovybash.core.executor.ExecutorModule
 import com.anrisoftware.groovybash.core.factories.BashParserFactory
 import com.anrisoftware.groovybash.core.parser.BashParser
+import com.anrisoftware.groovybash.core.parser.ParserModule
+import com.anrisoftware.groovybash.core.plugins.PluginsModule
 import com.google.inject.Guice
 import com.google.inject.Injector
 
@@ -90,7 +95,10 @@ class CommandTestUtils extends TestUtils {
 	
 	Injector createInjector() {
 		Guice.createInjector new BuildinsTestModule(
-			inputStream: inputStream, outputStream: outputStream, errorStream: errorStream)
+			inputStream: inputStream, outputStream: outputStream, errorStream: errorStream),
+		new ParserModule(),
+		new EnvironmentModule(), new PluginsModule(),
+		new ExecutorModule(), new ReturnsModule()
 	}
 	
 	void setInputBuffer(byte[] inputBuffer) {

@@ -48,6 +48,13 @@ public interface Environment {
 	void setArguments(String[] args);
 
 	/**
+	 * Returns the specified command line arguments for the script.
+	 * 
+	 * @return the command line arguments.
+	 */
+	String[] getArguments();
+
+	/**
 	 * Sets the current working directory.
 	 * 
 	 * @param directory

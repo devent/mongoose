@@ -1,7 +1,5 @@
 package com.anrisoftware.groovybash.core.buildins.cdbuildin;
 
-import static com.anrisoftware.groovybash.core.buildins.DefaultReturnValue.createSuccessValue;
-
 import java.io.File;
 import java.util.Map;
 
@@ -10,6 +8,7 @@ import javax.inject.Inject;
 import com.anrisoftware.groovybash.core.api.ReturnValue;
 import com.anrisoftware.groovybash.core.buildins.AbstractBuildin;
 import com.anrisoftware.groovybash.core.buildins.StandardStreams;
+import com.anrisoftware.groovybash.core.buildins.returns.ReturnCodeFactory;
 
 /**
  * The build-in command {@code cd [DIR]}. Change the current working directory
@@ -21,6 +20,8 @@ import com.anrisoftware.groovybash.core.buildins.StandardStreams;
  */
 class CdBuildin extends AbstractBuildin {
 
+	private final ReturnCodeFactory returnCodeFactory;
+
 	private CdBuildin buildin;
 
 	/**
@@ -31,9 +32,15 @@ class CdBuildin extends AbstractBuildin {
 	 *            and output streams.
 	 */
 	@Inject
-	CdBuildin(StandardStreams streams) {
+	CdBuildin(StandardStreams streams, ReturnCodeFactory returnCodeFactory) {
 		super(streams);
 		this.buildin = this;
+		this.returnCodeFactory = returnCodeFactory;
+	}
+
+	protected CdBuildin(CdBuildin parent) {
+		super(parent);
+		this.returnCodeFactory = parent.returnCodeFactory;
 	}
 
 	@Override
@@ -46,8 +53,7 @@ class CdBuildin extends AbstractBuildin {
 	}
 
 	ReturnValue callBuildin() throws Exception {
-		return createSuccessValue(getInputStream(), getOutputStream(),
-				getErrorStream());
+		return returnCodeFactory.createSuccess();
 	}
 
 	@Override

@@ -132,6 +132,11 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	}
 
 	@Override
+	public String[] getArguments() {
+		return args.toArray(new String[args.size()]);
+	}
+
+	@Override
 	public void setWorkingDirectory(File directory) {
 		workingDirectory = directory;
 		log.workingDirectorySet(directory);

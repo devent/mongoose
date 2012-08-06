@@ -18,65 +18,13 @@
  */
 package com.anrisoftware.groovybash.core.api;
 
-import java.io.InputStream;
-import java.io.PrintStream;
-
 /**
  * The return value from a command.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public interface ReturnValue extends Comparable<ReturnValue> {
-
-	/**
-	 * Returns the standard input stream of the command.
-	 * 
-	 * @return the {@link InputStream} for standard input.
-	 */
-	InputStream getInputStream();
-
-	/**
-	 * Returns the standard output stream of the command.
-	 * 
-	 * @return the {@link PrintStream} for standard output.
-	 */
-	PrintStream getOutputStream();
-
-	/**
-	 * Returns the standard error stream of the command.
-	 * 
-	 * @return the {@link PrintStream} for standard errors.
-	 */
-	PrintStream getErrorStream();
-
-	/**
-	 * Returns the number value of the return value.
-	 * 
-	 * @return the {@link Number} value.
-	 */
-	Number getAsNumber();
-
-	/**
-	 * Returns the boolean value of the return value.
-	 * 
-	 * @return the boolean value.
-	 */
-	boolean getAsBoolean();
-
-	/**
-	 * Compare this return value and the specified return value.
-	 */
-	@Override
-	int compareTo(ReturnValue o);
-
-	/**
-	 * Compare this return value and a different return value if they are
-	 * equals. Two return values are equals if they represent the same number
-	 * value.
-	 */
-	@Override
-	boolean equals(Object obj);
+public interface ReturnValue {
 
 	/**
 	 * Returns a human readable message for this return value.

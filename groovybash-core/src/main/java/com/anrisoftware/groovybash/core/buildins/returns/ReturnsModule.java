@@ -16,38 +16,24 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser
+package com.anrisoftware.groovybash.core.buildins.returns;
 
-import groovy.util.logging.Slf4j
-
-import org.junit.Test
-
-import com.anrisoftware.groovybash.core.CommandTestUtils
-import com.google.inject.Injector
+import com.anrisoftware.groovybash.core.api.ReturnCode;
+import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Test the build-in variables.
+ * Binds the factories for the return values.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-@Slf4j
-class ParseVariablesTest extends CommandTestUtils {
+public class ReturnsModule extends AbstractModule {
 
 	@Override
-	Injector createInjector() {
-		def injector = super.createInjector()
-		injector.createChildInjector()
+	protected void configure() {
+		install(new FactoryModuleBuilder().implement(ReturnCode.class,
+				ReturnCodeImpl.class).build(ReturnCodeFactory.class));
 	}
 
-	@Test
-	void "echo command line arguments"() {
-		def args = ["-a", "foo", "-b", "bar", "-c"]
-		def script = """
-echo ARGS
-"""
-		runParser script, null, args
-		assertStringContent "[-a, foo, -b, bar, -c]\n", output
-	}
 }
-

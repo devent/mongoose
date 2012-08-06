@@ -23,9 +23,6 @@ import groovy.util.logging.Slf4j
 import org.junit.Test
 
 import com.anrisoftware.groovybash.core.CommandTestUtils
-import com.anrisoftware.groovybash.core.environment.EnvironmentModule
-import com.anrisoftware.groovybash.core.executor.ExecutorModule
-import com.anrisoftware.groovybash.core.plugins.PluginsModule
 import com.google.inject.Injector
 
 /**
@@ -40,14 +37,12 @@ class ParseParameterTest extends CommandTestUtils {
 	@Override
 	Injector createInjector() {
 		def injector = super.createInjector()
-		injector.createChildInjector new ParserModule(),
-						new EnvironmentModule(), new PluginsModule(),
-						new ExecutorModule()
+		injector.createChildInjector()
 	}
 
 	@Test
 	void "parse command line arguments"() {
-		def args = ["-a", "foo", "-b", "bar", "-c"]
+		def args = ["-a", "foo", "-b", "10", "-c"]
 		def script = """
 class Parameter {
 
@@ -63,11 +58,6 @@ class Parameter {
 
 echo ARGS
 def parser = parse new Parameter()
-if (parser.parameterC) {
-    parser.printUsage()
-    exit 0
-}
-
 echo parser.parameterA
 echo parser.parameterB
 echo parser.parameterC
