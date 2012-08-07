@@ -42,7 +42,7 @@ class ParseParameterTest extends CommandTestUtils {
 
 	@Test
 	void "parse command line arguments"() {
-		def args = ["-a", "foo", "-b", "10", "-c"]
+		def args = ["-a", "foo", "-b", "10", "-c", "more", "arguments"]
 		def script = """
 class Parameter {
 
@@ -54,6 +54,9 @@ class Parameter {
 
     @Option(name = "-c")
     boolean parameterC
+
+	@Argument
+	List<String> arguments
 }
 
 echo ARGS
@@ -61,6 +64,7 @@ def parser = parse new Parameter()
 echo parser.parameterA
 echo parser.parameterB
 echo parser.parameterC
+echo parser.arguments
 """
 		runParser script, null, args
 		log.info output
@@ -80,6 +84,9 @@ class Parameter {
 
     @Option(name = "-c", usage = "Parameter C")
     boolean parameterC
+
+	@Argument
+	List<String> arguments
 }
 
 parser = parse new Parameter()
