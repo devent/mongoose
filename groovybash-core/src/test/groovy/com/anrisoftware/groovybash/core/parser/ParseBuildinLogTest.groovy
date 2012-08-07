@@ -111,5 +111,35 @@ debug "Debug logging {} {}", "foo", 10
 	}
 
 	@Test
+	void "parse warn buildin with message"() {
+		def script = """
+package com.anrisoftware.test.script
+warn "Warn logging"
+"""
+		def parser = runParser script
+		accumulate << "WARN: Warn logging\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
+
+	@Test
+	void "parse warn buildin with message and argument"() {
+		def script = """
+package com.anrisoftware.test.script
+warn "Warn logging {}", "foo"
+"""
+		def parser = runParser script
+		accumulate << "WARN: Warn logging foo\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
+
+	@Test
+	void "parse warn buildin with message and arguments"() {
+		def script = """
+package com.anrisoftware.test.script
+warn "Warn logging {} {}", "foo", 10
+"""
+		def parser = runParser script
+		accumulate << "WARN: Warn logging foo 10\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
 	}
 }
