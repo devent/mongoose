@@ -12,6 +12,12 @@ import com.anrisoftware.groovybash.core.api.ReturnValue;
 import com.anrisoftware.groovybash.core.buildins.StandardStreams;
 import com.google.inject.assistedinject.Assisted;
 
+/**
+ * Returns the parsed parameters.
+ * 
+ * @author Erwin Mueller, erwin.mueller@deventm.org
+ * @since 1.0
+ */
 class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 
 	private final CmdLineParser parser;
@@ -30,17 +36,22 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 
 	public void printExample() {
 		String example = parser.printExample(ExampleMode.ALL);
-		streams.getOutputStream().print(example);
+		streams.getOutputStream().println(example);
 	}
 
 	public void printSingleLineUsage() {
 		parser.printSingleLineUsage(streams.getOutputStream());
+		streams.getOutputStream().println();
 	}
 
 	public void printUsage() {
 		parser.printUsage(streams.getOutputStream());
+		streams.getOutputStream().println();
 	}
 
+	/**
+	 * Not found properties are delegated to the parameter bean object.
+	 */
 	@Override
 	public Object getProperty(String name) {
 		if (getMetaClass().hasProperty(this, name) != null) {

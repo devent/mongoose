@@ -65,5 +65,30 @@ echo parser.parameterC
 		runParser script, null, args
 		log.info output
 	}
+
+	@Test
+	void "parse command line arguments and print example"() {
+		def args = ["-a", "foo", "-b", "10", "-c"]
+		def script = """
+class Parameter {
+
+    @Option(name = "-a", required = true, usage = "Parameter A")
+    String parameterA
+
+    @Option(name = "-b", required = true, usage = "Parameter B")
+    int parameterB
+
+    @Option(name = "-c", usage = "Parameter C")
+    boolean parameterC
+}
+
+parser = parse new Parameter()
+parser.printExample()
+parser.printSingleLineUsage()
+parser.printUsage()
+"""
+		runParser script, null, args
+		log.info output
+	}
 }
 
