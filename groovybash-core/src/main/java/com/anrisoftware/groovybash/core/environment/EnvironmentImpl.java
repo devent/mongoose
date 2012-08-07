@@ -19,6 +19,7 @@
 package com.anrisoftware.groovybash.core.environment;
 
 import static com.google.common.collect.ImmutableList.copyOf;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.String.format;
 import groovy.lang.GroovyObjectSupport;
@@ -90,6 +91,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		this.argumentsWorker = argumentsWorker;
 		this.executorServiceHandler = executorServiceHandler;
 		this.variables = newHashMap();
+		this.args = newArrayList();
 		loadBuildins();
 	}
 
