@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>com.anrisoftware.groovybash</groupId>
 		<artifactId>groovybash-parent</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.0</version>
 		<relativePath>../groovybash-parent</relativePath>
 	</parent>
 
 	<artifactId>groovybash-core</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.1</version>
 	<name>Groovybash Core</name>
 
 	<dependencies>
