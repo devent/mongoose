@@ -26,7 +26,7 @@ import com.anrisoftware.groovybash.core.CommandTestUtils
 import com.google.inject.Injector
 
 /**
- * Test the build-in command {@link EchoBuildin}.
+ * Test the build-in command {@code parse}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
@@ -60,14 +60,19 @@ class Parameter {
 }
 
 echo ARGS
-def parser = parse new Parameter()
+parser = parse new Parameter()
 echo parser.parameterA
 echo parser.parameterB
 echo parser.parameterC
 echo parser.arguments
 """
 		runParser script, null, args
-		log.info output
+		assertStringContent """[-a, foo, -b, 10, -c, more, arguments]
+foo
+10
+true
+[more, arguments]
+""", output
 	}
 
 	@Test
@@ -91,11 +96,18 @@ class Parameter {
 
 parser = parse new Parameter()
 parser.printExample()
+echo
 parser.printSingleLineUsage()
+echo
 parser.printUsage()
 """
 		runParser script, null, args
-		log.info output
+		assertStringContent """ -a VAL -b N -c
+ [VAL ...] -a VAL -b N [-c]
+ -a VAL : Parameter A
+ -b N   : Parameter B
+ -c     : Parameter C
+""", output
 	}
 }
 

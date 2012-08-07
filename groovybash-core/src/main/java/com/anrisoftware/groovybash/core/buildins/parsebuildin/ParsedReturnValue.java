@@ -36,17 +36,15 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 
 	public void printExample() {
 		String example = parser.printExample(ExampleMode.ALL);
-		streams.getOutputStream().println(example);
+		streams.getOutputStream().print(example);
 	}
 
 	public void printSingleLineUsage() {
 		parser.printSingleLineUsage(streams.getOutputStream());
-		streams.getOutputStream().println();
 	}
 
 	public void printUsage() {
 		parser.printUsage(streams.getOutputStream());
-		streams.getOutputStream().println();
 	}
 
 	/**
