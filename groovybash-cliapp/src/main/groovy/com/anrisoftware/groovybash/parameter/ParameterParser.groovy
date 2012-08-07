@@ -51,10 +51,17 @@ class ParameterParser {
 	 * @return this {@link ParameterParser}.
 	 */
 	ParameterParser parseParameter(String[] args, Injector injector) {
-		parseAppParameter(args)
+		String[][] arguments = splitArguments(args)
+		parseAppParameter(arguments[0])
 		bashParser = bashParserFactory.create script
 		bashParser.injector = injector
+		bashParser.arguments = arguments[1]
 		return this
+	}
+	
+	private splitArguments(String[] args) {
+		def i = args.findIndexOf { it == "--" }
+		[args[0..(i - 1)], args[(i + 1)..-1]]
 	}
 
 	private parseAppParameter(String[] args) {
