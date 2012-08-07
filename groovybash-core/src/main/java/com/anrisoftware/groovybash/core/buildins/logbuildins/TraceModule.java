@@ -18,42 +18,19 @@
  */
 package com.anrisoftware.groovybash.core.buildins.logbuildins;
 
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-
-import com.anrisoftware.groovybash.core.buildins.StandardStreams;
+import com.anrisoftware.groovybash.core.api.Buildin;
+import com.google.inject.AbstractModule;
 
 /**
- * Log a message at the warn level of the logger.
+ * Binds the trace build-in command.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class WarnBuildin extends AbstractLogBuildin {
-
-	/**
-	 * Sets the standard input and output streams.
-	 * 
-	 * @param streams
-	 *            the {@link StandardStreams} that returns the standard input
-	 *            and output streams.
-	 */
-	@Inject
-	WarnBuildin(StandardStreams streams) {
-		super(streams);
-	}
+public class TraceModule extends AbstractModule {
 
 	@Override
-	protected void logMessage(Logger logger) {
-		logger.warn(getMessage(), getArguments());
-	}
-
-	/**
-	 * Returns the name {@code warn}.
-	 */
-	@Override
-	public String getName() {
-		return "warn";
+	protected void configure() {
+		bind(Buildin.class).to(TraceBuildin.class);
 	}
 }

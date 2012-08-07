@@ -142,4 +142,37 @@ warn "Warn logging {} {}", "foo", 10
 		accumulate << "WARN: Warn logging foo 10\n"
 		assertFileContent scriptTestLogFile, accumulate.toString()
 	}
+
+	@Test
+	void "parse trace buildin with message"() {
+		def script = """
+package com.anrisoftware.test.script
+trace "Trace logging"
+"""
+		def parser = runParser script
+		accumulate << "TRACE: Trace logging\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
+
+	@Test
+	void "parse trace buildin with message and argument"() {
+		def script = """
+package com.anrisoftware.test.script
+trace "Trace logging {}", "foo"
+"""
+		def parser = runParser script
+		accumulate << "TRACE: Trace logging foo\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
+
+	@Test
+	void "parse trace buildin with message and arguments"() {
+		def script = """
+package com.anrisoftware.test.script
+trace "Trace logging {} {}", "foo", 10
+"""
+		def parser = runParser script
+		accumulate << "TRACE: Trace logging foo 10\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
 }

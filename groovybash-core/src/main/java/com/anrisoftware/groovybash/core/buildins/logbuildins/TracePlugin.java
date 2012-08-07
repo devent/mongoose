@@ -18,42 +18,39 @@
  */
 package com.anrisoftware.groovybash.core.buildins.logbuildins;
 
-import javax.inject.Inject;
+import static java.lang.String.format;
+import net.xeoh.plugins.base.annotations.Capabilities;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 
-import org.slf4j.Logger;
-
-import com.anrisoftware.groovybash.core.buildins.StandardStreams;
+import com.anrisoftware.groovybash.core.api.Buildin;
+import com.anrisoftware.groovybash.core.api.BuildinPlugin;
+import com.google.inject.Injector;
 
 /**
- * Log a message at the warn level of the logger.
+ * Returns the trace build-in as a plug-in.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class WarnBuildin extends AbstractLogBuildin {
+@PluginImplementation
+public class TracePlugin implements BuildinPlugin {
 
-	/**
-	 * Sets the standard input and output streams.
-	 * 
-	 * @param streams
-	 *            the {@link StandardStreams} that returns the standard input
-	 *            and output streams.
-	 */
-	@Inject
-	WarnBuildin(StandardStreams streams) {
-		super(streams);
+	@Override
+	@Capabilities
+	public String[] getCapabilities() {
+		return new String[] { format("buildin:%s", getName()) };
 	}
 
 	@Override
-	protected void logMessage(Logger logger) {
-		logger.warn(getMessage(), getArguments());
+	public Buildin getBuildin(Injector injector) {
+		Injector childInjector = injector
+				.createChildInjector(new TraceModule());
+		return childInjector.getInstance(Buildin.class);
 	}
 
-	/**
-	 * Returns the name {@code warn}.
-	 */
 	@Override
 	public String getName() {
-		return "warn";
+		return "trace";
 	}
+
 }

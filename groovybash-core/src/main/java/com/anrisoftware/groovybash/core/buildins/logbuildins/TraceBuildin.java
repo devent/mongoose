@@ -25,12 +25,12 @@ import org.slf4j.Logger;
 import com.anrisoftware.groovybash.core.buildins.StandardStreams;
 
 /**
- * Log a message at the warn level of the logger.
+ * Log a message at the trace level of the logger.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class WarnBuildin extends AbstractLogBuildin {
+class TraceBuildin extends AbstractLogBuildin {
 
 	/**
 	 * Sets the standard input and output streams.
@@ -40,20 +40,20 @@ class WarnBuildin extends AbstractLogBuildin {
 	 *            and output streams.
 	 */
 	@Inject
-	WarnBuildin(StandardStreams streams) {
+	TraceBuildin(StandardStreams streams) {
 		super(streams);
 	}
 
 	@Override
 	protected void logMessage(Logger logger) {
-		logger.warn(getMessage(), getArguments());
+		logger.trace(getMessage(), getArguments());
 	}
 
 	/**
-	 * Returns the name {@code warn}.
+	 * Returns the name {@code trace}.
 	 */
 	@Override
 	public String getName() {
-		return "warn";
+		return "trace";
 	}
 }
