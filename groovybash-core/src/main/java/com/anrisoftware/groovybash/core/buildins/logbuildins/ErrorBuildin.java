@@ -46,7 +46,12 @@ class ErrorBuildin extends AbstractLogBuildin {
 
 	@Override
 	protected void logMessage(Logger logger) {
-		logger.error(getMessage(), getArguments());
+		Object[] arguments = getArguments();
+		if (arguments.length > 0 && arguments[0] instanceof Throwable) {
+			logger.error(getMessage(), (Throwable) arguments[0]);
+		} else {
+			logger.error(getMessage(), arguments);
+		}
 	}
 
 	/**

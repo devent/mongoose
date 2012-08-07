@@ -208,4 +208,13 @@ error "Error logging {} {}", "foo", 10
 		accumulate << "ERROR: Error logging foo 10\n"
 		assertFileContent scriptTestLogFile, accumulate.toString()
 	}
+
+	@Test
+	void "parse error buildin with message and exception"() {
+		def script = """
+package com.anrisoftware.test.script
+error "Error logging", new Exception("foo")
+"""
+		def parser = runParser script
+	}
 }
