@@ -1,6 +1,7 @@
 package com.anrisoftware.groovybash.application;
 
 import com.anrisoftware.groovybash.core.buildins.BuildinsModule;
+import com.anrisoftware.groovybash.core.buildins.returns.ReturnsModule;
 import com.anrisoftware.groovybash.core.environment.EnvironmentModule;
 import com.anrisoftware.groovybash.core.executor.ExecutorModule;
 import com.anrisoftware.groovybash.core.parser.ParserModule;
@@ -24,5 +25,6 @@ class ApplicationModule extends AbstractModule {
 		install(new PluginsModule());
 		install(new BuildinsModule());
 		install(new ExecutorModule());
+		install(new ReturnsModule());
 	}
 }
