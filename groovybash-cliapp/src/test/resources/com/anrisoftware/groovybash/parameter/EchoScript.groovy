@@ -13,4 +13,4 @@ echo "$var in String"
 
 ret = echo "Something"
 echo ret
-assert ret == 0
+assert ret == true
