@@ -4,6 +4,7 @@ import org.junit.Before
 import org.junit.Test
 
 import com.anrisoftware.groovybash.core.buildins.BuildinsModule
+import com.anrisoftware.groovybash.core.buildins.returns.ReturnsModule
 import com.anrisoftware.groovybash.core.environment.EnvironmentModule
 import com.anrisoftware.groovybash.core.executor.ExecutorModule
 import com.anrisoftware.groovybash.core.parser.ParserModule
@@ -15,7 +16,7 @@ class ParserTest extends CommandTestUtils {
 	void beforeTest() {
 		modules = [new ParameterModule(), new BuildinsModule(), new ParserModule(),
 						new EnvironmentModule(), new PluginsModule(),
-						new ExecutorModule()]
+						new ExecutorModule(), new ReturnsModule()]
 		super.beforeTest()
 	}
 
