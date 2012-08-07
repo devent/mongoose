@@ -69,6 +69,7 @@ public class BashParser implements Runnable {
 		config.addCompilationCustomizers(imports);
 		Script script = new GroovyShell(config).parse(scriptText);
 		parserMetaClass.setDelegate(script, environment);
+		environment.setScriptLoggerContext(script.getClass());
 		return script;
 	}
 

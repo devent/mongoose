@@ -35,6 +35,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.anrisoftware.groovybash.core.api.Buildin;
 import com.anrisoftware.groovybash.core.api.BuildinPlugin;
@@ -73,6 +75,8 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	private Injector injector;
 
 	private List<String> args;
+
+	private Logger scriptLogger;
 
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
@@ -152,6 +156,16 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	@Override
 	public File getUserHome() {
 		return new File(System.getProperty("user.home"));
+	}
+
+	@Override
+	public void setScriptLoggerContext(Class<?> context) {
+		scriptLogger = LoggerFactory.getLogger(context);
+	}
+
+	@Override
+	public Logger getScriptLogger() {
+		return scriptLogger;
 	}
 
 	/**

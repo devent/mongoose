@@ -53,7 +53,7 @@ public abstract class AbstractBuildin implements Buildin {
 
 	private final StandardStreams streams;
 
-	private ReturnCodeFactory returnCodeFactory;
+	protected ReturnCodeFactory returnCodeFactory;
 
 	/**
 	 * Sets the standard streams, the arguments and the flags from a parent

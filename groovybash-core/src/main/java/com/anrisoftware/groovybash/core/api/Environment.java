@@ -21,6 +21,8 @@ package com.anrisoftware.groovybash.core.api;
 import java.io.File;
 import java.util.concurrent.Future;
 
+import org.slf4j.Logger;
+
 import com.google.inject.Injector;
 
 /**
@@ -68,6 +70,15 @@ public interface Environment {
 	 * @return the {@link File} of the directory.
 	 */
 	File getWorkingDirectory();
+
+	void setScriptLoggerContext(Class<?> context);
+
+	/**
+	 * Returns the script logger.
+	 * 
+	 * @return the {@link Logger}.
+	 */
+	Logger getScriptLogger();
 
 	/**
 	 * Returns the user home directory.
