@@ -175,4 +175,37 @@ trace "Trace logging {} {}", "foo", 10
 		accumulate << "TRACE: Trace logging foo 10\n"
 		assertFileContent scriptTestLogFile, accumulate.toString()
 	}
+
+	@Test
+	void "parse error buildin with message"() {
+		def script = """
+package com.anrisoftware.test.script
+error "Error logging"
+"""
+		def parser = runParser script
+		accumulate << "ERROR: Error logging\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
+
+	@Test
+	void "parse error buildin with message and argument"() {
+		def script = """
+package com.anrisoftware.test.script
+error "Error logging {}", "foo"
+"""
+		def parser = runParser script
+		accumulate << "ERROR: Error logging foo\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
+
+	@Test
+	void "parse error buildin with message and arguments"() {
+		def script = """
+package com.anrisoftware.test.script
+error "Error logging {} {}", "foo", 10
+"""
+		def parser = runParser script
+		accumulate << "ERROR: Error logging foo 10\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
 }
