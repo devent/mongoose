@@ -31,12 +31,50 @@ import com.google.inject.Injector
  */
 class ParseBuildinLogTest extends CommandTestUtils {
 
-	static scriptTestLogFile = "script_test.log" as File
+	static File scriptTestLogFile = "script_test.log" as File
+
+	/**
+	 * Accumulate the expected result logging messages, like in the file.
+	 */
+	static StringBuilder accumulate = new StringBuilder()
 
 	@Override
 	Injector createInjector() {
 		def injector = super.createInjector()
 		injector.createChildInjector()
+	}
+
+	@Test
+	void "parse info buildin with message"() {
+		def script = """
+package com.anrisoftware.test.script
+info "Info logging"
+"""
+		def parser = runParser script
+		accumulate << "INFO: Info logging\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
+
+	@Test
+	void "parse info buildin with message and argument"() {
+		def script = """
+package com.anrisoftware.test.script
+info "Info logging {}", "foo"
+"""
+		def parser = runParser script
+		accumulate << "INFO: Info logging foo\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
+
+	@Test
+	void "parse info buildin with message and arguments"() {
+		def script = """
+package com.anrisoftware.test.script
+info "Info logging {} {}", "foo", 10
+"""
+		def parser = runParser script
+		accumulate << "INFO: Info logging foo 10\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
 	}
 
 	@Test
@@ -46,7 +84,8 @@ package com.anrisoftware.test.script
 debug "Debug logging"
 """
 		def parser = runParser script
-		assertFileContent scriptTestLogFile, "DEBUG: Debug logging\n"
+		accumulate << "DEBUG: Debug logging\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
 	}
 
 	@Test
@@ -56,7 +95,8 @@ package com.anrisoftware.test.script
 debug "Debug logging {}", "foo"
 """
 		def parser = runParser script
-		assertFileContent scriptTestLogFile, "DEBUG: Debug logging foo\n"
+		accumulate << "DEBUG: Debug logging foo\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
 	}
 
 	@Test
@@ -66,6 +106,10 @@ package com.anrisoftware.test.script
 debug "Debug logging {} {}", "foo", 10
 """
 		def parser = runParser script
-		assertFileContent scriptTestLogFile, "DEBUG: Debug logging foo 10\n"
+		accumulate << "DEBUG: Debug logging foo 10\n"
+		assertFileContent scriptTestLogFile, accumulate.toString()
+	}
+
+	@Test
 	}
 }
