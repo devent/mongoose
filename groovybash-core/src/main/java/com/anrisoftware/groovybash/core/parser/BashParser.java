@@ -21,12 +21,17 @@ package com.anrisoftware.groovybash.core.parser;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
+import java.util.List;
+import java.util.Properties;
+
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import com.anrisoftware.groovybash.core.api.Environment;
+import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;
 
@@ -44,24 +49,37 @@ public class BashParser implements Runnable {
 
 	private final ParserMetaClass parserMetaClass;
 
+	private final ContextProperties parserProperties;
+
 	@Inject
-	BashParser(Environment environment, ParserMetaClass parserMetaClass,
+	BashParser(@Named("parser-properties") Properties parserProperties,
+			Environment environment, ParserMetaClass parserMetaClass,
 			@Assisted String scriptText) {
+		this.parserProperties = new ContextProperties(this, parserProperties);
 		this.environment = environment;
 		this.parserMetaClass = parserMetaClass;
 		this.script = createScript(scriptText);
 	}
 
 	private Script createScript(String scriptText) {
-		ImportCustomizer imports = new ImportCustomizer()
-				.addStarImports("com.anrisoftware.groovybash.core.exceptions");
-		imports.addImports("org.kohsuke.args4j.Argument");
-		imports.addImports("org.kohsuke.args4j.Option");
+		ImportCustomizer imports = new ImportCustomizer();
+		addStarImports(imports);
+		addImports(imports);
 		CompilerConfiguration config = new CompilerConfiguration();
 		config.addCompilationCustomizers(imports);
 		Script script = new GroovyShell(config).parse(scriptText);
 		parserMetaClass.setDelegate(script, environment);
 		return script;
+	}
+
+	private void addStarImports(ImportCustomizer imports) {
+		List<String> list = parserProperties.getListProperty("star_imports");
+		imports.addStarImports(list.toArray(new String[list.size()]));
+	}
+
+	private void addImports(ImportCustomizer imports) {
+		List<String> list = parserProperties.getListProperty("imports");
+		imports.addImports(list.toArray(new String[list.size()]));
 	}
 
 	public void setInjector(Injector injector) {

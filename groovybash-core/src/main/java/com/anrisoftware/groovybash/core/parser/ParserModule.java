@@ -18,21 +18,50 @@
  */
 package com.anrisoftware.groovybash.core.parser;
 
+import static com.google.common.io.Resources.getResource;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
+
+import javax.inject.Named;
+
 import com.anrisoftware.groovybash.core.factories.BashParserFactory;
+import com.anrisoftware.propertiesutils.ContextPropertiesFactory;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Binds the bash parser factory.
+ * Binds the bash parser factory and provides the parser properties.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
 public class ParserModule extends AbstractModule {
 
+	private static final URL PARSER_PROPERTIES = getResource(
+			ParserModule.class, "parser.properties");
+
 	@Override
 	protected void configure() {
 		install(new FactoryModuleBuilder().implement(BashParser.class,
 				BashParser.class).build(BashParserFactory.class));
+	}
+
+	/**
+	 * Provides the parser properties from the resource
+	 * {@code parser.properties}.
+	 * 
+	 * @return the {@link Properties}.
+	 * 
+	 * @throws IOException
+	 *             if there was an error reading the properties resource.
+	 */
+	@Provides
+	@Named("parser-properties")
+	public Properties getParserProperties() throws IOException {
+		return new ContextPropertiesFactory(this)
+				.fromResource(PARSER_PROPERTIES);
 	}
 }
