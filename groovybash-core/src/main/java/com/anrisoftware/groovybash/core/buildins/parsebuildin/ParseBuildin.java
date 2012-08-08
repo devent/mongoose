@@ -27,6 +27,7 @@ import net.xeoh.plugins.base.Option;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import com.anrisoftware.groovybash.core.api.ReturnValue;
@@ -74,9 +75,18 @@ class ParseBuildin extends AbstractBuildin {
 	@Override
 	public ReturnValue call() throws Exception {
 		super.call();
-		parser.parseArgument(arguments);
+		try {
+			parser.parseArgument(arguments);
+		} catch (CmdLineException e) {
+			log.errorParseArguments(e, arguments);
+			return createReturnValue(false);
+		}
+		return createReturnValue(true);
+	}
+
+	private ParsedReturnValue createReturnValue(boolean valid) {
 		return returnValueFactory.create(StandardStreams.copy(this), parser,
-				bean);
+				bean, valid);
 	}
 
 	@Override

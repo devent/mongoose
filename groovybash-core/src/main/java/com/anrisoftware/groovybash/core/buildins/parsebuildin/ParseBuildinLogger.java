@@ -2,6 +2,8 @@ package com.anrisoftware.groovybash.core.buildins.parsebuildin;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import org.kohsuke.args4j.CmdLineException;
+
 import com.anrisoftware.globalpom.log.AbstractLogger;
 
 /**
@@ -22,5 +24,10 @@ class ParseBuildinLogger extends AbstractLogger {
 	void checkMinimumArgs(ParseBuildin buildin, Object[] args) {
 		checkArgument(args.length > 0,
 				"The build-in %s needs at least one argument.", buildin);
+	}
+
+	void errorParseArguments(CmdLineException e, String[] arguments) {
+		log.error("Error parse command line arguments {}: {}.", arguments,
+				e.getLocalizedMessage());
 	}
 }

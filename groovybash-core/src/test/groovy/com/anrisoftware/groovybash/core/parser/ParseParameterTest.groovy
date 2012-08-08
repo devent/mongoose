@@ -67,13 +67,16 @@ def printHelp(def parser) {
 	echo parser
 }
 
-try {
-	parser = parse new Parameter()
-} catch (e) {
-    printHelp parser
-}
+var = "foo"
+echo var
+
+parser = parse new Parameter()
+if (!parser.isValid) printHelp parser
+echo parser.parameterA
 """
-		runParser script, null, args
+		shouldFailWith IllegalStateException, {
+			runParser script, null, args
+		}
 	}
 
 	@Test
