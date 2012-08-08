@@ -33,6 +33,22 @@ import com.google.inject.Injector
  */
 @Slf4j
 class ParseParameterTest extends CommandTestUtils {
+	
+	static parameterClass = """class Parameter {
+
+    @Option(name = "-a", required = true, usage = "Parameter A")
+    String parameterA
+
+    @Option(name = "-b", required = true, usage = "Parameter B")
+    int parameterB
+
+    @Option(name = "-c", usage = "Parameter C")
+    boolean parameterC
+
+	@Argument
+	List<String> arguments
+}
+"""
 
 	@Override
 	Injector createInjector() {
@@ -41,24 +57,30 @@ class ParseParameterTest extends CommandTestUtils {
 	}
 
 	@Test
+	void "parse command line arguments with no arguments specified"() {
+		def args = []
+		def script = """
+$parameterClass
+
+def printHelp(def parser) {
+    echo "Help: "
+	echo parser
+}
+
+try {
+	parser = parse new Parameter()
+} catch (e) {
+    printHelp parser
+}
+"""
+		runParser script, null, args
+	}
+
+	@Test
 	void "parse command line arguments"() {
 		def args = ["-a", "foo", "-b", "10", "-c", "more", "arguments"]
 		def script = """
-class Parameter {
-
-    @Option(name = "-a", required = true)
-    String parameterA
-
-    @Option(name = "-b", required = true)
-    int parameterB
-
-    @Option(name = "-c")
-    boolean parameterC
-
-	@Argument
-	List<String> arguments
-}
-
+$parameterClass
 echo ARGS
 parser = parse new Parameter()
 echo parser.parameterA
@@ -79,21 +101,7 @@ true
 	void "parse command line arguments and print example"() {
 		def args = ["-a", "foo", "-b", "10", "-c"]
 		def script = """
-class Parameter {
-
-    @Option(name = "-a", required = true, usage = "Parameter A")
-    String parameterA
-
-    @Option(name = "-b", required = true, usage = "Parameter B")
-    int parameterB
-
-    @Option(name = "-c", usage = "Parameter C")
-    boolean parameterC
-
-	@Argument
-	List<String> arguments
-}
-
+$parameterClass
 parser = parse new Parameter()
 parser.printExample()
 echo
