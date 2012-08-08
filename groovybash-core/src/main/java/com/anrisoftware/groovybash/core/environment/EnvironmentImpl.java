@@ -54,6 +54,8 @@ import com.google.inject.Injector;
  */
 class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
+	private static final String WORKING_DIRECTORY = "PWD";
+
 	private final EnvironmentImplLogger log;
 
 	private final BuildinPluginsLoaderFactory loaderFactory;
@@ -69,8 +71,6 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	private final ArgumentsWorker argumentsWorker;
 
 	private final Map<String, Object> variables;
-
-	private File workingDirectory;
 
 	private Injector injector;
 
@@ -89,7 +89,6 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		this.log = logger;
 		this.properties = new ContextProperties(this, properties);
 		this.loaderFactory = loaderFactory;
-		this.workingDirectory = new File(".");
 		this.buildinPlugins = newHashMap();
 		this.callCommandWorker = callCommandWorker;
 		this.argumentsWorker = argumentsWorker;
@@ -97,6 +96,11 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		this.variables = newHashMap();
 		this.args = newArrayList();
 		loadBuildins();
+		setupVariables();
+	}
+
+	private void setupVariables() {
+		setWorkingDirectory(new File("."));
 	}
 
 	private void loadBuildins() {
@@ -117,8 +121,8 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private List<BuildinPlugin> loadBuildinPlugins(List<String> pluginNames) {
 		try {
-			Callable<List<BuildinPlugin>> loaders = loaderFactory.create(
-					BuildinPlugin.class, pluginNames);
+			Callable<List<BuildinPlugin>> loaders;
+			loaders = loaderFactory.create(BuildinPlugin.class, pluginNames);
 			return loaders.call();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -144,13 +148,13 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	@Override
 	public void setWorkingDirectory(File directory) {
-		workingDirectory = directory;
+		variables.put(WORKING_DIRECTORY, directory);
 		log.workingDirectorySet(directory);
 	}
 
 	@Override
 	public File getWorkingDirectory() {
-		return workingDirectory;
+		return (File) variables.get(WORKING_DIRECTORY);
 	}
 
 	@Override

@@ -49,5 +49,16 @@ echo ARGS
 		runParser script, null, args
 		assertStringContent "[-a, foo, -b, bar, -c]\n", output
 	}
+
+	@Test
+	void "echo pwd"() {
+		def dir = createTempDirectory()
+		def script = """
+cd "$dir"
+echo PWD
+"""
+		runParser script
+		assertStringContent "$dir\n", output
+	}
 }
 
