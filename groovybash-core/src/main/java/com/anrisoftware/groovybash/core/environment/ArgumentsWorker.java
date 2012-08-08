@@ -59,6 +59,15 @@ class ArgumentsWorker {
 	public ArgumentsWorker createCommandArgs(String name, Object[] uargs) {
 		args = newArrayList();
 		flags = newHashMap();
+		if (uargs.length < 1) {
+			args.add(name);
+			return this;
+		}
+		splitArgumentsAndFlags(name, uargs);
+		return this;
+	}
+
+	private void splitArgumentsAndFlags(String name, Object[] uargs) {
 		List<Object> command = newArrayList();
 		command.add(name);
 		int index = 0;
@@ -72,7 +81,6 @@ class ArgumentsWorker {
 			args.add(uargs[i]);
 		}
 		args.add(0, StringUtils.join(command, " "));
-		return this;
 	}
 
 	@SuppressWarnings("unchecked")
