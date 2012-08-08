@@ -61,7 +61,13 @@ class ParameterParser {
 	
 	private splitArguments(String[] args) {
 		def i = args.findIndexOf { it == "--" }
-		i < 0 ? [args, []] : [args[0..(i - 1)], args[(i + 1)..-1]]
+		if (i < 0) {
+			return [args, []]
+		}
+		if (args.length <= i + 1) {
+			return [args[0..(i - 1)], []]
+		}
+		return [args[0..(i - 1)], args[(i + 1)..-1]]
 	}
 
 	private parseAppParameter(String[] args) {
