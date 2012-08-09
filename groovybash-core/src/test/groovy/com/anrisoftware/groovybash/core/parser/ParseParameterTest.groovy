@@ -101,7 +101,7 @@ true
 	}
 
 	@Test
-	void "parse command line arguments and print example"() {
+	void "print example of the command line arguments"() {
 		def args = ["-a", "foo", "-b", "10", "-c"]
 		def script = """
 $parameterClass
@@ -118,6 +118,26 @@ parser.printUsage()
  -a VAL : Parameter A
  -b N   : Parameter B
  -c     : Parameter C
+""", output
+	}
+
+	@Test
+	void "get example of the command line arguments"() {
+		def args = ["-a", "foo", "-b", "10", "-c"]
+		def script = """
+$parameterClass
+parser = parse new Parameter()
+echo parser.example
+echo parser.singleLineUsage
+echo parser.usage
+"""
+		runParser script, null, args
+		assertStringContent """ -a VAL -b N -c
+ [VAL ...] -a VAL -b N [-c]
+ -a VAL : Parameter A
+ -b N   : Parameter B
+ -c     : Parameter C
+
 """, output
 	}
 }
