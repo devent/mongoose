@@ -34,6 +34,10 @@ import com.google.inject.Injector
 @Slf4j
 class ParseParameterTest extends CommandTestUtils {
 	
+	static validArgs = ["-a", "foo", "-b", "10", "-c", "more", "arguments"]
+	
+	static notValidArgs = []
+	
 	static parameterClass = """class Parameter {
 
     @Option(name = "-a", required = true, usage = "Parameter A")
@@ -58,7 +62,6 @@ class ParseParameterTest extends CommandTestUtils {
 
 	@Test
 	void "parse command line arguments with no arguments specified"() {
-		def args = []
 		def script = """
 $parameterClass
 
@@ -67,21 +70,67 @@ def printHelp(def parser) {
 	echo parser
 }
 
-var = "foo"
-echo var
-
 parser = parse new Parameter()
 if (!parser.isValid) printHelp parser
 echo parser.parameterA
 """
 		shouldFailWith IllegalStateException, {
-			runParser script, null, args
+			runParser script, null, notValidArgs
 		}
 	}
 
 	@Test
+	void "if valid - not valid syntax with valid arguments"() {
+		def script = """
+$parameterClass
+parser = parse new Parameter()
+parser.valid {
+	echo "Valid"
+} notValid {
+	echo "Not Valid"
+} 
+"""
+		runParser script, null, validArgs
+		assertStringContent "Valid\n", output
+	}
+
+	@Test
+	void "if valid - not valid syntax with not valid arguments"() {
+		def script = """
+$parameterClass
+parser = parse new Parameter()
+parser.valid {
+	echo "Valid"
+} notValid {
+	echo "Not Valid"
+} 
+"""
+		runParser script, null, notValidArgs
+		assertStringContent "Not Valid\n", output
+	}
+
+	@Test
+	void "if valid - not valid syntax with not valid arguments and pass parser"() {
+		def script = """
+$parameterClass
+
+def printHelp(def parser) {
+    echo "Help:"
+	echo parser != null
+}
+
+parse(new Parameter()).valid {
+	echo "Valid"
+} notValid { parser ->
+	printHelp parser
+} 
+"""
+		runParser script, null, notValidArgs
+		assertStringContent "Help:\ntrue\n", output
+	}
+
+	@Test
 	void "parse command line arguments"() {
-		def args = ["-a", "foo", "-b", "10", "-c", "more", "arguments"]
 		def script = """
 $parameterClass
 echo ARGS
@@ -91,7 +140,7 @@ echo parser.parameterB
 echo parser.parameterC
 echo parser.arguments
 """
-		runParser script, null, args
+		runParser script, null, validArgs
 		assertStringContent """[-a, foo, -b, 10, -c, more, arguments]
 foo
 10
@@ -102,7 +151,6 @@ true
 
 	@Test
 	void "print example of the command line arguments"() {
-		def args = ["-a", "foo", "-b", "10", "-c"]
 		def script = """
 $parameterClass
 parser = parse new Parameter()
@@ -112,7 +160,7 @@ parser.printSingleLineUsage()
 echo
 parser.printUsage()
 """
-		runParser script, null, args
+		runParser script, null, validArgs
 		assertStringContent """ -a VAL -b N -c
  [VAL ...] -a VAL -b N [-c]
  -a VAL : Parameter A
@@ -123,7 +171,6 @@ parser.printUsage()
 
 	@Test
 	void "get example of the command line arguments"() {
-		def args = ["-a", "foo", "-b", "10", "-c"]
 		def script = """
 $parameterClass
 parser = parse new Parameter()
@@ -131,7 +178,7 @@ echo parser.example
 echo parser.singleLineUsage
 echo parser.usage
 """
-		runParser script, null, args
+		runParser script, null, validArgs
 		assertStringContent """ -a VAL -b N -c
  [VAL ...] -a VAL -b N [-c]
  -a VAL : Parameter A

@@ -1,6 +1,7 @@
 package com.anrisoftware.groovybash.core.buildins.parsebuildin;
 
 import static com.google.common.base.Preconditions.checkState;
+import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
 
 import java.io.ByteArrayOutputStream;
@@ -138,6 +139,21 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 */
 	public boolean getIsValid() {
 		return valid;
+	}
+
+	public Object valid(Closure<?> closure) {
+		if (valid) {
+			closure.call(parser);
+			return this;
+		}
+		return this;
+	}
+
+	public Object notValid(Closure<?> closure) {
+		if (!valid) {
+			return closure.call(parser);
+		}
+		return this;
 	}
 
 	/**
