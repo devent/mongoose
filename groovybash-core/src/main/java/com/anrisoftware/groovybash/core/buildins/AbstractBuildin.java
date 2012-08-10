@@ -64,6 +64,7 @@ public abstract class AbstractBuildin implements Buildin {
 	 */
 	protected AbstractBuildin(AbstractBuildin parent) {
 		this(parent.streams);
+		this.environment = parent.environment;
 		this.args = parent.args;
 		this.flags = parent.flags;
 	}
