@@ -16,37 +16,19 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser
-
-import com.anrisoftware.groovybash.core.Environment;
+package com.anrisoftware.groovybash.core;
 
 /**
- * Sets the delegate for the script.
+ * The return value from a command.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class ParserMetaClass {
+public interface ReturnValue {
 
 	/**
-	 * Sets the environment for the specified script. All missing methods or
-	 * missing properties are delegated to the environment.
-	 * 
-	 * @param script
-	 * 			  the {@link Script}.
-	 * 
-	 * @param environment
-	 * 			  the {@link Environment}.
-	 * 
-	 * @return the {@link Script} with the set delegate.
+	 * Returns a human readable message for this return value.
 	 */
-	Script setDelegate(Script script, Environment environment) {
-		script.metaClass.methodMissing = { name, args ->
-			environment.invokeMethod(name, args)
-		}
-		script.metaClass.propertyMissing = { name ->
-			environment.getProperty(name)
-		}
-		return script
-	}
+	@Override
+	String toString();
 }

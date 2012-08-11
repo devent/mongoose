@@ -16,37 +16,23 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser
-
-import com.anrisoftware.groovybash.core.Environment;
+package com.anrisoftware.groovybash.buildins.listfilesbuildin;
 
 /**
- * Sets the delegate for the script.
+ * Factory to create worker that can list files with a wildcard.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.2
  */
-class ParserMetaClass {
+interface WildcardListFactory {
 
 	/**
-	 * Sets the environment for the specified script. All missing methods or
-	 * missing properties are delegated to the environment.
+	 * Creates the list from the specified wildcard.
 	 * 
-	 * @param script
-	 * 			  the {@link Script}.
+	 * @param wildcard
+	 *            the wildcard.
 	 * 
-	 * @param environment
-	 * 			  the {@link Environment}.
-	 * 
-	 * @return the {@link Script} with the set delegate.
+	 * @return the {@link ListWorker}.
 	 */
-	Script setDelegate(Script script, Environment environment) {
-		script.metaClass.methodMissing = { name, args ->
-			environment.invokeMethod(name, args)
-		}
-		script.metaClass.propertyMissing = { name ->
-			environment.getProperty(name)
-		}
-		return script
-	}
+	ListWorker create(String wildcard);
 }

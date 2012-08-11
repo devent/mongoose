@@ -16,37 +16,33 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser
+package com.anrisoftware.groovybash.environment;
 
-import com.anrisoftware.groovybash.core.Environment;
+import java.io.File;
+import java.util.Arrays;
+
+import com.anrisoftware.globalpom.log.AbstractLogger;
 
 /**
- * Sets the delegate for the script.
+ * Logging messages for {@link EnvironmentImpl}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class ParserMetaClass {
+class EnvironmentImplLogger extends AbstractLogger {
 
 	/**
-	 * Sets the environment for the specified script. All missing methods or
-	 * missing properties are delegated to the environment.
-	 * 
-	 * @param script
-	 * 			  the {@link Script}.
-	 * 
-	 * @param environment
-	 * 			  the {@link Environment}.
-	 * 
-	 * @return the {@link Script} with the set delegate.
+	 * Creates logger for {@link EnvironmentImpl}.
 	 */
-	Script setDelegate(Script script, Environment environment) {
-		script.metaClass.methodMissing = { name, args ->
-			environment.invokeMethod(name, args)
-		}
-		script.metaClass.propertyMissing = { name ->
-			environment.getProperty(name)
-		}
-		return script
+	EnvironmentImplLogger() {
+		super(EnvironmentImpl.class);
+	}
+
+	void workingDirectorySet(File directory) {
+		log.info("Set working directory {}.", directory);
+	}
+
+	void argumentsSet(String[] args) {
+		log.info("Set command line arguments {}.", Arrays.toString(args));
 	}
 }

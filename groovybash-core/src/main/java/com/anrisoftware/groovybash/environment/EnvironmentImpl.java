@@ -1,0 +1,210 @@
+/*
+ * Copyright 2012 Erwin Müller <erwin.mueller@deventm.org>
+ * 
+ * This file is part of groovybash-core.
+ * 
+ * groovybash-core is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ * 
+ * groovybash-core is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
+ */
+package com.anrisoftware.groovybash.environment;
+
+import static com.google.common.collect.ImmutableList.copyOf;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import groovy.lang.GroovyObjectSupport;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.Future;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.codehaus.groovy.runtime.InvokerHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.anrisoftware.groovybash.core.Buildin;
+import com.anrisoftware.groovybash.core.BuildinPlugin;
+import com.anrisoftware.groovybash.core.Environment;
+import com.anrisoftware.groovybash.core.ExecutorServiceHandler;
+import com.anrisoftware.propertiesutils.ContextProperties;
+import com.google.inject.Injector;
+
+/**
+ * Loads the build-in plugins and executes them in the script context.
+ * 
+ * @author Erwin Mueller, erwin.mueller@deventm.org
+ * @since 1.0
+ */
+class EnvironmentImpl extends GroovyObjectSupport implements Environment {
+
+	private static final String WORKING_DIRECTORY = "PWD";
+
+	private final EnvironmentImplLogger log;
+
+	private final ContextProperties properties;
+
+	private final Map<String, BuildinPlugin> buildinPlugins;
+
+	private final CallCommandWorker callCommandWorker;
+
+	private final ExecutorServiceHandler executorServiceHandler;
+
+	private final ArgumentsWorker argumentsWorker;
+
+	private final Map<String, Object> variables;
+
+	private Injector injector;
+
+	private List<String> args;
+
+	private Logger scriptLogger;
+
+	@Inject
+	EnvironmentImpl(EnvironmentImplLogger logger,
+			@Named("environmentProperties") Properties properties,
+			Set<BuildinPlugin> buildins, ArgumentsWorker argumentsWorker,
+			CallCommandWorker callCommandWorker,
+			ExecutorServiceHandler executorServiceHandler) {
+		super();
+		this.log = logger;
+		this.properties = new ContextProperties(this, properties);
+		this.buildinPlugins = newHashMap();
+		this.callCommandWorker = callCommandWorker;
+		this.argumentsWorker = argumentsWorker;
+		this.executorServiceHandler = executorServiceHandler;
+		this.variables = newHashMap();
+		this.args = newArrayList();
+		loadBuildins(buildins);
+		setupVariables();
+	}
+
+	private void setupVariables() {
+		setWorkingDirectory(new File("."));
+	}
+
+	private void loadBuildins(Set<BuildinPlugin> plugins) {
+		for (BuildinPlugin plugin : plugins) {
+			buildinPlugins.put(plugin.getName(), plugin);
+		}
+	}
+
+	@Override
+	public void setInjector(Injector injector) {
+		this.injector = injector;
+	}
+
+	@Override
+	public void setArguments(String[] args) {
+		this.args = copyOf(args);
+		variables.put("ARGS", this.args);
+		log.argumentsSet(args);
+	}
+
+	@Override
+	public String[] getArguments() {
+		return args.toArray(new String[args.size()]);
+	}
+
+	@Override
+	public void setWorkingDirectory(File directory) {
+		variables.put(WORKING_DIRECTORY, directory);
+		log.workingDirectorySet(directory);
+	}
+
+	@Override
+	public File getWorkingDirectory() {
+		return (File) variables.get(WORKING_DIRECTORY);
+	}
+
+	@Override
+	public File getUserHome() {
+		return new File(System.getProperty("user.home"));
+	}
+
+	@Override
+	public void setScriptLoggerContext(Class<?> context) {
+		scriptLogger = LoggerFactory.getLogger(context);
+	}
+
+	@Override
+	public Logger getScriptLogger() {
+		return scriptLogger;
+	}
+
+	/**
+	 * Call the specified command.
+	 */
+	@Override
+	public Object invokeMethod(String name, Object args) {
+		Object[] uargs = InvokerHelper.asUnwrappedArray(args);
+		if (getMetaClass().getMetaMethod(name, uargs) != null) {
+			return super.invokeMethod(name, args);
+		}
+		BuildinPlugin buildinPlugin = buildinPlugins.get(name);
+		if (buildinPlugin != null) {
+			return callBuildin(uargs, buildinPlugin);
+		} else {
+			return callCommand(name, uargs);
+		}
+	}
+
+	private Object callBuildin(Object[] uargs, BuildinPlugin buildinPlugin) {
+		Buildin buildin = buildinPlugin.getBuildin(injector);
+		buildin.setEnvironment(this);
+		buildin.setArguments(uargs);
+		return callCommandWorker.call(buildin);
+	}
+
+	private Object callCommand(String name, Object[] uargs) {
+		Buildin buildin = getBuildin("run");
+		ArgumentsWorker arguments;
+		arguments = argumentsWorker.createCommandArgs(name, uargs);
+		buildin.setArguments(arguments.getFlags(), arguments.getArgs());
+		return callCommandWorker.call(buildin);
+	}
+
+	private Buildin getBuildin(String name) {
+		BuildinPlugin buildinPlugin = buildinPlugins.get(name);
+		Buildin buildin = buildinPlugin.getBuildin(injector);
+		buildin.setEnvironment(this);
+		return buildin;
+	}
+
+	@Override
+	public Object getProperty(String name) {
+		if (getMetaClass().hasProperty(this, name) != null) {
+			return super.getProperty(name);
+		} else {
+			Object var = variables.get(name);
+			if (var != null) {
+				return var;
+			}
+		}
+		return invokeMethod(name, null);
+	}
+
+	@Override
+	public Future<?> submitTask(Runnable task) {
+		return executorServiceHandler.submitTask(task);
+	}
+
+	@Override
+	public void close() {
+		executorServiceHandler.shutdown();
+	}
+}

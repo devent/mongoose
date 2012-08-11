@@ -30,7 +30,7 @@ import javax.inject.Named;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
-import com.anrisoftware.groovybash.core.api.Environment;
+import com.anrisoftware.groovybash.core.Environment;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;

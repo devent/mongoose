@@ -16,37 +16,30 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser
+package com.anrisoftware.groovybash.environment;
 
-import com.anrisoftware.groovybash.core.Environment;
+import static java.lang.String.format;
+
+import com.anrisoftware.globalpom.log.AbstractLogger;
+import com.anrisoftware.groovybash.core.Buildin;
+import com.anrisoftware.groovybash.environment.CallCommandWorker;
 
 /**
- * Sets the delegate for the script.
+ * Logging messages for {@link CallCommandWorker}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class ParserMetaClass {
+class CallCommandWorkerLogger extends AbstractLogger {
 
 	/**
-	 * Sets the environment for the specified script. All missing methods or
-	 * missing properties are delegated to the environment.
-	 * 
-	 * @param script
-	 * 			  the {@link Script}.
-	 * 
-	 * @param environment
-	 * 			  the {@link Environment}.
-	 * 
-	 * @return the {@link Script} with the set delegate.
+	 * Creates logger for {@link CallCommandWorker}.
 	 */
-	Script setDelegate(Script script, Environment environment) {
-		script.metaClass.methodMissing = { name, args ->
-			environment.invokeMethod(name, args)
-		}
-		script.metaClass.propertyMissing = { name ->
-			environment.getProperty(name)
-		}
-		return script
+	CallCommandWorkerLogger() {
+		super(CallCommandWorker.class);
+	}
+
+	void errorCallBuildin(Buildin buildin, Exception e) {
+		log.error(format("Command %s throws an exception:", buildin), e);
 	}
 }

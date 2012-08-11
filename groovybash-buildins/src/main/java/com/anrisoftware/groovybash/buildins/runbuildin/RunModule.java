@@ -16,37 +16,26 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser
+package com.anrisoftware.groovybash.buildins.runbuildin;
 
-import com.anrisoftware.groovybash.core.Environment;
+import com.anrisoftware.groovybash.core.Buildin;
+import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Sets the delegate for the script.
+ * Binds the run build-in command.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class ParserMetaClass {
+public class RunModule extends AbstractModule {
 
-	/**
-	 * Sets the environment for the specified script. All missing methods or
-	 * missing properties are delegated to the environment.
-	 * 
-	 * @param script
-	 * 			  the {@link Script}.
-	 * 
-	 * @param environment
-	 * 			  the {@link Environment}.
-	 * 
-	 * @return the {@link Script} with the set delegate.
-	 */
-	Script setDelegate(Script script, Environment environment) {
-		script.metaClass.methodMissing = { name, args ->
-			environment.invokeMethod(name, args)
-		}
-		script.metaClass.propertyMissing = { name ->
-			environment.getProperty(name)
-		}
-		return script
+	@Override
+	protected void configure() {
+		bind(Buildin.class).to(RunBuildin.class);
+		install(new FactoryModuleBuilder().implement(OutputTask.class,
+				OutputTask.class).build(OutputTaskFactory.class));
+		install(new FactoryModuleBuilder().implement(ErrorTask.class,
+				ErrorTask.class).build(ErrorTaskFactory.class));
 	}
 }

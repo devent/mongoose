@@ -16,37 +16,45 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser
+package com.anrisoftware.groovybash.buildins.listfilesbuildin;
 
-import com.anrisoftware.groovybash.core.Environment;
+import static java.util.Arrays.asList;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+
+import com.google.inject.assistedinject.Assisted;
 
 /**
- * Sets the delegate for the script.
+ * List files with a wildcard.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class ParserMetaClass {
+class WildcardListWorker implements ListWorker {
+
+	private final String name;
 
 	/**
-	 * Sets the environment for the specified script. All missing methods or
-	 * missing properties are delegated to the environment.
+	 * Sets the the wildcard name.
 	 * 
-	 * @param script
-	 * 			  the {@link Script}.
-	 * 
-	 * @param environment
-	 * 			  the {@link Environment}.
-	 * 
-	 * @return the {@link Script} with the set delegate.
+	 * @param name
+	 *            the wildcard name.
 	 */
-	Script setDelegate(Script script, Environment environment) {
-		script.metaClass.methodMissing = { name, args ->
-			environment.invokeMethod(name, args)
-		}
-		script.metaClass.propertyMissing = { name ->
-			environment.getProperty(name)
-		}
-		return script
+	@Inject
+	WildcardListWorker(@Assisted String name) {
+		this.name = name;
 	}
+
+	@Override
+	public List<File> listFiles(File dir) {
+		FileFilter filter = new WildcardFileFilter(name);
+		return asList(dir.listFiles(filter));
+	}
+
 }

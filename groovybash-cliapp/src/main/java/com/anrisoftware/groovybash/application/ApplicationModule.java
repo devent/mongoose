@@ -2,10 +2,10 @@ package com.anrisoftware.groovybash.application;
 
 import com.anrisoftware.groovybash.core.buildins.BuildinsModule;
 import com.anrisoftware.groovybash.core.buildins.returns.ReturnsModule;
-import com.anrisoftware.groovybash.core.environment.EnvironmentModule;
-import com.anrisoftware.groovybash.core.executor.ExecutorModule;
 import com.anrisoftware.groovybash.core.parser.ParserModule;
 import com.anrisoftware.groovybash.core.plugins.PluginsModule;
+import com.anrisoftware.groovybash.environment.EnvironmentModule;
+import com.anrisoftware.groovybash.executor.ExecutorModule;
 import com.anrisoftware.groovybash.parameter.ParameterModule;
 import com.google.inject.AbstractModule;
 

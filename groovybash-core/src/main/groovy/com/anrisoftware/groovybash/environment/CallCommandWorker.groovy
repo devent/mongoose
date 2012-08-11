@@ -16,37 +16,44 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser
+package com.anrisoftware.groovybash.environment
 
-import com.anrisoftware.groovybash.core.Environment;
+import javax.inject.Inject
+
+import com.anrisoftware.groovybash.environment.CallCommandWorkerLogger;
 
 /**
- * Sets the delegate for the script.
+ * Call the command. The worker is used because 
+ * {@link GroovyObject#invokeMethod(String, Object)} cannot throw any 
+ * checked exceptions, so we use Groovy dynamic nature to throw a checked
+ * exception regardless.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class ParserMetaClass {
+class CallCommandWorker {
+
+	private final CallCommandWorkerLogger log
+
+	@Inject
+	CallCommandWorker(CallCommandWorkerLogger log) {
+		this.log = log
+	}
 
 	/**
-	 * Sets the environment for the specified script. All missing methods or
-	 * missing properties are delegated to the environment.
+	 * Call the specified command, log and re-throw any exceptions.
 	 * 
-	 * @param script
-	 * 			  the {@link Script}.
+	 * @param command
+	 * 			  the command to call.
 	 * 
-	 * @param environment
-	 * 			  the {@link Environment}.
-	 * 
-	 * @return the {@link Script} with the set delegate.
+	 * @return the return value of the command.
 	 */
-	Script setDelegate(Script script, Environment environment) {
-		script.metaClass.methodMissing = { name, args ->
-			environment.invokeMethod(name, args)
+	def call(def command) {
+		try {
+			command.call()
+		} catch (Exception e) {
+			log.errorCallBuildin(command, e)
+			throw e
 		}
-		script.metaClass.propertyMissing = { name ->
-			environment.getProperty(name)
-		}
-		return script
 	}
 }

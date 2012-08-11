@@ -16,37 +16,41 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser
+package com.anrisoftware.groovybash.environment;
+
+import static com.google.common.io.Resources.getResource;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
+
+import javax.inject.Named;
 
 import com.anrisoftware.groovybash.core.Environment;
+import com.anrisoftware.propertiesutils.ContextPropertiesFactory;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
 /**
- * Sets the delegate for the script.
+ * Provides the environment properties.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class ParserMetaClass {
+public class EnvironmentModule extends AbstractModule {
 
-	/**
-	 * Sets the environment for the specified script. All missing methods or
-	 * missing properties are delegated to the environment.
-	 * 
-	 * @param script
-	 * 			  the {@link Script}.
-	 * 
-	 * @param environment
-	 * 			  the {@link Environment}.
-	 * 
-	 * @return the {@link Script} with the set delegate.
-	 */
-	Script setDelegate(Script script, Environment environment) {
-		script.metaClass.methodMissing = { name, args ->
-			environment.invokeMethod(name, args)
-		}
-		script.metaClass.propertyMissing = { name ->
-			environment.getProperty(name)
-		}
-		return script
+	private static final URL ENVIRONMENT_PROPERTIES = getResource(
+			EnvironmentModule.class, "environment.properties");
+
+	@Override
+	protected void configure() {
+		bind(Environment.class).to(EnvironmentImpl.class);
+	}
+
+	@Provides
+	@Named("environmentProperties")
+	Properties getEnvironmentProperties() throws IOException {
+		return new ContextPropertiesFactory(this)
+				.fromResource(ENVIRONMENT_PROPERTIES);
 	}
 }

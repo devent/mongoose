@@ -16,37 +16,44 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser
+package com.anrisoftware.groovybash.buildins.logbuildins;
 
-import com.anrisoftware.groovybash.core.Environment;
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+
+import com.anrisoftware.groovybash.buildins.StandardStreams;
 
 /**
- * Sets the delegate for the script.
+ * Log a message at the trace level of the logger.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class ParserMetaClass {
+class TraceBuildin extends AbstractLogBuildin {
 
 	/**
-	 * Sets the environment for the specified script. All missing methods or
-	 * missing properties are delegated to the environment.
+	 * Sets the standard input and output streams.
 	 * 
-	 * @param script
-	 * 			  the {@link Script}.
-	 * 
-	 * @param environment
-	 * 			  the {@link Environment}.
-	 * 
-	 * @return the {@link Script} with the set delegate.
+	 * @param streams
+	 *            the {@link StandardStreams} that returns the standard input
+	 *            and output streams.
 	 */
-	Script setDelegate(Script script, Environment environment) {
-		script.metaClass.methodMissing = { name, args ->
-			environment.invokeMethod(name, args)
-		}
-		script.metaClass.propertyMissing = { name ->
-			environment.getProperty(name)
-		}
-		return script
+	@Inject
+	TraceBuildin(StandardStreams streams) {
+		super(streams);
+	}
+
+	@Override
+	protected void logMessage(Logger logger) {
+		logger.trace(getMessage(), getArguments());
+	}
+
+	/**
+	 * Returns the name {@code trace}.
+	 */
+	@Override
+	public String getName() {
+		return "trace";
 	}
 }
