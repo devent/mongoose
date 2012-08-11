@@ -38,9 +38,17 @@ interface OutputWorker {
 	 * @param text
 	 *            the text.
 	 * 
-	 * @throws IOException
-	 *             if there is an error output the text to the stream.
 	 */
-	void output(PrintStream output, String text) throws IOException;
+	void output(PrintStream output, String text);
+
+	/**
+	 * Returns the text to output.
+	 * 
+	 * @return the text
+	 * 
+	 * @throws IOException
+	 *             if there is an error reading the text to output.
+	 */
+	String getOutput() throws IOException;
 
 }

@@ -54,4 +54,20 @@ class EchoTest extends BuildinTestUtils {
 		assertStringContent output, "$text"
 	}
 
+	@Test
+	void "echo from input"() {
+		def text = "Text"
+		inputBuffer = text.bytes
+		createBuildin(EchoBuildin, [[in: inputStream]])()
+		assertStringContent output, "$text\n"
+	}
+
+	@Test
+	void "echo from input no newline"() {
+		def text = "Text"
+		inputBuffer = text.bytes
+		createBuildin(EchoBuildin, [[in: inputStream, noNewline: true]])()
+		assertStringContent output, "$text"
+	}
+
 }

@@ -69,13 +69,18 @@ class EchoBuildin extends AbstractBuildin {
 			public void output(PrintStream output, String text) {
 				output.println(text);
 			}
+
+			@Override
+			public String getOutput() {
+				return EchoBuildin.this.getOutput();
+			}
 		};
 	}
 
 	@Override
 	public ReturnValue call() throws Exception {
 		super.call();
-		output.output(getOutputStream(), getOutput());
+		output.output(getOutputStream(), output.getOutput());
 		getOutputStream().flush();
 		return returnCodeFactory.createSuccess();
 	}
@@ -102,11 +107,17 @@ class EchoBuildin extends AbstractBuildin {
 	private OutputWorker createOutputFromInputStream() {
 		return new OutputWorker() {
 
+			OutputWorker parent = output;
+
 			@Override
-			public void output(PrintStream output, String a) throws IOException {
+			public void output(PrintStream output, String text) {
+				parent.output(output, text);
+			}
+
+			@Override
+			public String getOutput() throws IOException {
 				InputStreamReader i = new InputStreamReader(getInputStream());
-				String text = CharStreams.toString(i);
-				output.print(text);
+				return CharStreams.toString(i);
 			}
 		};
 	}
@@ -117,6 +128,11 @@ class EchoBuildin extends AbstractBuildin {
 			@Override
 			public void output(PrintStream output, String text) {
 				output.print(text);
+			}
+
+			@Override
+			public String getOutput() {
+				return EchoBuildin.this.getOutput();
 			}
 		};
 	}
