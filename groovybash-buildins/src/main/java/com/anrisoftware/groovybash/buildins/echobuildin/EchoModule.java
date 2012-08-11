@@ -26,7 +26,7 @@ import com.google.inject.AbstractModule;
  * Binds the echo build-in command.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 public class EchoModule extends AbstractModule {
 

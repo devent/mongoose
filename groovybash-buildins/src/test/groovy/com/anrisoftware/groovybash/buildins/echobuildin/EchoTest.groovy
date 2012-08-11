@@ -43,14 +43,14 @@ class EchoTest extends BuildinTestUtils {
 
 	@Test
 	void "echo no text no noewline"() {
-		createBuildin(EchoBuildin, [[nonewline: true]])()
+		createBuildin(EchoBuildin, [[noNewline: true]])()
 		assertStringContent output, ""
 	}
 
 	@Test
 	void "echo with text no newline"() {
 		def text = "Text"
-		createBuildin(EchoBuildin, [[nonewline: true], text])()
+		createBuildin(EchoBuildin, [[noNewline: true], text])()
 		assertStringContent output, "$text"
 	}
 

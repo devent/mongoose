@@ -33,15 +33,17 @@ import com.anrisoftware.groovybash.core.ReturnValue;
 import com.google.common.io.CharStreams;
 
 /**
- * The build-in command {@code echo [nonewline] arguments…}. Outputs the
- * {@code arguments…}, separated by spaces. If {@code nonewline} was specified
- * the output is not followed by a newline, otherwise a newline is following the
- * output.
+ * The build-in command {@code echo [noNewline: true|false] arguments…}. Outputs
+ * the {@code arguments…}, separated by spaces. If {@code noNewline} is set to
+ * {@code true} the output is not followed by a newline, otherwise a newline is
+ * following the output. {@code noNewline} is set to {@code false} as default.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 class EchoBuildin extends AbstractBuildin {
+
+	private static final String NONEWLINE = "noNewline";
 
 	private static final String SEPARATOR = " ";
 
@@ -89,7 +91,7 @@ class EchoBuildin extends AbstractBuildin {
 	@Override
 	public void setArguments(Map<?, ?> flags, Object[] args) {
 		super.setArguments(flags, args);
-		if (getFlag("nonewline", false)) {
+		if (getFlag(NONEWLINE, false)) {
 			output = createOutputNoNewline();
 		}
 		if (getFlag("in", null) != null && args.length == 0) {
