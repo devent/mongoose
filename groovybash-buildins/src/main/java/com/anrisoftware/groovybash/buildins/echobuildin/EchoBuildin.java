@@ -21,14 +21,16 @@ package com.anrisoftware.groovybash.buildins.echobuildin;
 import static org.apache.commons.lang3.StringUtils.join;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import com.anrisoftware.groovybash.buildins.AbstractBuildin;
 import com.anrisoftware.groovybash.buildins.StandardStreams;
-import com.anrisoftware.groovybash.buildins.returns.ReturnCodeFactory;
 import com.anrisoftware.groovybash.core.ReturnValue;
+import com.google.common.io.CharStreams;
 
 /**
  * The build-in command {@code echo [nonewline] arguments…}. Outputs the
@@ -41,11 +43,9 @@ import com.anrisoftware.groovybash.core.ReturnValue;
  */
 class EchoBuildin extends AbstractBuildin {
 
-	static final String SEPARATOR = " ";
+	private static final String SEPARATOR = " ";
 
-	private final ReturnCodeFactory returnCodeFactory;
-
-	private EchoBuildin buildin;
+	private OutputWorker output;
 
 	/**
 	 * Sets the standard input and output streams.
@@ -55,42 +55,68 @@ class EchoBuildin extends AbstractBuildin {
 	 *            and output streams.
 	 */
 	@Inject
-	EchoBuildin(StandardStreams streams, ReturnCodeFactory returnCodeFactory) {
+	EchoBuildin(StandardStreams streams) {
 		super(streams);
-		this.buildin = this;
-		this.returnCodeFactory = returnCodeFactory;
+		this.output = createOutput();
 	}
 
-	protected EchoBuildin(EchoBuildin parent) {
-		super(parent);
-		this.returnCodeFactory = parent.returnCodeFactory;
+	private OutputWorker createOutput() {
+		return new OutputWorker() {
+
+			@Override
+			public void output(PrintStream output, String text) {
+				output.println(text);
+			}
+		};
 	}
 
 	@Override
 	public ReturnValue call() throws Exception {
 		super.call();
-		buildin.outputText(buildin.getOutput());
+		output.output(getOutputStream(), getOutput());
+		getOutputStream().flush();
 		return returnCodeFactory.createSuccess();
 	}
 
-	void outputText(String text) throws IOException {
-		getOutputStream().println(text);
-		getOutputStream().flush();
-	}
-
-	String getOutput() throws IOException {
-		return join(getArgs(), SEPARATOR);
+	private String getOutput() {
+		Object[] args = getArgs();
+		if (args.length == 0) {
+			return "";
+		}
+		return join(args, SEPARATOR);
 	}
 
 	@Override
 	public void setArguments(Map<?, ?> flags, Object[] args) {
 		super.setArguments(flags, args);
 		if (getFlag("nonewline", false)) {
-			buildin = new EchoNoNewLine(this);
+			output = createOutputNoNewline();
 		}
 		if (getFlag("in", null) != null && args.length == 0) {
-			buildin = new FromInput(buildin);
+			output = createOutputFromInputStream();
 		}
+	}
+
+	private OutputWorker createOutputFromInputStream() {
+		return new OutputWorker() {
+
+			@Override
+			public void output(PrintStream output, String a) throws IOException {
+				InputStreamReader i = new InputStreamReader(getInputStream());
+				String text = CharStreams.toString(i);
+				output.print(text);
+			}
+		};
+	}
+
+	private OutputWorker createOutputNoNewline() {
+		return new OutputWorker() {
+
+			@Override
+			public void output(PrintStream output, String text) {
+				output.print(text);
+			}
+		};
 	}
 
 	/**
@@ -98,11 +124,6 @@ class EchoBuildin extends AbstractBuildin {
 	 */
 	@Override
 	public String getName() {
-		return "echo";
-	}
-
-	@Override
-	public String toString() {
 		return "echo";
 	}
 }
