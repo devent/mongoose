@@ -8,8 +8,6 @@ import java.io.ByteArrayOutputStream;
 
 import javax.inject.Inject;
 
-import net.xeoh.plugins.base.Option;
-
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineParser;

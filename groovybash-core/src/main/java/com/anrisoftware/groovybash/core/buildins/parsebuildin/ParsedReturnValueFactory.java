@@ -1,7 +1,5 @@
 package com.anrisoftware.groovybash.core.buildins.parsebuildin;
 
-import net.xeoh.plugins.base.Option;
-
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineParser;
 

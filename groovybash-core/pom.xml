@@ -27,10 +27,6 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.xeoh</groupId>
-			<artifactId>jspf-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.anrisoftware.propertiesutils</groupId>
 			<artifactId>propertiesutils</artifactId>
 		</dependency>
