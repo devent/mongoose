@@ -62,7 +62,7 @@ class CdTest extends BuildinTestUtils {
 	void "cd to directory read from input"() {
 		def dir = createTempDirectory()
 		inputBuffer = "$dir".toString().bytes
-		createBuildin(CdBuildin, [[in: inputStream]])()
+		createBuildin(CdBuildin, [[in: inputStream, fromIn: true]])()
 		assert environment.workingDirectory == dir
 	}
 
@@ -70,7 +70,7 @@ class CdTest extends BuildinTestUtils {
 	void "cd to directory read from input terminated with newline"() {
 		def dir = createTempDirectory()
 		inputBuffer = "$dir\n".toString().bytes
-		createBuildin(CdBuildin, [[in: inputStream]])()
+		createBuildin(CdBuildin, [[in: inputStream, fromIn: true]])()
 		assert environment.workingDirectory == dir
 	}
 }

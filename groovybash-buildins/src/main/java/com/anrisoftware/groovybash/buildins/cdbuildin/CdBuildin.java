@@ -18,11 +18,7 @@
  */
 package com.anrisoftware.groovybash.buildins.cdbuildin;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -74,9 +70,8 @@ class CdBuildin extends AbstractBuildin {
 
 	@Override
 	public ReturnValue call() throws Exception {
-		super.call();
 		worker.changeDirectory();
-		return returnCodeFactory.createSuccess();
+		return super.call();
 	}
 
 	ReturnValue callBuildin() throws Exception {
@@ -84,32 +79,10 @@ class CdBuildin extends AbstractBuildin {
 	}
 
 	@Override
-	public void setArguments(Map<?, ?> flags, Object[] args) throws Exception {
-		super.setArguments(flags, args);
-		if (args.length == 1) {
+	protected void setupArguments() throws Exception {
+		if (getArgs().length == 1) {
 			worker = createChangeDirectoryWorker();
 		}
-		if (getFlag("in", null) != null && args.length == 0) {
-			worker = createReadDirectoryFromInputStream();
-		}
-	}
-
-	private CdWorker createReadDirectoryFromInputStream() {
-		return new CdWorker() {
-
-			@Override
-			public void changeDirectory() throws IOException {
-				String name = readDirectory();
-				File directory = new File(name);
-				getEnvironment().setWorkingDirectory(directory);
-			}
-		};
-	}
-
-	private String readDirectory() throws IOException {
-		BufferedReader reader;
-		reader = new BufferedReader(new InputStreamReader(getInputStream()));
-		return reader.readLine();
 	}
 
 	private CdWorker createChangeDirectoryWorker() {
@@ -136,10 +109,5 @@ class CdBuildin extends AbstractBuildin {
 	@Override
 	public String getName() {
 		return "cd";
-	}
-
-	@Override
-	public String toString() {
-		return getName();
 	}
 }
