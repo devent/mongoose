@@ -92,4 +92,19 @@ class RunTest extends BuildinTestUtils {
 		assertStringContent output, "$tmp\n"
 	}
 
+	@Test
+	void "run build-in redirect error stream to output stream"() {
+		createBuildin(RunBuildin, [[redirectErrorStream: true], 'bash -xc "echo Text"'])()
+		assertStringContent output, """+ echo Text
+Text
+"""
+	}
+	
+	@Test
+	void "run build-in output and error stream"() {
+		createBuildin(RunBuildin, ['bash -xc "echo Text"'])()
+		assertStringContent output, "Text\n"
+		assertStringContent error, "+ echo Text\n"
+	}
+
 }

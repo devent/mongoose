@@ -23,6 +23,8 @@ import static org.apache.commons.lang3.StringUtils.split;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import com.anrisoftware.groovybash.buildins.StandardStreams;
 import com.anrisoftware.groovybash.buildins.returns.ReturnCodeFactory;
 import com.anrisoftware.groovybash.core.Environment;
 import com.anrisoftware.groovybash.core.ReturnValue;
+import com.csvreader.CsvReader;
 
 /**
  * Executes the specified command in a separate process with the specified
@@ -109,8 +112,15 @@ class RunBuildin extends AbstractBuildin {
 	}
 
 	private List<String> getCommand(Object[] args) {
-		String[] commandArgs = split(args[0].toString(), " ");
-		return Arrays.asList(commandArgs);
+		Reader reader = new StringReader(args[0].toString());
+		CsvReader csv = new CsvReader(reader, ' ');
+		try {
+			csv.readRecord();
+			return Arrays.asList(csv.getValues());
+		} catch (IOException e) {
+			throw new IllegalStateException(
+					"Reading from string should always be successfull.", e);
+		}
 	}
 
 	private Map<String, String> getEnvironment(Object[] args) {
