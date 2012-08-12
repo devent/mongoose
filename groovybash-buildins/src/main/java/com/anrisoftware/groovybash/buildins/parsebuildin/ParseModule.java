@@ -18,6 +18,7 @@
  */
 package com.anrisoftware.groovybash.buildins.parsebuildin;
 
+import com.anrisoftware.groovybash.buildins.returns.ReturnsModule;
 import com.anrisoftware.groovybash.core.Buildin;
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -33,6 +34,7 @@ public class ParseModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(Buildin.class).to(ParseBuildin.class);
+		install(new ReturnsModule());
 		install(new FactoryModuleBuilder().implement(ParsedReturnValue.class,
 				ParsedReturnValue.class).build(ParsedReturnValueFactory.class));
 	}
