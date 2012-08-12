@@ -26,7 +26,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * Binds the parse build-in command.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 public class ParseModule extends AbstractModule {
 

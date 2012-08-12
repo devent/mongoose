@@ -33,15 +33,15 @@ import com.anrisoftware.groovybash.buildins.StandardStreams;
 import com.anrisoftware.groovybash.core.ReturnValue;
 
 /**
- * The build-in command {@code parse obj [args]}.
+ * The build-in command {@code parse obj [args…]}.
  * <p>
- * Parse the specified command line arguments {@code args}. If no arguments are
+ * Parse the specified command line arguments {@code args…}. If no arguments are
  * specified it will use the command line arguments of the script, stored in the
  * {@code ARGS} build-in variable. {@code obj} needs to be an instance of a
  * class annotated with {@link Option} or {@link Argument}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 class ParseBuildin extends AbstractBuildin {
 
