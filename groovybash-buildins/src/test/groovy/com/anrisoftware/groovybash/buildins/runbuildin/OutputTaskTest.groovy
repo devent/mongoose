@@ -7,8 +7,6 @@ import org.perfidix.Benchmark
 import org.perfidix.annotation.Bench
 import org.perfidix.ouput.TabularSummaryOutput
 
-import com.anrisoftware.groovybash.buildins.runbuildin.OutputTask;
-
 /**
  * Benchmark the output of a process to the standard output stream.
  * 
@@ -65,7 +63,7 @@ class OutputTaskTest {
 		benchmark.add(this)
 		def result = benchmark.run()
 		new TabularSummaryOutput(new PrintStream(output)).visitBenchmark(result)
-		log.info "{}\n", output.toString()
+		log.info "\n{}", output.toString()
 	}
 
 	@Test
