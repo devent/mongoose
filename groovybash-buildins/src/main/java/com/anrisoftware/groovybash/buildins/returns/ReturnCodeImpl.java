@@ -110,6 +110,9 @@ class ReturnCodeImpl extends Number implements ReturnCode {
 		if (obj instanceof Boolean) {
 			return getAsBoolean() == (Boolean) obj;
 		}
+		if (obj instanceof Number) {
+			return getAsNumber().equals(obj);
+		}
 		if (!(obj instanceof ReturnCode)) {
 			return false;
 		}

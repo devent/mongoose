@@ -46,6 +46,12 @@ class RunTest extends BuildinTestUtils {
 	}
 
 	@Test
+	void "run build-in return code from command"() {
+		def result = createBuildin(RunBuildin, ['bash -c "exit 1"'])()
+		assert result == 1
+	}
+
+	@Test
 	void "run build-in with custom environment passed as string"() {
 		def tmp = createTempFile 'echo $ENV_1'
 		createBuildin(RunBuildin, ["bash $tmp", "ENV_1=foo"])()
