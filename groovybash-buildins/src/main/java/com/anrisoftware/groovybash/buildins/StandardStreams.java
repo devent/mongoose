@@ -25,20 +25,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
-import com.anrisoftware.groovybash.core.Buildin;
-
 /**
- * Bundles the standart input and outputs of a command.
+ * Bundles the standard input and outputs of a command.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 public class StandardStreams {
-
-	public static StandardStreams copy(Buildin buildin) {
-		return new StandardStreams(buildin.getInputStream(),
-				buildin.getOutputStream(), buildin.getErrorStream());
-	}
 
 	InputStream inputStream;
 

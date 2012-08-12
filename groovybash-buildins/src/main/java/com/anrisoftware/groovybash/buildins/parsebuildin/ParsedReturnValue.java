@@ -23,6 +23,7 @@ import groovy.lang.Closure;
 import groovy.lang.GroovyObjectSupport;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import javax.inject.Inject;
 
@@ -31,7 +32,6 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ExampleMode;
 
-import com.anrisoftware.groovybash.buildins.StandardStreams;
 import com.anrisoftware.groovybash.core.ReturnValue;
 import com.google.inject.assistedinject.Assisted;
 
@@ -47,7 +47,7 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 
 	private final Object bean;
 
-	private final StandardStreams streams;
+	private final PrintStream output;
 
 	private final boolean valid;
 
@@ -56,10 +56,8 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 * the Java bean class and whether or not the arguments are parsed
 	 * correctly.
 	 * 
-	 * @param streams
-	 *            the {@link StandardStreams} containing the standard input,
-	 *            output and error streams. Needed to print the usage and
-	 *            examples to.
+	 * @param output
+	 *            the {@link PrintStreams} to print the usage and examples to.
 	 * 
 	 * @param bean
 	 *            the Java bean class annotated with {@link Option} and
@@ -73,10 +71,10 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 *            contains the valid parameter.
 	 */
 	@Inject
-	public ParsedReturnValue(@Assisted StandardStreams streams,
+	public ParsedReturnValue(@Assisted PrintStream output,
 			@Assisted CmdLineParser parser, @Assisted Object bean,
 			@Assisted boolean valid) {
-		this.streams = streams;
+		this.output = output;
 		this.parser = parser;
 		this.bean = bean;
 		this.valid = valid;
@@ -124,7 +122,7 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 */
 	public void printExample() {
 		String example = parser.printExample(ExampleMode.ALL);
-		streams.getOutputStream().print(example);
+		output.print(example);
 	}
 
 	/**
@@ -132,7 +130,7 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 * in the standard output.
 	 */
 	public void printSingleLineUsage() {
-		parser.printSingleLineUsage(streams.getOutputStream());
+		parser.printSingleLineUsage(output);
 	}
 
 	/**
@@ -140,7 +138,7 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 * output.
 	 */
 	public void printUsage() {
-		parser.printUsage(streams.getOutputStream());
+		parser.printUsage(output);
 	}
 
 	/**

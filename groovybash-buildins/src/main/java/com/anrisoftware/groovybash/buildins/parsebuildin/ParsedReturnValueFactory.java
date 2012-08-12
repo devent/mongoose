@@ -18,10 +18,10 @@
  */
 package com.anrisoftware.groovybash.buildins.parsebuildin;
 
+import java.io.PrintStream;
+
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineParser;
-
-import com.anrisoftware.groovybash.buildins.StandardStreams;
 
 /**
  * Factory to create a new return value for parsed command line arguments.
@@ -34,10 +34,8 @@ interface ParsedReturnValueFactory {
 	/**
 	 * Creates a new return value for parsed command line arguments.
 	 * 
-	 * @param streams
-	 *            the {@link StandardStreams} containing the standard input,
-	 *            output and error streams. Needed to print the usage and
-	 *            examples to.
+	 * @param output
+	 *            the {@link PrintStreams} to print the usage and examples to.
 	 * 
 	 * @param bean
 	 *            the Java bean class annotated with {@link Option} and
@@ -52,6 +50,6 @@ interface ParsedReturnValueFactory {
 	 * 
 	 * @return the {@link ParsedReturnValue}.
 	 */
-	ParsedReturnValue create(StandardStreams streams, CmdLineParser parser,
+	ParsedReturnValue create(PrintStream output, CmdLineParser parser,
 			Object bean, boolean valid);
 }

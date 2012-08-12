@@ -51,7 +51,7 @@ class ParseBuildin extends AbstractBuildin {
 
 	private String[] arguments;
 
-	private final ParsedReturnValueFactory returnValueFactory;
+	private final ParsedReturnValueFactory valueFactory;
 
 	private Object bean;
 
@@ -67,7 +67,7 @@ class ParseBuildin extends AbstractBuildin {
 			ParsedReturnValueFactory returnValueFactory) {
 		super(streams);
 		this.log = logger;
-		this.returnValueFactory = returnValueFactory;
+		this.valueFactory = returnValueFactory;
 	}
 
 	@Override
@@ -83,8 +83,7 @@ class ParseBuildin extends AbstractBuildin {
 	}
 
 	private ParsedReturnValue createReturnValue(boolean valid) {
-		return returnValueFactory.create(StandardStreams.copy(this), parser,
-				bean, valid);
+		return valueFactory.create(getOutputStream(), parser, bean, valid);
 	}
 
 	@Override
