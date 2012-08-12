@@ -27,13 +27,15 @@ import com.anrisoftware.groovybash.buildins.StandardStreams;
 import com.anrisoftware.groovybash.core.ReturnValue;
 
 /**
- * The build-in command {@code pwd}. Prints the absolute path of the current
+ * The build-in command {@code pwd}. Returns the absolute path of the current
  * working directory.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 0.1
  */
 class PwdBuildin extends AbstractBuildin {
+
+	private final PwdValueFactory valueFactory;
 
 	/**
 	 * Sets the standard input and output streams.
@@ -43,16 +45,19 @@ class PwdBuildin extends AbstractBuildin {
 	 *            and output streams.
 	 */
 	@Inject
-	PwdBuildin(StandardStreams streams) {
+	PwdBuildin(StandardStreams streams, PwdValueFactory valueFactory) {
 		super(streams);
+		this.valueFactory = valueFactory;
 	}
 
+	/**
+	 * Returns the current working directory.
+	 */
 	@Override
 	public ReturnValue call() throws Exception {
 		super.call();
 		File pwd = getEnvironment().getWorkingDirectory();
-		getOutputStream().println(pwd.getAbsolutePath());
-		return returnCodeFactory.createSuccess();
+		return valueFactory.create(pwd);
 	}
 
 	/**

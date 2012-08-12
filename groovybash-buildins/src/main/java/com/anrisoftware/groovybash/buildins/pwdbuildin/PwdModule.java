@@ -18,8 +18,10 @@
  */
 package com.anrisoftware.groovybash.buildins.pwdbuildin;
 
+import com.anrisoftware.groovybash.buildins.returns.ReturnsModule;
 import com.anrisoftware.groovybash.core.Buildin;
 import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * Binds the pwd build-in command.
@@ -32,5 +34,8 @@ public class PwdModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(Buildin.class).to(PwdBuildin.class);
+		install(new ReturnsModule());
+		install(new FactoryModuleBuilder().implement(PwdReturnValue.class,
+				PwdReturnValue.class).build(PwdValueFactory.class));
 	}
 }
