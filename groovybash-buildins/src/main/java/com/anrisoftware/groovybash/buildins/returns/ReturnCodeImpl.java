@@ -28,7 +28,7 @@ import com.google.inject.assistedinject.AssistedInject;
  * Sets the return code as a number.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 @SuppressWarnings("serial")
 class ReturnCodeImpl extends Number implements ReturnCode {

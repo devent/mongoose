@@ -4,12 +4,19 @@ import static java.lang.Thread.currentThread;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 
 import javax.inject.Inject;
 
 import com.google.inject.assistedinject.Assisted;
 
+/**
+ * Read data from an input and write the data to an output.
+ * 
+ * @author Erwin Mueller, erwin.mueller@deventm.org
+ * @since 0.1
+ */
 class OutputTask implements Runnable {
 
 	private final BufferedInputStream processOutput;
@@ -20,13 +27,25 @@ class OutputTask implements Runnable {
 
 	private final int bufferSize;
 
+	/**
+	 * Sets the input and output streams.
+	 * 
+	 * @param input
+	 *            the {@link InputStream} from which we read data.
+	 * 
+	 * @param output
+	 *            the {@link PrintStream} to which we write the read data.
+	 */
 	@Inject
-	OutputTask(@Assisted Process process, @Assisted PrintStream output) {
+	OutputTask(@Assisted InputStream input, @Assisted PrintStream output) {
 		this.output = output;
 		this.bufferSize = 1024;
-		this.processOutput = new BufferedInputStream(process.getInputStream());
+		this.processOutput = new BufferedInputStream(input);
 	}
 
+	/**
+	 * Start reading data from the input and write the data to the output.
+	 */
 	@Override
 	public void run() {
 		try {
@@ -47,6 +66,12 @@ class OutputTask implements Runnable {
 		}
 	}
 
+	/**
+	 * Returns the exception thrown.
+	 * 
+	 * @return the {@link Exception} thrown while reading or writing the data or
+	 *         {@code null} if no exception was thrown.
+	 */
 	public Exception getException() {
 		return exception;
 	}

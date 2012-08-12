@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import com.anrisoftware.groovybash.buildins.AbstractBuildin;
 import com.anrisoftware.groovybash.buildins.StandardStreams;
 import com.anrisoftware.groovybash.buildins.returns.ReturnCodeFactory;
+import com.anrisoftware.groovybash.core.Environment;
 import com.anrisoftware.groovybash.core.ReturnValue;
 
 /**
@@ -40,9 +41,11 @@ import com.anrisoftware.groovybash.core.ReturnValue;
  * environment and working directory.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 class RunBuildin extends AbstractBuildin {
+
+	private static final String REDIRECT_ERROR_STREAM_FLAG = "redirectErrorStream";
 
 	private List<String> command;
 
@@ -53,8 +56,6 @@ class RunBuildin extends AbstractBuildin {
 	private boolean redirectErrorStream;
 
 	private final OutputTaskFactory outputTaskFactory;
-
-	private final ErrorTaskFactory errorTaskFactory;
 
 	private final ReturnCodeFactory returnCodeFactory;
 
@@ -67,22 +68,21 @@ class RunBuildin extends AbstractBuildin {
 	 */
 	@Inject
 	RunBuildin(StandardStreams streams, ReturnCodeFactory returnCodeFactory,
-			OutputTaskFactory outputTaskFactory,
-			ErrorTaskFactory errorTaskFactory) {
+			OutputTaskFactory outputTaskFactory) {
 		super(streams);
 		this.returnCodeFactory = returnCodeFactory;
 		this.outputTaskFactory = outputTaskFactory;
-		this.errorTaskFactory = errorTaskFactory;
 	}
 
 	@Override
 	public ReturnValue call() throws Exception {
 		super.call();
 		Process process = startProcess();
-		Future<?> outputTask = getEnvironment().submitTask(
-				outputTaskFactory.create(process, getOutputStream()));
-		Future<?> errorTask = getEnvironment().submitTask(
-				errorTaskFactory.create(process, getErrorStream()));
+		Environment env = getEnvironment();
+		Future<?> outputTask = env.submitTask(outputTaskFactory.create(
+				process.getInputStream(), getOutputStream()));
+		Future<?> errorTask = env.submitTask(outputTaskFactory.create(
+				process.getErrorStream(), getErrorStream()));
 		outputTask.get();
 		errorTask.get();
 		int ret = process.waitFor();
@@ -105,7 +105,7 @@ class RunBuildin extends AbstractBuildin {
 		command = getCommand(args);
 		environment = getEnvironment(args);
 		workingDirectory = getWorkingDir(args);
-		redirectErrorStream = getFlag("redirectErrorStream", false);
+		redirectErrorStream = getFlag(REDIRECT_ERROR_STREAM_FLAG, false);
 	}
 
 	private List<String> getCommand(Object[] args) {

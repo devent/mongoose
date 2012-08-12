@@ -37,7 +37,5 @@ public class RunModule extends AbstractModule {
 		bind(Buildin.class).to(RunBuildin.class);
 		install(new FactoryModuleBuilder().implement(OutputTask.class,
 				OutputTask.class).build(OutputTaskFactory.class));
-		install(new FactoryModuleBuilder().implement(ErrorTask.class,
-				ErrorTask.class).build(ErrorTaskFactory.class));
 	}
 }
