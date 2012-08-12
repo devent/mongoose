@@ -84,8 +84,6 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 * Returns an example of the command line arguments.
 	 * 
 	 * @return an example of the command line arguments.
-	 * 
-	 * @since 0.2
 	 */
 	public String getExample() {
 		return parser.printExample(ExampleMode.ALL);
@@ -95,8 +93,6 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 * Returns an usage example in a single line of the command line arguments.
 	 * 
 	 * @return an example of the usage in a single line.
-	 * 
-	 * @since 0.2
 	 */
 	public String getSingleLineUsage() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -108,8 +104,6 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 * Returns an usage example of the command line arguments.
 	 * 
 	 * @return an example of the usage.
-	 * 
-	 * @since 0.2
 	 */
 	public String getUsage() {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
