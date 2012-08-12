@@ -22,7 +22,7 @@ package com.anrisoftware.groovybash.buildins.listfilesbuildin;
  * Factory to create worker that can list files with a wildcard.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.2
+ * @since 0.1
  */
 interface WildcardListFactory {
 

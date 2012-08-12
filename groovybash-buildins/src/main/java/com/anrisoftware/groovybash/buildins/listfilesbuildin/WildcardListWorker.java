@@ -34,7 +34,7 @@ import com.google.inject.assistedinject.Assisted;
  * List files with a wildcard.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 class WildcardListWorker implements ListWorker {
 

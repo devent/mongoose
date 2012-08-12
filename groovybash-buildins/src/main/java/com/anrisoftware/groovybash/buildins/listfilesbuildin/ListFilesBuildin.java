@@ -31,13 +31,13 @@ import com.anrisoftware.groovybash.buildins.StandardStreams;
 import com.anrisoftware.groovybash.core.ReturnValue;
 
 /**
- * The build-in command {@code listFiles NAME...}. Search all files in the
- * current working directory with the given file names {@code NAME...}. The file
+ * The build-in command {@code listFiles [NAME…]}. Search all files in the
+ * current working directory with the given file names {@code NAME…}. The file
  * names can contain wildcats {@code *?}. If no names are specified, all files
  * are returned.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.2
+ * @since 0.1
  */
 class ListFilesBuildin extends AbstractBuildin {
 

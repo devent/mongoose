@@ -25,7 +25,7 @@ import java.util.Collection;
  * Factory to create a new return value for found files.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.2
+ * @since 0.1
  */
 interface FilesReturnValueFactory {
 

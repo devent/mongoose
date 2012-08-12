@@ -26,7 +26,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * Binds the {@code listFiles} build-in command.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.2
+ * @since 0.1
  */
 public class ListFilesModule extends AbstractModule {
 

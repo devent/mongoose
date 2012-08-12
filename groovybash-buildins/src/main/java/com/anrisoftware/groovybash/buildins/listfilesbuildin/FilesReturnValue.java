@@ -34,7 +34,7 @@ import com.google.inject.assistedinject.Assisted;
  * Returns the found files.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.2
+ * @since 0.1
  */
 class FilesReturnValue extends GroovyObjectSupport implements ReturnValue {
 
