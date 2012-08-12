@@ -18,6 +18,7 @@
  */
 package com.anrisoftware.groovybash.buildins.listfilesbuildin;
 
+import com.anrisoftware.groovybash.buildins.returns.ReturnsModule;
 import com.anrisoftware.groovybash.core.Buildin;
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -33,6 +34,7 @@ public class ListFilesModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(Buildin.class).to(ListFilesBuildin.class);
+		install(new ReturnsModule());
 		install(new FactoryModuleBuilder().implement(FilesReturnValue.class,
 				FilesReturnValue.class).build(FilesReturnValueFactory.class));
 		install(new FactoryModuleBuilder().implement(ListWorker.class,
