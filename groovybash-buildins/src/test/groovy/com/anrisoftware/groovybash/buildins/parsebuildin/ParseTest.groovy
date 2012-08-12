@@ -95,6 +95,12 @@ class ParseTest extends BuildinTestUtils {
 	}
 
 	@Test
+	void "parse command line arguments with valid arguments so result equals true"() {
+		def result = createBuildin(ParseBuildin, [new Parameter(), validArgs])()
+		assert result == true
+	}
+
+	@Test
 	void "parse command line arguments with valid arguments access not defined parameter"() {
 		def result = createBuildin(ParseBuildin, [new Parameter(), validArgs])()
 		shouldFailWith MissingFieldException, {

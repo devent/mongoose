@@ -27,6 +27,7 @@ import java.io.PrintStream;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineParser;
@@ -183,4 +184,29 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 		return InvokerHelper.getProperty(bean, name);
 	}
 
+	/**
+	 * Equals only if the object is a boolean and the valid equals to the
+	 * expected boolean value, or if of the same class and valid and the bean
+	 * are equals.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof Boolean) {
+			Boolean expecting = (Boolean) obj;
+			return valid == expecting;
+		}
+		if (obj.getClass() != getClass()) {
+			return false;
+		}
+		ParsedReturnValue rhs = (ParsedReturnValue) obj;
+		return new EqualsBuilder().append(valid, rhs.valid)
+				.append(bean, rhs.bean).isEquals();
+
+	}
 }
