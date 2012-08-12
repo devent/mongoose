@@ -20,7 +20,10 @@ package com.anrisoftware.groovybash.buildins;
 
 import static org.apache.commons.lang3.StringUtils.join;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Map;
 
@@ -32,6 +35,7 @@ import com.anrisoftware.groovybash.buildins.returns.ReturnCodeFactory;
 import com.anrisoftware.groovybash.core.Buildin;
 import com.anrisoftware.groovybash.core.Environment;
 import com.anrisoftware.groovybash.core.ReturnValue;
+import com.anrisoftware.groovybash.core.exceptions.CommandException;
 import com.google.common.collect.Maps;
 
 /**
@@ -42,6 +46,14 @@ import com.google.common.collect.Maps;
  * @since 1.0
  */
 public abstract class AbstractBuildin implements Buildin {
+
+	private static final String STANDARD_ERROR_FLAG = "err";
+
+	private static final String STANDARD_OUTPUT_FLAG = "out";
+
+	private static final String STANDARD_INPUT_FLAG = "in";
+
+	private static final String FROM_INPUT_FLAG = "fromIn";
 
 	private AbstractBuildinLogger log;
 
@@ -89,7 +101,7 @@ public abstract class AbstractBuildin implements Buildin {
 	 *            the {@link AbstractBuildinLogger}.
 	 */
 	@Inject
-	public void setAbstractBuildinLogger(AbstractBuildinLogger logger) {
+	public final void setAbstractBuildinLogger(AbstractBuildinLogger logger) {
 		this.log = logger;
 	}
 
@@ -100,7 +112,7 @@ public abstract class AbstractBuildin implements Buildin {
 	 *            the {@link ReturnCodeFactory}.
 	 */
 	@Inject
-	public void setReturnCodeFactory(ReturnCodeFactory returnCodeFactory) {
+	public final void setReturnCodeFactory(ReturnCodeFactory returnCodeFactory) {
 		this.returnCodeFactory = returnCodeFactory;
 	}
 
@@ -115,7 +127,7 @@ public abstract class AbstractBuildin implements Buildin {
 	}
 
 	@Override
-	public void setArguments(Object[] args) {
+	public final void setArguments(Object[] args) throws Exception {
 		if (args.length == 0) {
 			return;
 		}
@@ -132,9 +144,71 @@ public abstract class AbstractBuildin implements Buildin {
 	}
 
 	@Override
-	public void setArguments(Map<?, ?> flags, Object[] args) {
+	public final void setArguments(Map<?, ?> flags, Object[] args)
+			throws Exception {
 		this.flags = flags;
 		this.args = args;
+		setupInput();
+		setupOutput();
+		setupError();
+		setupFromInput(args);
+		setupArguments();
+	}
+
+	/**
+	 * Setup the build-in command after the default arguments and flags are set.
+	 * 
+	 * @throws Exception
+	 *             if some errors are encountered.
+	 * 
+	 * @see #getArgs()
+	 * @see #getFlag(Object, Object)
+	 */
+	protected void setupArguments() throws Exception {
+	}
+
+	private void setupInput() throws Exception {
+		Object flag = getFlag(STANDARD_INPUT_FLAG, null);
+		if (flag == null) {
+			return;
+		}
+		streams.setInputStream(flag);
+		log.inputStreamSet(this, flag);
+	}
+
+	private void setupOutput() throws Exception {
+		Object flag = getFlag(STANDARD_OUTPUT_FLAG, null);
+		if (flag == null) {
+			return;
+		}
+		streams.setOutputStream(flag);
+		log.outputStreamSet(this, flag);
+	}
+
+	private void setupError() throws Exception {
+		Object flag = getFlag(STANDARD_ERROR_FLAG, null);
+		if (flag == null) {
+			return;
+		}
+		streams.setErrorStream(flag);
+		log.outputStreamSet(this, flag);
+	}
+
+	private void setupFromInput(Object[] args) throws CommandException {
+		if (getFlag(FROM_INPUT_FLAG, false)) {
+			String string = readLineFromInput();
+			this.args = ArrayUtils.add(args, 0, string);
+		}
+	}
+
+	private String readLineFromInput() throws CommandException {
+		BufferedReader reader;
+		reader = new BufferedReader(new InputStreamReader(getInputStream()));
+		try {
+			return reader.readLine();
+		} catch (IOException e) {
+			throw log.errorReadLineFromInput(this, e);
+		}
 	}
 
 	/**
@@ -195,29 +269,14 @@ public abstract class AbstractBuildin implements Buildin {
 		return streams.errorStream;
 	}
 
+	/**
+	 * Do nothing.
+	 * 
+	 * @return always returns success return code.
+	 */
 	@Override
 	public ReturnValue call() throws Exception {
-		setupInput();
-		setupOutput();
 		return returnCodeFactory.createSuccess();
-	}
-
-	private void setupInput() throws Exception {
-		Object flag = getFlag("in", null);
-		if (flag == null) {
-			return;
-		}
-		streams.setInputStream(flag);
-		log.inputStreamSet(this, flag);
-	}
-
-	private void setupOutput() throws Exception {
-		Object flag = getFlag("out", null);
-		if (flag == null) {
-			return;
-		}
-		streams.setOutputStream(flag);
-		log.outputStreamSet(this, flag);
 	}
 
 	@Override

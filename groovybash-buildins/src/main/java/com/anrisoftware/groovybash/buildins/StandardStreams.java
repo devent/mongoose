@@ -194,4 +194,48 @@ public class StandardStreams {
 		this.errorStream = errorStream;
 	}
 
+	/**
+	 * Creates an input stream from different targets and uses it as the
+	 * standard error.
+	 * 
+	 * @param obj
+	 *            the target {@link Object}.
+	 * 
+	 * @throws Exception
+	 *             the there was an error opening or writing to the target.
+	 * 
+	 */
+	public void setErrorStream(Object obj) throws Exception {
+		if (obj instanceof File) {
+			setErrorStream((File) obj);
+		} else if (obj instanceof OutputStream) {
+			setErrorStream((OutputStream) obj);
+		} else {
+			setErrorStream(new File(obj.toString()));
+		}
+	}
+
+	/**
+	 * The file is used for the standard Error.
+	 * 
+	 * @param file
+	 *            the {@link File} to write to.
+	 * 
+	 * @throws FileNotFoundException
+	 *             if the file was not found.
+	 */
+	public void setErrorStream(File file) throws FileNotFoundException {
+		errorStream = new PrintStream(file);
+	}
+
+	/**
+	 * The stream is used for the standard Error.
+	 * 
+	 * @param stream
+	 *            the {@link OutputStream} to write to.
+	 */
+	public void setErrorStream(OutputStream stream) {
+		outputStream = new PrintStream(stream);
+	}
+
 }

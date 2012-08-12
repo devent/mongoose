@@ -106,5 +106,12 @@ Text
 		assertStringContent output, "Text\n"
 		assertStringContent error, "+ echo Text\n"
 	}
+	
+	@Test
+	void "read command from input"() {
+		inputBuffer = 'bash -c "echo Text"'.toString().bytes
+		createBuildin(RunBuildin, [[in: inputStream, fromIn: true]])()
+		assertStringContent output, "Text\n"
+	}
 
 }

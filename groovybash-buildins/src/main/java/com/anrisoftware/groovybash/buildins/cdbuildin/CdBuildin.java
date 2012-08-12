@@ -84,7 +84,7 @@ class CdBuildin extends AbstractBuildin {
 	}
 
 	@Override
-	public void setArguments(Map<?, ?> flags, Object[] args) {
+	public void setArguments(Map<?, ?> flags, Object[] args) throws Exception {
 		super.setArguments(flags, args);
 		if (args.length == 1) {
 			worker = createChangeDirectoryWorker();

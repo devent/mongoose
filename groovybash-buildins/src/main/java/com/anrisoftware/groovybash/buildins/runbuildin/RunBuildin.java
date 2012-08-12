@@ -50,6 +50,8 @@ class RunBuildin extends AbstractBuildin {
 
 	private static final String REDIRECT_ERROR_STREAM_FLAG = "redirectErrorStream";
 
+	private final RunBuildinLogger log;
+
 	private List<String> command;
 
 	private Map<String, String> environment;
@@ -70,16 +72,17 @@ class RunBuildin extends AbstractBuildin {
 	 *            and output streams.
 	 */
 	@Inject
-	RunBuildin(StandardStreams streams, ReturnCodeFactory returnCodeFactory,
+	RunBuildin(StandardStreams streams, RunBuildinLogger logger,
+			ReturnCodeFactory returnCodeFactory,
 			OutputTaskFactory outputTaskFactory) {
 		super(streams);
+		this.log = logger;
 		this.returnCodeFactory = returnCodeFactory;
 		this.outputTaskFactory = outputTaskFactory;
 	}
 
 	@Override
 	public ReturnValue call() throws Exception {
-		super.call();
 		Process process = startProcess();
 		Environment env = getEnvironment();
 		Future<?> outputTask = env.submitTask(outputTaskFactory.create(
@@ -98,13 +101,15 @@ class RunBuildin extends AbstractBuildin {
 		parentEnvironment.putAll(environment);
 		builder.directory(workingDirectory);
 		builder.redirectErrorStream(redirectErrorStream);
+		log.startingCommand(this);
 		Process process = builder.start();
+		log.commandFinished(this);
 		return process;
 	}
 
 	@Override
-	public void setArguments(Map<?, ?> flags, Object[] args) {
-		super.setArguments(flags, args);
+	protected void setupArguments() throws Exception {
+		Object[] args = getArgs();
 		command = getCommand(args);
 		environment = getEnvironment(args);
 		workingDirectory = getWorkingDir(args);
@@ -112,14 +117,14 @@ class RunBuildin extends AbstractBuildin {
 	}
 
 	private List<String> getCommand(Object[] args) {
+		log.checkCommandArgumentIndex(args);
 		Reader reader = new StringReader(args[0].toString());
 		CsvReader csv = new CsvReader(reader, ' ');
 		try {
 			csv.readRecord();
 			return Arrays.asList(csv.getValues());
 		} catch (IOException e) {
-			throw new IllegalStateException(
-					"Reading from string should always be successfull.", e);
+			throw log.errorReadCommandString(this, e);
 		}
 	}
 
