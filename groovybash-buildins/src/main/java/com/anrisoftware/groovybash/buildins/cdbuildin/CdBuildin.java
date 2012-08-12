@@ -1,13 +1,16 @@
 package com.anrisoftware.groovybash.buildins.cdbuildin;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import com.anrisoftware.groovybash.buildins.AbstractBuildin;
 import com.anrisoftware.groovybash.buildins.StandardStreams;
-import com.anrisoftware.groovybash.buildins.returns.ReturnCodeFactory;
+import com.anrisoftware.groovybash.core.Environment;
 import com.anrisoftware.groovybash.core.ReturnValue;
 
 /**
@@ -20,9 +23,7 @@ import com.anrisoftware.groovybash.core.ReturnValue;
  */
 class CdBuildin extends AbstractBuildin {
 
-	private final ReturnCodeFactory returnCodeFactory;
-
-	private CdBuildin buildin;
+	private CdWorker worker;
 
 	/**
 	 * Sets the standard input and output streams.
@@ -32,24 +33,32 @@ class CdBuildin extends AbstractBuildin {
 	 *            and output streams.
 	 */
 	@Inject
-	CdBuildin(StandardStreams streams, ReturnCodeFactory returnCodeFactory) {
+	CdBuildin(StandardStreams streams) {
 		super(streams);
-		this.buildin = this;
-		this.returnCodeFactory = returnCodeFactory;
 	}
 
-	protected CdBuildin(CdBuildin parent) {
-		super(parent);
-		this.returnCodeFactory = parent.returnCodeFactory;
+	@Override
+	public void setEnvironment(Environment environment) {
+		super.setEnvironment(environment);
+		this.worker = createChangeToUserHomeWorker();
+	}
+
+	private CdWorker createChangeToUserHomeWorker() {
+		return new CdWorker() {
+
+			@Override
+			public void changeDirectory() {
+				Environment e = getEnvironment();
+				e.setWorkingDirectory(e.getUserHome());
+			}
+		};
 	}
 
 	@Override
 	public ReturnValue call() throws Exception {
 		super.call();
-		if (getArgs().length == 0) {
-			buildin = new UserHomeCd(this);
-		}
-		return buildin.callBuildin();
+		worker.changeDirectory();
+		return returnCodeFactory.createSuccess();
 	}
 
 	ReturnValue callBuildin() throws Exception {
@@ -60,8 +69,47 @@ class CdBuildin extends AbstractBuildin {
 	public void setArguments(Map<?, ?> flags, Object[] args) {
 		super.setArguments(flags, args);
 		if (args.length == 1) {
-			buildin = new FileCd(this, new File(args[0].toString()));
+			worker = createChangeDirectoryWorker();
 		}
+		if (getFlag("in", null) != null && args.length == 0) {
+			worker = createReadDirectoryFromInputStream();
+		}
+	}
+
+	private CdWorker createReadDirectoryFromInputStream() {
+		return new CdWorker() {
+
+			@Override
+			public void changeDirectory() throws IOException {
+				String name = readDirectory();
+				File directory = new File(name);
+				getEnvironment().setWorkingDirectory(directory);
+			}
+		};
+	}
+
+	private String readDirectory() throws IOException {
+		BufferedReader reader;
+		reader = new BufferedReader(new InputStreamReader(getInputStream()));
+		return reader.readLine();
+	}
+
+	private CdWorker createChangeDirectoryWorker() {
+		return new CdWorker() {
+
+			@Override
+			public void changeDirectory() {
+				File directory = asFile(getArgs()[0]);
+				getEnvironment().setWorkingDirectory(directory);
+			}
+		};
+	}
+
+	private File asFile(Object object) {
+		if (object instanceof File) {
+			return (File) object;
+		}
+		return new File(object.toString());
 	}
 
 	/**
