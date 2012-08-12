@@ -19,6 +19,7 @@
 package com.anrisoftware.groovybash.buildins.parsebuildin;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.StringUtils.join;
 
 import org.kohsuke.args4j.CmdLineException;
 
@@ -45,7 +46,7 @@ class ParseBuildinLogger extends AbstractLogger {
 	}
 
 	void errorParseArguments(CmdLineException e, String[] arguments) {
-		log.error("Error parse command line arguments {}: {}.", arguments,
-				e.getLocalizedMessage());
+		log.error("Error parse command line arguments ``{}'': {}.",
+				join(arguments, ","), e.getLocalizedMessage());
 	}
 }
