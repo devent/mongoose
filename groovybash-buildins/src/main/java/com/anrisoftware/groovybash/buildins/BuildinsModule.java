@@ -22,6 +22,7 @@ import com.anrisoftware.groovybash.buildins.cdbuildin.CdPluginModule;
 import com.anrisoftware.groovybash.buildins.echobuildin.EchoPluginModule;
 import com.anrisoftware.groovybash.buildins.listfilesbuildin.ListFilesPluginModule;
 import com.anrisoftware.groovybash.buildins.logbuildins.LogPluginModule;
+import com.anrisoftware.groovybash.buildins.parsebuildin.ParsePluginModule;
 import com.anrisoftware.groovybash.buildins.pwdbuildin.PwdPluginModule;
 import com.anrisoftware.groovybash.buildins.runbuildin.RunPluginModule;
 import com.google.inject.AbstractModule;
@@ -46,6 +47,7 @@ public class BuildinsModule extends AbstractModule {
 		install(new EchoPluginModule());
 		install(new ListFilesPluginModule());
 		install(new LogPluginModule());
+		install(new ParsePluginModule());
 		install(new PwdPluginModule());
 		install(new RunPluginModule());
 	}
