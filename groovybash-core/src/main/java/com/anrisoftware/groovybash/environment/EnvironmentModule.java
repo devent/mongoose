@@ -18,10 +18,7 @@
  */
 package com.anrisoftware.groovybash.environment;
 
-import static com.google.common.io.Resources.getResource;
-
 import java.io.IOException;
-import java.net.URL;
 import java.util.Properties;
 
 import javax.inject.Named;
@@ -39,8 +36,7 @@ import com.google.inject.Provides;
  */
 public class EnvironmentModule extends AbstractModule {
 
-	private static final URL ENVIRONMENT_PROPERTIES = getResource(
-			EnvironmentModule.class, "environment.properties");
+	private static final String ENVIRONMENT_PROPERTIES = "core.properties";
 
 	@Override
 	protected void configure() {
