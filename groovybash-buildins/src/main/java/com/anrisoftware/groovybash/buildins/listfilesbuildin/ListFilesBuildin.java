@@ -22,7 +22,6 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -77,13 +76,16 @@ class ListFilesBuildin extends AbstractBuildin {
 	}
 
 	@Override
-	public void setArguments(Map<?, ?> flags, Object[] args) {
-		super.setArguments(flags, args);
+	protected void setupArguments() throws Exception {
 		if (getArgs().length < 1) {
 			return;
 		}
+		addWildcats();
+	}
+
+	private void addWildcats() {
 		listFilesWorkers.clear();
-		for (Object a : args) {
+		for (Object a : getArgs()) {
 			if (a instanceof List) {
 				addWildcatsInList(a);
 			} else {

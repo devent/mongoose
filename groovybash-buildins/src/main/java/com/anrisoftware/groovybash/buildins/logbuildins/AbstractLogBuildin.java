@@ -1,7 +1,5 @@
 package com.anrisoftware.groovybash.buildins.logbuildins;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -67,8 +65,8 @@ abstract class AbstractLogBuildin extends AbstractBuildin {
 	protected abstract void logMessage(Logger logger);
 
 	@Override
-	public void setArguments(Map<?, ?> flags, Object[] args) {
-		super.setArguments(flags, args);
+	protected void setupArguments() throws Exception {
+		Object[] args = getArgs();
 		log.checkMinimumArgs(this, args);
 		message = args[0].toString();
 		arguments = createArguments(args);

@@ -56,6 +56,16 @@ class OutputTaskTest {
 		}
 	}
 
+	def output
+
+	def outputStream
+
+	def bigtext = new BigText().run()
+
+	def smalltext = "small text"
+
+	Process process
+
 	@Test
 	void "run benchmarks"() {
 		def output = new ByteArrayOutputStream()
@@ -71,24 +81,14 @@ class OutputTaskTest {
 		output = new ByteArrayOutputStream()
 		outputStream = new PrintStream(output)
 		process = new DummyProcess(smalltext)
-		def task = new OutputTask(process, outputStream)
+		def task = new OutputTask(process.inputStream, outputStream)
 		task.run()
 		assert output.toString() == smalltext
 	}
 
-	def output
-
-	def outputStream
-
-	def bigtext = new BigText().run()
-
-	def smalltext = "small text"
-
-	def process
-
 	@Bench(runs = 100, beforeFirstRun = "setup big text")
 	void "read from input and output with big text"() {
-		def task = new OutputTask(process, outputStream)
+		def task = new OutputTask(process.inputStream, outputStream)
 		task.run()
 	}
 
@@ -100,7 +100,7 @@ class OutputTaskTest {
 
 	@Bench(runs = 100, beforeFirstRun = "setup small text")
 	void "read from input and output with small text"() {
-		def task = new OutputTask(process, outputStream)
+		def task = new OutputTask(process.inputStream, outputStream)
 		task.run()
 	}
 

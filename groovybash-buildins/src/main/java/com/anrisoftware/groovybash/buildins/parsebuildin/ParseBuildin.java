@@ -19,7 +19,6 @@
 package com.anrisoftware.groovybash.buildins.parsebuildin;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -87,8 +86,8 @@ class ParseBuildin extends AbstractBuildin {
 	}
 
 	@Override
-	public void setArguments(Map<?, ?> flags, Object[] args) {
-		super.setArguments(flags, args);
+	protected void setupArguments() throws Exception {
+		Object[] args = getArgs();
 		log.checkMinimumArgs(this, args);
 		bean = args[0];
 		parser = new CmdLineParser(bean);
