@@ -22,6 +22,7 @@ import static com.google.inject.multibindings.Multibinder.newSetBinder;
 
 import com.anrisoftware.groovybash.buildins.cdbuildin.CdPlugin;
 import com.anrisoftware.groovybash.buildins.echobuildin.EchoPlugin;
+import com.anrisoftware.groovybash.buildins.listfilesbuildin.ListFilesPluginModule;
 import com.anrisoftware.groovybash.buildins.runbuildin.RunPluginModule;
 import com.anrisoftware.groovybash.core.BuildinPlugin;
 import com.google.inject.AbstractModule;
@@ -49,6 +50,7 @@ public class BuildinsModule extends AbstractModule {
 		binder.addBinding().to(EchoPlugin.class);
 
 		install(new RunPluginModule());
+		install(new ListFilesPluginModule());
 	}
 
 	/**
