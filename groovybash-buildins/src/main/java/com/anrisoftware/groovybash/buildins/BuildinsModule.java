@@ -20,7 +20,7 @@ package com.anrisoftware.groovybash.buildins;
 
 import static com.google.inject.multibindings.Multibinder.newSetBinder;
 
-import com.anrisoftware.groovybash.buildins.cdbuildin.CdPlugin;
+import com.anrisoftware.groovybash.buildins.cdbuildin.CdPluginModule;
 import com.anrisoftware.groovybash.buildins.echobuildin.EchoPlugin;
 import com.anrisoftware.groovybash.buildins.listfilesbuildin.ListFilesPluginModule;
 import com.anrisoftware.groovybash.buildins.pwdbuildin.PwdPluginModule;
@@ -47,9 +47,9 @@ public class BuildinsModule extends AbstractModule {
 	private void installBuildins() {
 		Multibinder<BuildinPlugin> binder;
 		binder = newSetBinder(binder(), BuildinPlugin.class);
-		binder.addBinding().to(CdPlugin.class);
 		binder.addBinding().to(EchoPlugin.class);
 
+		install(new CdPluginModule());
 		install(new ListFilesPluginModule());
 		install(new PwdPluginModule());
 		install(new RunPluginModule());
