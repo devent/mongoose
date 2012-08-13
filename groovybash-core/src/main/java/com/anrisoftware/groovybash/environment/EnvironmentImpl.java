@@ -48,7 +48,7 @@ import com.google.inject.Injector;
  * Loads the build-in plugins and executes them in the script context.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
@@ -166,16 +166,17 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	private Object callBuildin(Object[] uargs, BuildinPlugin buildinPlugin) {
 		Buildin buildin = buildinPlugin.getBuildin(injector);
 		buildin.setEnvironment(this);
-		buildin.setArguments(uargs);
-		return callCommandWorker.call(buildin);
+		Map<?, ?> flags = newHashMap();
+		return callCommandWorker.call(buildin, flags, uargs);
 	}
 
 	private Object callCommand(String name, Object[] uargs) {
 		Buildin buildin = getBuildin("run");
 		ArgumentsWorker arguments;
 		arguments = argumentsWorker.createCommandArgs(name, uargs);
-		buildin.setArguments(arguments.getFlags(), arguments.getArgs());
-		return callCommandWorker.call(buildin);
+		Object[] args = arguments.getArgs();
+		Map<?, ?> flags = arguments.getFlags();
+		return callCommandWorker.call(buildin, flags, args);
 	}
 
 	private Buildin getBuildin(String name) {

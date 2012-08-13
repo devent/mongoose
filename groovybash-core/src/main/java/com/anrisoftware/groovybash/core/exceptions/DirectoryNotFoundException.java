@@ -28,7 +28,7 @@ import java.io.FileNotFoundException;
  * directory or the directory is not readable.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 @SuppressWarnings("serial")
 public class DirectoryNotFoundException extends FileNotFoundException {

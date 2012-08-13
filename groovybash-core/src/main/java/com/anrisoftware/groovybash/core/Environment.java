@@ -29,7 +29,7 @@ import com.google.inject.Injector;
  * The environment of the script.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 public interface Environment {
 
@@ -71,12 +71,22 @@ public interface Environment {
 	 */
 	File getWorkingDirectory();
 
+	/**
+	 * Sets the context for the script logger.
+	 * 
+	 * @param context
+	 *            the {@link Class} context.
+	 * 
+	 * @since 0.2
+	 */
 	void setScriptLoggerContext(Class<?> context);
 
 	/**
 	 * Returns the script logger.
 	 * 
 	 * @return the {@link Logger}.
+	 * 
+	 * @since 0.2
 	 */
 	Logger getScriptLogger();
 
@@ -88,6 +98,16 @@ public interface Environment {
 	 */
 	File getUserHome();
 
+	/**
+	 * Submit the task for execution in a different thread.
+	 * 
+	 * @param task
+	 *            the {@link Runnable} task.
+	 * 
+	 * @return the {@link Future} of the task.
+	 * 
+	 * @since 0.2
+	 */
 	Future<?> submitTask(Runnable task);
 
 	/**

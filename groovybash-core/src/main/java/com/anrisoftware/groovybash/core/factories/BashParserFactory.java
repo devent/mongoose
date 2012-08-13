@@ -24,7 +24,7 @@ import com.anrisoftware.groovybash.core.parser.BashParser;
  * Factory to create a new parser of Groovy Bash scripts.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 public interface BashParserFactory {
 

@@ -35,7 +35,7 @@ import com.google.inject.Provides;
  * Provides the environment properties.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 public class EnvironmentModule extends AbstractModule {
 

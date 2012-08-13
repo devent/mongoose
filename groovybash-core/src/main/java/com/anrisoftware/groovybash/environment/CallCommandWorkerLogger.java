@@ -22,13 +22,12 @@ import static java.lang.String.format;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
 import com.anrisoftware.groovybash.core.Buildin;
-import com.anrisoftware.groovybash.environment.CallCommandWorker;
 
 /**
  * Logging messages for {@link CallCommandWorker}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 class CallCommandWorkerLogger extends AbstractLogger {
 

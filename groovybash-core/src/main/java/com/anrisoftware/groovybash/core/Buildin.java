@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
  * Groovy Bash command build-in.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 public interface Buildin extends Callable<ReturnValue> {
 
@@ -71,8 +71,13 @@ public interface Buildin extends Callable<ReturnValue> {
 	 * 
 	 * @param args
 	 *            the arguments.
+	 * 
+	 * @throws Exception
+	 *             if some errors are encountered.
+	 * 
+	 * @since 0.2
 	 */
-	void setArguments(Object[] args);
+	void setArguments(Object[] args) throws Exception;
 
 	/**
 	 * Sets the arguments for the build-in command.
@@ -82,8 +87,13 @@ public interface Buildin extends Callable<ReturnValue> {
 	 * 
 	 * @param args
 	 *            the arguments.
+	 * 
+	 * @throws Exception
+	 *             if some errors are encountered.
+	 * 
+	 * @since 0.2
 	 */
-	void setArguments(Map<?, ?> flags, Object[] args);
+	void setArguments(Map<?, ?> flags, Object[] args) throws Exception;
 
 	/**
 	 * Sets the standard input stream.

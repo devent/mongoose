@@ -20,8 +20,6 @@ package com.anrisoftware.groovybash.environment
 
 import javax.inject.Inject
 
-import com.anrisoftware.groovybash.environment.CallCommandWorkerLogger;
-
 /**
  * Call the command. The worker is used because 
  * {@link GroovyObject#invokeMethod(String, Object)} cannot throw any 
@@ -29,7 +27,7 @@ import com.anrisoftware.groovybash.environment.CallCommandWorkerLogger;
  * exception regardless.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 class CallCommandWorker {
 
@@ -46,10 +44,19 @@ class CallCommandWorker {
 	 * @param command
 	 * 			  the command to call.
 	 * 
+	 * @param flags 
+	 * 			  the flags of the command.
+	 * 
+	 * @param args
+	 * 			  the arguments of the command. 
+	 * 
 	 * @return the return value of the command.
+	 * 
+	 * @since 0.2
 	 */
-	def call(def command) {
+	def call(def command, def flags, def args) {
 		try {
+			command.setArguments(flags, args)
 			command.call()
 		} catch (Exception e) {
 			log.errorCallBuildin(command, e)
