@@ -26,6 +26,7 @@ import com.anrisoftware.groovybash.buildins.AbstractBuildin;
 import com.anrisoftware.groovybash.buildins.StandardStreams;
 import com.anrisoftware.groovybash.core.Environment;
 import com.anrisoftware.groovybash.core.ReturnValue;
+import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFoundException;
 
 /**
  * The build-in command {@code cd [DIR]}. Change the current working directory
@@ -37,6 +38,8 @@ import com.anrisoftware.groovybash.core.ReturnValue;
  */
 class CdBuildin extends AbstractBuildin {
 
+	private final CdBuildinLogger log;
+
 	private CdWorker worker;
 
 	/**
@@ -47,8 +50,9 @@ class CdBuildin extends AbstractBuildin {
 	 *            and output streams.
 	 */
 	@Inject
-	CdBuildin(StandardStreams streams) {
+	CdBuildin(StandardStreams streams, CdBuildinLogger logger) {
 		super(streams);
+		this.log = logger;
 	}
 
 	@Override
@@ -89,8 +93,9 @@ class CdBuildin extends AbstractBuildin {
 		return new CdWorker() {
 
 			@Override
-			public void changeDirectory() {
+			public void changeDirectory() throws DirectoryNotFoundException {
 				File directory = asFile(getArgs()[0]);
+				log.checkDirectory(directory);
 				getEnvironment().setWorkingDirectory(directory);
 			}
 		};
