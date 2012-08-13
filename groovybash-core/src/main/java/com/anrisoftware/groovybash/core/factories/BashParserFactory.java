@@ -18,7 +18,7 @@
  */
 package com.anrisoftware.groovybash.core.factories;
 
-import com.anrisoftware.groovybash.core.parser.BashParser;
+import com.anrisoftware.groovybash.parser.BashParser;
 
 /**
  * Factory to create a new parser of Groovy Bash scripts.

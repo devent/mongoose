@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.core.parser;
+package com.anrisoftware.groovybash.parser;
 
 import static com.google.common.io.Resources.getResource;
 
@@ -36,7 +36,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * Binds the bash parser factory and provides the parser properties.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 public class ParserModule extends AbstractModule {
 
@@ -51,7 +51,17 @@ public class ParserModule extends AbstractModule {
 
 	/**
 	 * Provides the parser properties from the resource
-	 * {@code parser.properties}.
+	 * {@code parser.properties}. The properties file can have the properties:
+	 * 
+	 * <dl>
+	 * <dt>{@code com.anrisoftware.groovybash.parser.star_imports}</dt>
+	 * <dd>
+	 * A list of all packages that should be imported in the script as a star
+	 * import. Star import will import all classes in the package.</dd>
+	 * 
+	 * <dt>{@code com.anrisoftware.groovybash.parser.imports}</dt>
+	 * <dd>A list of all classes that should be imported in the script.</dd>
+	 * </dl>
 	 * 
 	 * @return the {@link Properties}.
 	 * 
