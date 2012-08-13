@@ -1,0 +1,70 @@
+\chapter{Listings}
+
+\begin{lstlisting}[style=nonumbers, language=Java, label={lst:script_example_parameter}, caption={Example of implicit and explicit execution of a command}]
+lvcreate "-s -l100%FREE -n lvsnap lvdevice"
+run "lvremove", "-f lvsnap"
+\end{lstlisting}
+
+\begin{lstlisting}[style=nonumbers, language=Java, label={lst:script_example_parameter}, caption={Example of script function with parameter}]
+def backup_lv(def vgname, def lvname, def dest) {
+    def date = date "+%Y-%m-%d-%s"
+    def lvsnap = "$lvname_snap"
+    def backupname = "$vgname-$lvname-${date}.dd"
+    def lvdevice = "/dev/$vgname/$lvname"
+    def lvsnapdevice = "/dev/$vgname/$lvsnap"
+
+    lvcreate "-s -l100%FREE -n $lvsnap $lvdevice"
+    dd "if=$lvsnapdevice of=$dest/$backupname"
+    shasum "$dest/$backupname" > "$dest/$backupname.sha"
+    lvremove "-f $lvsnapdevice"
+}
+
+backup_lv "vg_name", "lv_name", "/destination"
+\end{lstlisting}
+
+\begin{lstlisting}[style=nonumbers, language=Java, label={lst:script_parse_cl_parameter}, caption={Parse command line parameter}]
+class Parameter {
+
+    @Option(name = "-a", required = true)
+    String parameterA
+
+    @Option(name = "-b", required = true)
+    int parameterB
+
+    @Option(name = "-c")
+    boolean parameterC
+
+    @Argument
+    List<String> arguments
+}
+
+echo ARGS
+parser = parse new Parameter()
+echo parser.parameterA
+echo parser.parameterB
+echo parser.parameterC
+echo parser.arguments
+\end{lstlisting}
+
+\begin{lstlisting}[style=nonumbers, language=Java, label={lst:script_print_usage_cl_parameter}, caption={Print usage of command line parameter}]
+class Parameter {
+
+    @Option(name = "-a", required = true, usage = "Parameter A")
+    String parameterA
+
+    @Option(name = "-b", required = true, usage = "Parameter B")
+    int parameterB
+
+    @Option(name = "-c", usage = "Parameter C")
+    boolean parameterC
+
+    @Argument
+    List<String> arguments
+}
+
+parser = parse new Parameter()
+parser.printExample()
+parser.printSingleLineUsage()
+parser.printUsage()
+\end{lstlisting}
+

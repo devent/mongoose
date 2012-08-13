@@ -1,0 +1,21 @@
+\begin{multicols*}{2}[\section{Kenndaten}]
+
+\subsection{Genaue Synchronisation}
+
+Eine möglichst genauso Synchronisation der beiden Instanzen auf den zwei Maschinen
+ist nötig um eine möglichst hohe Wahrscheinlichkeit zu haben, dass zwei gleiche Schlüssel
+generiert wurden. Diese Genauigkeit muss möglichst an das Ideal mit $\Delta t = 0$,
+wobei $\Delta t=|t_a - t_b|$ die Differenz der beiden Zeitpunkte $t_a$ und $t_b$ ist,
+bei dem die beiden Instanzen auf Maschinen a und b einen Schlüssel generieren,
+so nah wie möglich herankommen.
+
+\subsection{Überprüfbarkeit}
+
+Man muss die Eingabe- und die Ausgabedaten aufzeichnen können. Unter den Eingabedaten
+versteht man die rohen Rauschdaten aus den Rauschquellen und unter den Ausgabedaten
+die berechneten Schlüssel. Die berechneten Schlüssel müssen einem eindeutigem Zeitpunkt
+zugeordnet sein, wann sie generiert wurden. Dies ist nötig, damit wir die generierten
+Schlüssel von den zwei Instanzen auf den Maschinen a und b vergleichen können.
+
+\end{multicols*}
+

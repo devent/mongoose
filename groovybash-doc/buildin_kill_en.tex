@@ -1,0 +1,10 @@
+%%
+\label{par:kill}
+\parparameter{\parcommand{kill} [\partype{sigspec} | \partype{signum},] \partype{pid} | \partype{object}}
+
+Send the signal named by \partype{sigspec} or \partype{signum} to the
+processes named by \partype{pid} or \partype{object}. \partype{sigspec} is
+either a case-insensitive signal name such as \code{SIGKILL} or a signal
+number; \partype{signum} is a signal number. If \partype{sigspec} is not
+present, then \code{SIGTERM} is assumed.
+

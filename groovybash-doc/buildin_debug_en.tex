@@ -1,0 +1,15 @@
+\label{par:debug}
+\parparameter{\parcommand{debug} \partype{msg} [, \partype{args\dots}]}
+
+Log a message at the debug level of the logger. Beware if using Groovy
+variable substitution in logging messages. The variable needs to be
+converted in a string regardless whether or not the logging level is active.
+
+\subparagraph{Example:}
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_debug}]
+debug "The debug message."
+debug "The variable {} should be {}.", variable, expected
+debug "The variable $variable should be $expected."
+\end{lstlisting}
+

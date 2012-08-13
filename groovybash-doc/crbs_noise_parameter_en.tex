@@ -1,0 +1,131 @@
+\label{sec:crbsnoise_project_parameter}
+\subsubsection{CRBS Noise Parameter}
+
+%%
+\label{par:crbsnoise_partition_size}
+\parparameter{\code{-Ppartition-size}, \code{-Psize} or \code{-Ps <SIZE>}}
+
+The partition size of the data. The partition size is how many
+data values we use to calculate the fraction similarity dimension.
+Defaults to a partition size of \marker{16}.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Ppartition-size 16} set the partition size to 16.
+\item \codequoted{-Psize 32} set the partition size to 32.
+\item \codequoted{-Ps 64} set the partition size to 64.
+\end{compactitem}
+
+%%
+\label{par:crbsnoise_derivations_count}
+\parparameter{\code{-Pderivations-count}, \code{-Pderivations} or \code{-Pd <NUMBER>}}
+
+How many derivations we do with calculate. The derivation is calculated on
+the partition size of the data. So it
+needs to be always $partition\_size + derivations\_count$ data
+available. Defaults to \marker{two (2)} derivations.
+
+%%
+\label{par:crbsnoise_sensors}
+\parparameter{\code{-Psensors} or \code{-PS <LIST>}}
+
+The number of the sensors that we use from the noise device. The index of
+the columns starts with zero. Defaults to \marker{``0,1,2,3,4,5,6,7} columns.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Psensors 0,1,2,3,4,5,6,7} reads the eight sensors.
+\item \codequoted{-PS 1,2,3} reads only the second, third and fourth sensor.
+\end{compactitem}
+
+%%
+\label{par:crbsnoise_values_per_sensor}
+\parparameter{\code{-Pvalues-per-sensor}, \code{-Pvalues} or \code{-Pv <SIZE>}}
+
+How many values we have per sensor. For example the GMR sensors can
+have two values, GMR-X and GMR-Y. Defaults to \marker{one (1)} value per sensor.
+
+%%
+\label{par:crbsnoise_data_calculus_factory}
+\parparameter{\code{-Pdata-calculus-factory}, \code{-Pcalculus} or \code{-PF <NAME>}}
+
+Sets the data calculus factory that creates the object that will
+calculate the derivation or integration of the data. Currently valid names are
+\codequoted{sortedDerivationFactory} or \codequoted{sortedSortedDerivationFactory}.
+Defaults to the \marker{''sortedSortedDerivationFactory``} factory.
+
+%%
+\label{par:crbsnoise_address}
+\parparameter{\code{-Paddress} or \code{-Pa <ADDRESS>}}
+
+The internet address of the CRBS noise device.
+Default is the address ``189.101.211.228''.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Paddress 127.0.0.1} sets the address of the noise box.
+\item \codequoted{-Pa localhost} sets the host name of the noise box.
+\end{compactitem}
+
+%%
+\label{par:crbsnoise_command_port}
+\parparameter{\code{-Pcommand-port}, \code{-Pcommand} or \code{-PC <NUMBER>}}
+
+The command port number of the CRBS noise device.
+Default is the port number 5000.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Pcommand-port 5000} sets the command port number.
+\end{compactitem}
+
+%%
+\label{par:crbsnoise_data_port}
+\parparameter{\code{-Pdata-port}, \code{-Pdata} or \code{-PD <NUMBER>}}
+
+The data port number of the CRBS noise device.
+Default is the port number 5001.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Pdata-port 5001} sets the data port number.
+\end{compactitem}
+
+%%
+\label{par:crbsnoise_sensor_type}
+\parparameter{\code{-Psensor-type}, \code{-Psensor} or \code{-Pt <NAME>}}
+
+Set the sensor type to use. The allowed sensor types are:
+\begin{asparadesc}
+%%
+\item[\code{GMR\_XY}]
+Measure GMR Signals (horizontal x and y magnetic fields).
+%%
+\item[\code{NOISE\_DIODES}]
+Measure noise diodes.
+\end{asparadesc}
+
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Psensor-type NOISE\_DIODES} sets the noise diodes.
+\item \codequoted{-Pt GMX\_XY} sets the GMR sensors.
+\end{compactitem}
+
+%%
+\label{par:crbsnoise_sampling_frequency}
+\parparameter{\code{-Psampling-frequency}, \code{-Pfrequency} or \code{-Pf <DECIMAL>}}
+
+Set the sampling frequency in Hz to use. The frequency needs to be greater then zero.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Psampling-frequency 100} sets 100Hz as the sampling frequency.
+\item \codequoted{-Pf 555.123} sets 555.123Hz as the sampling frequency.
+\end{compactitem}
+
+%%
+\label{par:crbsnoise_stabilization_time}
+\parparameter{\code{-Pstabilization-time}, \code{-Ptime} or \code{-PT <NUMBER>}}
+
+Set the stabilization time in seconds to use. The device will idle for the
+specified time before any sensors are read. The time cannot be negative.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Pstabilization-time 0} no stabilization time.
+\item \codequoted{-PT 5} sets a 5 seconds stabilization time.
+\end{compactitem}
+

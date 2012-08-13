@@ -1,0 +1,58 @@
+\subsection{Application Parameter}
+
+The application parameter are expected to be the first parameter.
+
+%%
+\label{par:app_project_type}
+\parparameter{\code{-project-type}, \code{-project} or \code{-t <NAME>}}
+
+The project type that we want to create. Each project type have different project
+parameter. Examples are:
+\begin{compactitem}
+\item \codequoted{-project-type project:csvfile} creates a new ``csvfile'' project.
+\item \codequoted{-project project:crbsnoise} creates a new project that reads
+noise data from a CRBS noise box.
+\end{compactitem}
+
+\begin{asparadesc}
+%%
+\item[\code{project:csvfile}]
+Reads noise data from a Comma Values Separated (CSV) file.
+For the expected parameter see \refsec{sec:csvfile_project_parameter}.
+%%
+\item[\code{project:crbsnoise}]
+Reads noise data from a connected CRBS noise box.
+For the expected parameter see \refsec{sec:crbsnoise_project_parameter}.
+%%
+\item[\code{project:list}]
+Collects all available project and output types.
+For the expected parameter see \refsec{sec:list_project_parameter}.
+\end{asparadesc}
+
+%%
+\label{par:app_project_output}
+\parparameter{\code{-project-output}, \code{-output} or \code{-o <NAME>|<LIST>}}
+
+The project output type. Multiple output types can be specified as shown in
+the second example. The outputs are printed in the ordner they are specified.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-project-output output:\\console,output:derivated}
+Outputs the calculated derivations on the console.
+\item \codequoted{-o output:console,output:\\derivated output:console,\\output:fractal}
+Outputs the calculated derivations on the console.
+\end{compactitem}
+
+\begin{asparadesc}
+\item[\code{output:console}]
+Outputs the data in the console.
+\item[\code{output:noise}]
+Outputs the not modified noise data.
+\item[\code{output:derivated}]
+Outputs the calculated derivations.
+\item[\code{output:fractal}]
+Outputs the calculated fractal dimensions in the console.
+\item[\code{output:projects}]
+Prints the available projects and output types.
+\end{asparadesc}
+

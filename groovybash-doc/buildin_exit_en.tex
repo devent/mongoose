@@ -1,0 +1,15 @@
+%%
+\label{par:exit}
+\parparameter{\parcommand{exit} [\partype{n}]}
+
+Exits the script with the status code of \codetype{n}.
+If no \codetype{n} is specified, the script is exit with the status code 0.
+Always returns \code{true}.
+
+\subparagraph{Example:}
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_exit}]
+exit
+exit 1
+\end{lstlisting}
+

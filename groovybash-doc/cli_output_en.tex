@@ -1,0 +1,116 @@
+\section{Command Line Output}
+
+With the \code{-project-output}, \code{-output} or \code{-o <NAME>|<LIST>}
+parameter we can specify the output of the data, \marker\refpar{par:app_project_output}.
+
+The supported outputs are:
+\begin{asparadesc}
+\item[\code{output:console}]
+Outputs the data in the console.
+\item[\code{output:noise}]
+Outputs the not modified noise data.
+\item[\code{output:derivated}]
+Outputs the calculated derivations.
+\item[\code{output:fractal}]
+Outputs the calculated fractal dimensions in the console.
+\item[\code{output:projects}]
+Prints the available projects and output types.
+\end{asparadesc}
+
+\subsection{output:console}
+
+The data will be printed in the console. That is useful for small amount of data
+to see the output.
+
+The output of the console can also be redirected to a file or to a different
+application.
+
+\begin{lstlisting}[style=nonumbers,language=bash, caption={Example redirect to file}]
+./java fdsanalysis.jar > output_file.csv
+\end{lstlisting}
+
+\subsection{output:noise}
+
+Outputs the noise data without any calculations. This is to read the noise data
+from the source and output it on the console.
+The first line is a header line that contains the names of the columns.
+The header line is only printed for the first partition.
+The partitions and the rows are following.
+
+The columns are:
+\begin{asparadesc}
+\item[partition]
+The partition number of the data.
+\item[row]
+The row number of the data.
+\item[columns]
+The user columns or sensors.
+\item[column 0\dots{n}]
+The column $0\dots{n}$ with the data.
+\end{asparadesc}
+
+The \reflst{lst:data_noise} shows the noise data output for the
+first partition and noise diodes with one value per column.
+The \reflst{lst:data_gmr} shows the noise data output for the
+first partition and GMR data with GMR-X and GMR-Y values per column.
+
+\subsection{output:derivated}
+
+Outputs the derivations in a Comma Separated Values format. The first line is
+a header line that contains the names of the columns.
+The header line is only printed for the first partition.
+The partitions and the
+rows are following.
+
+The columns are:
+\begin{asparadesc}
+\item[partition]
+The partition number of the data.
+\item[row]
+The row number of the data.
+\item[columns]
+The user columns or sensors.
+\item[column 0\dots{n}]
+The column $0\dots{n}$ with the data.
+\end{asparadesc}
+
+The \reflst{lst:derivated_data_noise} shows the derivated data output for the
+first partition and noise diodes with one value per column.
+The \reflst{lst:derivated_data_gmr} shows the derivated data output for the
+first partition and GMR data with GMR-X and GMR-Y values per column.
+
+\subsection{output:fractal}
+
+Outputs the fractal dimensions in a Comma Separated Values format. The first line is
+a header line that contains the names of the columns.
+The header line is only printed for the first partition.
+The partitions and the
+rows are following. The fractal data have only one row per partition, the last
+row. The values are not the fractal dimensions but the $N$ value from
+\refeq{eq:fractal_dimension}. With $k$ is the partition size, the value of $D$
+can be calculated.
+
+\begin{equation}\label{eq:fractal_dimension}
+D=\frac{\log{k}}{\log{N}}
+\end{equation}
+
+
+The columns are:
+\begin{asparadesc}
+\item[partition]
+The partition number of the data.
+\item[row]
+The row number of the data.
+\item[columns]
+The user columns or sensors.
+\item[column 0\dots{n}]
+The column $0\dots{n}$ with the data.
+\end{asparadesc}
+
+The \reflst{lst:fractal_data_noise} shows the fractal data output for the
+first partition and noise diodes with one value per column.
+The \reflst{lst:fractal_data_gmr} shows the fractal data output for the
+first partition and GMR data with GMR-X and GMR-Y values per column.
+
+\subsection{output:projects}
+

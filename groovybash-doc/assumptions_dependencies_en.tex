@@ -1,0 +1,34 @@
+\begin{multicols}{2}[\section{Assumptions and Dependencies}]
+
+The software should be implemented on the Java platform. The main dependency
+of the software is memory, because we need to calculate the nodes of the fractal
+with a satisfying amoung of layers.
+
+It should be possible to distribute the calculation of the fractal on multiple
+computers, because the calculation is very time intensive.
+
+\subsection{Possible Dependencies}
+
+\subsubsection{Hazelcast}
+
+Hazelcast\footnote{\url{http://www.hazelcast.com/}}
+is a distributed in memory data grid available under the Apache Licence.
+It have a Elastic Memory implementation with is off-heap memory storage for big
+data. The Elastic Memory is only available in Hazelcast Enterprise Edition with
+have a commercially licensed edition of Hazelcast.
+
+\subsubsection{Ehcache and BigMemory}
+
+Ehcache\footnote{\url{http://terracotta.org/documentation/overview}}
+supports distributed caching and is available under the Apache 2.0 licence.
+It can be used with BigMemory, with is off-heap memory storage for big
+data. BigMemory is only available in Enterprise Ehcache.
+
+\subsubsection{Java Caching System}
+
+JCS\footnote{\url{http://commons.apache.org/jcs/}}
+is a distributed caching system and is available under the Apache licence.
+It has an disk cache to swap entries to disk.
+ 
+\end{multicols}
+

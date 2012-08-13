@@ -1,0 +1,21 @@
+\section{Build-In Exceptions}
+
+%%
+\label{par:directory_not_found}
+\parparameter{\parcommand{DirectoryNotFound}}
+
+Exception that the directory could not be found. Either the path is not a
+directory or the directory is not readable.
+
+\subparagraph{Properties:}
+\begin{asparadesc}
+\item[directory] Returns the directory that could not be found.
+\end{asparadesc}
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_user_home}]
+try {
+    cd "path/not/there"
+} catch (DirectoryNotFound e) {
+    echo "The directory ${e.directory} could not be found."
+}
+\end{lstlisting}

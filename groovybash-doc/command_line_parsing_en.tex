@@ -1,0 +1,13 @@
+\section{Command Line Parser}
+
+Groovy-Bash is using the
+Args4j\footnote{\url{http://args4j.kohsuke.org/}} command line arguments parser.
+
+Command line parameter are defined in a Java bean class that is annotated
+with {@code Option} and {@code Argument}. The build-in
+command \parcommand{parse} will parse the command line arguments with the
+specified bean class instance.
+
+The build-in variable \code{ARGS} contains
+the command line arguments specified for the script as an immutable list.
+

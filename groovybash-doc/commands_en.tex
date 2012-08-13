@@ -1,0 +1,71 @@
+\section{Commands}
+
+Commands are identifier that are not class, interface, methods names or Java
+or Groovy key-words or build-in variables. There are two kinds of commands:
+external commands and build-in commands.
+
+External commands are executes as a separated process, either in the foreground
+or in the background. External commands are only available if found in the
+search path or in the current working directory.
+Build-in commands are always available and are executed in the current process.
+Build-ins are like functions or methods that can be executed.
+
+\subsection{Flags}
+
+\paragraph{\code{in: Object|File|Stream}}
+
+Redirects the standard output to a
+file or a stream. If a generic \code{Object} is specified, the string
+representation of this object is used as file name for the redirect target.
+
+\subparagraph{Example:}
+~
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_cd}]
+echo out: "output.txt", "Hello World"
+
+output = new ByteArrayOutput Stream()
+echo out: output, "Hello World"
+\end{lstlisting}
+
+\paragraph{\code{out: Object|File|Stream}}
+
+Redirects the standard output to a
+file or a stream. If a generic \code{Object} is specified, the string
+representation of this object is used as file name for the redirect target.
+
+\subparagraph{Example:}
+~
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_cd}]
+echo out: "output.txt", "Hello World"
+
+output = new ByteArrayOutput Stream()
+echo out: output, "Hello World"
+\end{lstlisting}
+
+\paragraph{\code{err: Object|File|Stream}}
+
+Redirects the standard output to a
+file or a stream. If a generic \code{Object} is specified, the string
+representation of this object is used as file name for the redirect target.
+
+\subparagraph{Example:}
+~
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_cd}]
+echo err: "error.txt", "Hello World"
+
+output = new ByteArrayOutput Stream()
+echo err: output, "Hello World"
+\end{lstlisting}
+
+\subsection{Return Value}
+
+External and build-in commands returning a return value from type
+\code{ReturnValue}. The return value contains a return code or a value of
+\code{true} indicating the successfull execution of a command.
+
+With the return value the standard output and standard error can be accessed
+with \code{ReturnValue\#getOutput()} and \code{ReturnValue\#getError()}.
+

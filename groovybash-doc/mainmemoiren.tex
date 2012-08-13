@@ -1,0 +1,23 @@
+\documentclass[11pt,twoside]{memoir}
+
+\usepackage{mainpackagesen}
+\usepackage{mainpackages}
+\usepackage{pagestyles}
+
+\begin{document}
+
+% title page
+\input{titlepage}
+
+% pages
+\cleardoublepage
+\pagenumbering{arabic}
+\mainmatter
+\include{vision_en}
+\include{identifiers_en}
+\appendix
+%\include{tables_en}
+\include{listings_en}
+
+
+\end{document}

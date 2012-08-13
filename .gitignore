@@ -10,3 +10,14 @@ test-output
 *.log
 jspf.cache
 .directory
+*~
+.*
+*.aux
+*.log
+*.out
+*.pdf
+*.toc
+*.lof
+*.lot
+*.backup
+*.kilepr

@@ -1,0 +1,54 @@
+\begin{multicols*}{2}[\chapter{Einleitung}]
+ 
+Die Software soll eine Kommandozeilen-Äquivalenz zu der GUI Software sein. Es
+soll alle Möglichkeiten der Schlüsselerzeugung bieten, aber über einen
+Kommandozeilen-Schnittstelle. Eine Kommandozeilen-Schnittstelle bietet der
+graphischen Schnittstelle entscheidende Vorteile der Automatisierbarkeit und
+Überprüfbarkeit.
+
+Es werden immer zwei Instanzen der Anwendung auf zwei verschiedenen Maschinen
+benötigt, die jeweils eine Rauschquelle gleichzeitig auslesen können. Diese
+Rauschdaten werden nach Global Scaling analysiert und daraus Schlüssel generiert.
+Diese Schlüssel sollten bei gleichzeitiger Generierung eine hohe Wahrscheinlichkeit
+aufweisen, dass sie identisch sind.
+
+Die zwei wichtigsten Aspekte der Anwendung ist die Korrektheit der Synchronisation
+und der Aufzeichnung der generierten Schlüssel zur späten Auswertung.
+
+Die Anwendung soll die folgenden Parameter auswerten können. Zum einen die
+Rauschquelle muss auswählbar und konfigurierbar sein. Als Rauschquelle soll vor
+allem
+\begin{inparaenum}[a)]
+\item die Greybox und
+\item eine Datei mit vorher aufgezeichnete Rauschdaten
+\end{inparaenum}
+dienen.
+
+Die Zeitquelle, die zur Synchronisation benötigt wird, soll auswählbar und
+konfigurierbar sein. Als Zeitquellen sollen vor allem
+\begin{inparaenum}[a)]
+\item die Systemzeit des Computers und
+\item ein NTP-Server
+\end{inparaenum}
+dienen.
+
+Die Parameter der Schlüsselerzeugung müssen übergebbar sein, wie
+\begin{inparaenum}[a)]
+\item die benutzten Sensoren,
+\item die Anzahl an Ableitungen,
+\item die Parameter der fraktalen Berechnung,
+\item die Größe des Schlüssels und
+\item die Anzahl der Schlüssel.
+\end{inparaenum}
+
+Die Form der Ausgabe soll einstellbar sein. Es sollen vor allem die Ausgabe als 
+\begin{inparaenum}[a)]
+\item eine CSV Datei
+\end{inparaenum}
+verfügbar sein.
+
+\end{multicols*}
+
+\input{features}
+\input{design}
+

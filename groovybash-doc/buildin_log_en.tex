@@ -1,0 +1,19 @@
+\label{par:log}
+\parparameter{\parcommand{log} \partype{obj}}
+
+Creates a new logger for the specified \partype{obj} object. If the object is
+a string, the object is the name of the logger; for a \code{Class} or an
+undefined object the class type is used.
+
+\subparagraph{Example:}
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_log}]
+// sets the logger for the script:
+log this
+log "myscript"
+
+// creates a new logger for the FooClass class:
+mylogger = log FooClass
+mylogger.debug "Debug message for FooClass."
+\end{lstlisting}
+

@@ -1,0 +1,112 @@
+\label{sec:csvfile_project_parameter}
+\subsubsection{Csvfile Parameter}
+
+%%
+\label{par:csvfile_file}
+\parparameter{\code{-Pfile} or \code{-Pf <FILE>}}
+
+Set the CSV file from which we read the noise data.
+Either the file or the URL needs to be specified.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Pfile myfile.csv} reads the \file{myfile.csv} file in the
+current directory.
+\item \codequoted{-Pf /home/user/Documents\\/myfile.csv} reads
+the \file{myfile.csv} file in the specified directory.
+\end{compactitem}
+
+%%
+\label{par:csvfile_url}
+\parparameter{\code{-Purl} or \code{-Pu <URL>}}
+
+The URL of the CVS file to load. The file needs to exists and be readable.
+Either the file or the URL needs to be specified.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Purl file://myfile.csv} reads the \file{myfile.csv} file in the
+current directory.
+\item \codequoted{-Pu http://domain.com/\\myfile.csv} reads
+the \file{myfile.csv} file on the specified server.
+\end{compactitem}
+
+%%
+\label{par:csvfile_partition_size}
+\parparameter{\code{-Ppartition-size}, \code{-Psize} or \code{-Ps <SIZE>}}
+
+The partition size of the data. The partition size is how many
+data values we use to calculate the fraction similarity dimension.
+Defaults to a parition size of \marker{16}.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Ppartition-size 16} set the partition size to 16.
+\item \codequoted{-Psize 32} set the partition size to 32.
+\item \codequoted{-Ps 64} set the partition size to 64.
+\end{compactitem}
+
+%%
+\label{par:csvfile_derivations_count}
+\parparameter{\code{-Pderivations-count}, \code{-Pderivations} or \code{-Pd <NUMBER>}}
+
+How many derivations we do with calculate. The derivation is calculated on
+the partition size of the data. So it
+needs to be always $partition\_size + derivations\_count$ data
+available. Defaults to \marker{two (2)} derivations.
+
+%%
+\label{par:csvfile_columns}
+\parparameter{\code{-Pcolumns} or \code{-Pc <LIST>}}
+
+The number of columns or the sensors that we use from the data. The index of
+the columns starts with zero. Defaults to \marker{``0,1,2,3,4,5,6,7} columns.
+Examples are:
+\begin{compactitem}
+\item \codequoted{-Pcolumns 0,1,2,3,4,5,6,7} reads the eight sensors.
+\item \codequoted{-Pc 1,2,3} reads only the second, third and fourth sensor.
+\end{compactitem}
+
+%%
+\label{par:csvfile_values_per_column}
+\parparameter{\code{-Pvalues-per-column}, \code{-Pvalues} or \code{-Pv <SIZE>}}
+
+How many values we have per column or sensor. For example the GMR sensors can
+have two values, GMR-X and GMR-Y. Defaults to \marker{one (1)} value per sensor.
+
+%%
+\label{par:csvfile_separator}
+\parparameter{\code{-Pseparator} or \code{-PS <CHAR>}}
+
+The separator character of the CSV file. The values in the file have to be
+separated with this and only with this character.
+Defaults to a \marker{comma '',``} as the separator.
+
+%%
+\label{par:csvfile_charset}
+\parparameter{\code{-Pcharset} or \code{-PT <NAME>}}
+
+The character set of the CSV file. It needs to be a valid character set name.
+Defaults to the \marker{''utf-8``} character set.
+
+%%
+\label{par:csvfile_headers}
+\parparameter{\code{-Pheaders} or \code{-Ph}}
+
+Flag that specify if the CSV file have a header row.
+Defaults are \marker{no} headers.
+
+%%
+\label{par:csvfile_data_calculus_factory}
+\parparameter{\code{-Pdata-calculus-factory}, \code{-Pcalculus} or \code{-PF <NAME>}}
+
+Sets the data calculus factory that creates the object that will
+calculate the derivation or integration of the data. Currently valid names are
+\codequoted{sortedDerivationFactory} or \codequoted{sortedSortedDerivationFactory}.
+Defaults to the \marker{''sortedSortedDerivationFactory``} factory.
+
+\begin{asparadesc}
+\item[\codequoted{sortedDerivationFactory}]
+The data calculus factory that calculating the derivation from first sorted
+values.
+\item[\codequoted{sortedSortedDerivationFactory}]
+The data calculus factory that calculating the derivation from first sorted
+values. After the derivation the values are sorted again.
+\end{asparadesc}

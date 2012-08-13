@@ -1,0 +1,25 @@
+%%
+\label{par:listfiles}
+\parparameter{\parcommand{listFiles} [\partype{NAME\dots}]}
+
+Search all files in the current working directory with the given file
+names \partype{NAME\dots}. The file names can contain wildcats \codequoted{*?}.
+If no names are specified, all files are returned.
+
+\subparagraph{Returns:}
+
+It returns a list of all found files.
+
+\subparagraph{Example:}
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_listfiles}]
+listFiles
+listFiles "*.jpg"
+listFiles "i?age.jpg", "*.txt"
+listFiles "image.jpg", "*.txt"
+
+listFiles "*.jpg" each {
+    echo it
+}
+\end{lstlisting}
+

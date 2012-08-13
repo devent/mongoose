@@ -1,0 +1,218 @@
+
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{@{\extracolsep{1em}}p{0.3\textwidth}lp{0.5\textwidth}}
+\tbhead{Parameter} & \tbhead{Type} & \tbhead{Description} \\
+\toprule
+\endhead
+
+%%
+\code{-project-type} & \code{<ENUM>} &
+\multirow{1}{0.5\columnwidth}{The noise device source type.
+\marker\refpar{par:app_project_type}.} \\
+\code{-project} & & \\*
+\code{-t} & & \\*
+\hdashline
+
+%%
+\code{-project-output} & \code{<ENUM>} &
+\multirow{1}{0.5\columnwidth}{The project output type.
+\marker\refpar{par:app_project_output}.} \\
+\code{-output} & & \\*
+\code{-o} & & \\*
+
+\bottomrule
+\caption{Application parameter list}
+\end{longtable}
+
+\begin{longtable}{@{\extracolsep{1em}}p{0.3\textwidth}lp{0.5\textwidth}}
+\tbhead{Parameter} & \tbhead{Type} & \tbhead{Description} \\
+\toprule
+\endhead
+
+%%
+\code{-Pfile} & \code{<FILE>} &
+\multirow{1}{0.5\columnwidth}{The CVS file to load.
+\marker\refpar{par:csvfile_file}.} \\
+\code{-Pf} & & \\*
+\hdashline
+
+%%
+\code{-Purl} & \code{<URL>} &
+\multirow{1}{0.5\columnwidth}{The URL of the CVS file to load.
+\marker\refpar{par:csvfile_file}.} \\
+\code{-Pu} & & \\*
+\hdashline
+
+%%
+\code{-Ppartition-size} & \code{<SIZE>} &
+\multirow{2}{0.5\columnwidth}{%
+The partition size of the data. \marker\refpar{par:csvfile_partition_size}.} \\
+\code{-Psize} & & \\
+\code{-Ps} & & \\*
+\hdashline
+
+%%
+\code{-Pderivations-count} & \code{<SIZE>} &
+\multirow{2}{0.5\columnwidth}{%
+How many derivations we do with calculate. \marker\refpar{par:csvfile_derivations_count}.} \\
+\code{-Pderivations} & & \\
+\code{-Pd} & & \\*
+\hdashline
+
+%%
+\code{-Pcolumns} & \code{<LIST>} &
+\multirow{3}{0.5\columnwidth}{%
+The number of columns or the sensors that we use from the data.
+\marker\refpar{par:csvfile_columns}.} \\
+\code{-Pc} & & \\*
+& & \\*
+\hdashline
+
+%%
+\code{-Pvalues-per-column} & \code{<SIZE>} &
+\multirow{2}{0.5\columnwidth}{%
+How many values we have per column or sensor. \marker\refpar{par:csvfile_values_per_column}.} \\
+\code{-Pvalues} & & \\
+\code{-Pv} & & \\*
+\hdashline
+
+%%
+\code{-Pseparator} & \code{<CHAR>} &
+\multirow{1}{0.5\columnwidth}{%
+The separator character of the CSV file. \marker\refpar{par:csvfile_separator}.} \\
+\code{-PS} & & \\*
+\hdashline
+
+%%
+\code{-Pcharset} & \code{<NAME>} &
+\multirow{1}{0.5\columnwidth}{The character set of the CSV file.
+\marker\refpar{par:csvfile_charset}.} \\
+\code{-PT} & & \\*
+\hdashline
+
+%%
+\code{-Pheaders} & &
+\multirow{2}{0.5\columnwidth}{Flag that specify if the CSV file have a
+header row. \marker\refpar{par:csvfile_headers}.} \\
+\code{-Ph} & & \\*
+\hdashline
+
+%%
+\code{-Pdata-calculus-factory} & \code{<NAME>} &
+\multirow{4}{0.5\columnwidth}{Sets the data calculus factory that creates
+the object that will calculate the derivation or integration of the data.
+\marker\refpar{par:csvfile_data_calculus_factory}.} \\
+\code{-Pcalculus} & & \\
+\code{-PF} & & \\*
+& & \\*
+\bottomrule
+
+\caption{CSV project parameter list}
+\end{longtable}
+
+\begin{longtable}{@{\extracolsep{1em}}p{0.3\textwidth}lp{0.5\textwidth}}
+\tbhead{Parameter} & \tbhead{Type} & \tbhead{Description} \\*
+\toprule
+\endfirsthead
+\tbhead{Parameter} & \tbhead{Type} & \tbhead{Description} \\*
+\endhead
+Continue on next page\dots
+\endfoot
+\endlastfoot
+
+%%
+\code{-Ppartition-size} & \code{<SIZE>} &
+\multirow{2}{0.5\columnwidth}{%
+The partition size of the data. \marker\refpar{par:crbsnoise_partition_size}.} \\*
+\code{-Psize} & & \\*
+\code{-Ps} & & \\*
+\hdashline
+
+%%
+\code{-Pderivations-count} & \code{<SIZE>} &
+\multirow{2}{0.5\columnwidth}{%
+How many derivations we do with calculate. \marker\refpar{par:crbsnoise_derivations_count}.} \\*
+\code{-Pderivations} & & \\*
+\code{-Pd} & & \\*
+\hdashline
+
+%%
+\code{-Psensors} & \code{<LIST>} &
+\multirow{3}{0.5\columnwidth}{%
+The number of the sensors that we use from the noise device.
+\marker\refpar{par:crbsnoise_sensors}.} \\*
+\code{-PS} & & \\*
+& & \\*
+\hdashline
+
+%%
+\code{-Pvalues-per-sensor} & \code{<SIZE>} &
+\multirow{2}{0.5\columnwidth}{%
+How many values we have per sensor. \marker\refpar{par:crbsnoise_values_per_sensor}.} \\*
+\code{-Pvalues} & & \\*
+\code{-Pv} & & \\*
+\hdashline
+
+%%
+\code{-Pdata-calculus-factory} & \code{<NAME>} &
+\multirow{4}{0.5\columnwidth}{Sets the data calculus factory that creates
+the object that will calculate the derivation or integration of the data.
+\marker\refpar{par:crbsnoise_data_calculus_factory}.} \\*
+\code{-Pcalculus} & & \\*
+\code{-PF} & & \\*
+& & \\*
+\hdashline
+
+%%
+\code{-Paddress} & \code{<NUMBER>} &
+\multirow{2}{0.5\columnwidth}{%
+The internet address of the CRBS noise device. \marker\refpar{par:crbsnoise_address}.} \\*
+\code{-Pa} & & \\*
+ & & \\*
+\hdashline
+
+%%
+\code{-Pcommand-port} & \code{<NUMBER>} &
+\multirow{2}{0.5\columnwidth}{%
+The command port number of the CRBS noise device. \marker\refpar{par:crbsnoise_command_port}.} \\*
+\code{-Pcommand} & & \\*
+\code{-PC} & & \\*
+\hdashline
+
+%%
+\code{-Pdata-port} & \code{<NUMBER>} &
+\multirow{2}{0.5\columnwidth}{%
+The data port number of the CRBS noise device. \marker\refpar{par:crbsnoise_data_port}.} \\*
+\code{-Pdata} & & \\*
+\code{-PD} & & \\*
+\hdashline
+
+%%
+\code{-Psensor-type} & \code{<NAME>} &
+\multirow{2}{0.5\columnwidth}{%
+Set the sensor type to use, \marker\refpar{par:crbsnoise_sensor_type}.} \\*
+\code{-Ptype} & & \\*
+\code{-Pt} & & \\*
+\hdashline
+
+%%
+\code{-Psampling-frequency} & \code{<DECIMAL>} &
+\multirow{2}{0.5\columnwidth}{%
+Set the sampling frequency in Hz to use, \marker\refpar{par:crbsnoise_sampling_frequency}.} \\*
+\code{-Pfrequency} & & \\*
+\code{-Pf} & & \\*
+\hdashline
+
+%%
+\code{-Pstabilization-time} & \code{<NUMBER>} &
+\multirow{2}{0.5\columnwidth}{%
+Set the stabilization time in seconds to use, \marker\refpar{par:crbsnoise_stabilization_time}.} \\*
+\code{-Ptime} & & \\*
+\code{-PT} & & \\*
+
+\bottomrule
+
+\caption{CRBS noise project parameter list}
+\end{longtable}
+

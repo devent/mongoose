@@ -1,0 +1,36 @@
+\begin{multicols*}{2}[\chapter{Parameter}]
+
+\end{multicols*}
+
+\begin{lstlisting}[style=synopsis,label={lst:fdsanalysis_cli_overview},caption={Zusammenfassung}]
+fdsanalysis-cli SOURCE TIME KEYS
+\end{lstlisting}
+
+\begin{lstlisting}[style=synopsis,label={lst:fdsanalysis_cli_source},caption={SOURCE Parameter}]
+fdsanalysis-cli -type [csv_project | simulation_project | noise_device_project] SOURCE_PARAMETER TIME KEYS
+\end{lstlisting}
+
+\begin{lstlisting}[style=synopsis,label={lst:fdsanalysis_cli_csv},caption={SOURCE\_PARAMETER Parameter wenn Quelle ist CSV}]
+fdsanalysis-cli -type csv_project [-columns list] [-separator character] [-charset string] [-headers] [-files string] -source string TIME KEYS
+\end{lstlisting}
+
+\begin{lstlisting}[style=synopsis,label={lst:fdsanalysis_cli_noise_device},caption={SOURCE\_PARAMETER Parameter wenn Quelle ist NOISE\_DEVICE}]
+fdsanalysis-cli -type noise_device -device string [-gps] -preoscillations [none | samples5 | permanent] -rate [rate1_1 | rate5_0 | rate22 | rate101] -source [gmr_signals | ex_noise_diode_voltages] TIME KEYS
+\end{lstlisting}
+
+\begin{lstlisting}[style=synopsis,label={lst:fdsanalysis_cli_keys},caption={TIME Parameter}]
+fdsanalysis-cli SOURCE -time [system | ntp] TIME_PARAMETER KEYS
+\end{lstlisting}
+
+\begin{lstlisting}[style=synopsis,label={lst:fdsanalysis_cli_noise_device},caption={TIME\_PARAMETER  Parameter wenn Zeitquelle ist SYSTEM}]
+fdsanalysis-cli SOURCE -time system -start number -sampling number -max-jitter number KEYS
+\end{lstlisting}
+
+\begin{lstlisting}[style=synopsis,label={lst:fdsanalysis_cli_noise_device},caption={TIME\_PARAMETER  Parameter wenn Zeitquelle ist NTP}]
+fdsanalysis-cli SOURCE -time ntp -host string -timeout number -start number -sampling number -max-jitter number KEYS
+\end{lstlisting}
+
+\begin{lstlisting}[style=synopsis,label={lst:fdsanalysis_cli_keys},caption={KEYS Parameter}]
+fdsanalysis-cli SOURCE TIME -derivations integer [-derivation-type sorted_derivation | sorted_sorted_derivation] -size number -places number -characters number
+\end{lstlisting}
+
