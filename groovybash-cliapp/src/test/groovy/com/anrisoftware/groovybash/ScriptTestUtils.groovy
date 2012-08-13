@@ -142,5 +142,6 @@ class ScriptTestUtils extends TestUtils {
 		ParameterParser parser = injector.getInstance ParameterParser
 		parser.parseParameter arguments, injector
 		runCallback(parser.bashParser)
+		return parser.bashParser
 	}
 }

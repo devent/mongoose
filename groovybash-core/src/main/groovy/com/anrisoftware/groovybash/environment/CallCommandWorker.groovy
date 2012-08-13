@@ -54,9 +54,30 @@ class CallCommandWorker {
 	 * 
 	 * @since 0.2
 	 */
-	def call(def command, def flags, def args) {
+	def callWithFlags(def command, def flags, def args) {
 		try {
 			command.setArguments(flags, args)
+			command.call()
+		} catch (Exception e) {
+			log.errorCallBuildin(command, e)
+			throw e
+		}
+	}
+
+	/**
+	 * Call the specified command, log and re-throw any exceptions.
+	 * 
+	 * @param command
+	 * 			  the command to call.
+	 * 
+	 * @param args
+	 * 			  the arguments of the command. 
+	 * 
+	 * @return the return value of the command.
+	 */
+	def call(def command, def args) {
+		try {
+			command.setArguments(args)
 			command.call()
 		} catch (Exception e) {
 			log.errorCallBuildin(command, e)

@@ -18,17 +18,13 @@
  */
 package com.anrisoftware.groovybash.buildins;
 
-import static com.google.inject.multibindings.Multibinder.newSetBinder;
-
 import com.anrisoftware.groovybash.buildins.cdbuildin.CdPluginModule;
-import com.anrisoftware.groovybash.buildins.echobuildin.EchoPlugin;
+import com.anrisoftware.groovybash.buildins.echobuildin.EchoPluginModule;
 import com.anrisoftware.groovybash.buildins.listfilesbuildin.ListFilesPluginModule;
 import com.anrisoftware.groovybash.buildins.pwdbuildin.PwdPluginModule;
 import com.anrisoftware.groovybash.buildins.runbuildin.RunPluginModule;
-import com.anrisoftware.groovybash.core.BuildinPlugin;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.multibindings.Multibinder;
 
 /**
  * Install the build-in modules. Provides a default of the the standard input
@@ -45,11 +41,8 @@ public class BuildinsModule extends AbstractModule {
 	}
 
 	private void installBuildins() {
-		Multibinder<BuildinPlugin> binder;
-		binder = newSetBinder(binder(), BuildinPlugin.class);
-		binder.addBinding().to(EchoPlugin.class);
-
 		install(new CdPluginModule());
+		install(new EchoPluginModule());
 		install(new ListFilesPluginModule());
 		install(new PwdPluginModule());
 		install(new RunPluginModule());

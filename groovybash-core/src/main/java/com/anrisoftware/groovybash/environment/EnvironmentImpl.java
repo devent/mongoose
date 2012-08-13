@@ -166,8 +166,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	private Object callBuildin(Object[] uargs, BuildinPlugin buildinPlugin) {
 		Buildin buildin = buildinPlugin.getBuildin(injector);
 		buildin.setEnvironment(this);
-		Map<?, ?> flags = newHashMap();
-		return callCommandWorker.call(buildin, flags, uargs);
+		return callCommandWorker.call(buildin, uargs);
 	}
 
 	private Object callCommand(String name, Object[] uargs) {
@@ -176,7 +175,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		arguments = argumentsWorker.createCommandArgs(name, uargs);
 		Object[] args = arguments.getArgs();
 		Map<?, ?> flags = arguments.getFlags();
-		return callCommandWorker.call(buildin, flags, args);
+		return callCommandWorker.callWithFlags(buildin, flags, args);
 	}
 
 	private Buildin getBuildin(String name) {
