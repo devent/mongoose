@@ -44,8 +44,20 @@ public interface ReturnCode extends ReturnValue {
 
 	/**
 	 * Compare this return value and a different return value if they are
-	 * equals. Two return values are equals if they represent the same number
-	 * value.
+	 * equals.
+	 * 
+	 * @return {@code true} if one of the following conditions apply:
+	 *         <dl>
+	 *         <dt>{@code obj} is of type {@code Boolean}:</dt>
+	 *         <dd>if this value as boolean equals to the specified boolean
+	 *         value.</dd>
+	 *         <dt>{@code obj} is of type {@code Number}:</dt>
+	 *         <dd>if this value as number equals to the specified number value.
+	 *         </dd>
+	 *         <dt>{@code obj} is of type {@code ReturnCode}:</dt>
+	 *         <dd>if this value as number equals to the specified return code
+	 *         number value.</dd>
+	 *         </dl>
 	 */
 	@Override
 	boolean equals(Object obj);

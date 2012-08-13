@@ -28,8 +28,8 @@ emph={[3]HOME,USER_HOME},emphstyle={[3]\textbf}}
 
 %% Put the command line parameter in a box
 %% \parparameter{Title}
-\newcommand\parparameter[1]{%
-\paragraph{\small\normalfont\noindent\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-\fboxrule\relax}{\texttt{#1}}}}
+\newcommand{\parparameter}[1]{%
+\paragraph{\small\normalfont\noindent\protect\shadowbox{\parbox{\dimexpr\linewidth-2\fboxsep-\fboxrule\relax}{\texttt{#1}}}}
 }
 
 \newcommand\parcommand{\textbf}

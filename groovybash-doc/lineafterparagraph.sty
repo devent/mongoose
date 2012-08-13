@@ -1,0 +1,13 @@
+ % This file is part of Latexlibs.
+% Copyright 2012 Erwin Müller, erwin.mueller@deventm.org.
+% This work is licensed under the Creative Commons Attribution 3.0 Unported
+% License. To view a copy of this license, visit
+% http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative
+% Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
+\ProvidesPackage{lineafterparagraph}[2012/06/16 v1.0 Adds a new line after a paragraph.]
+
+%% add a new line after paragraph
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+{-3.25ex\@plus -1ex \@minus -.2ex}%
+{0.1em \@plus .1em}%
+{\normalfont\normalsize\bfseries}}

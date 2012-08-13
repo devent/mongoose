@@ -19,9 +19,8 @@ file or a stream. If a generic \code{Object} is specified, the string
 representation of this object is used as file name for the redirect target.
 
 \subparagraph{Example:}
-~
 
-\begin{lstlisting}[style=Groovybash, label={lst:example_cd}]
+\begin{lstlisting}[style=Groovybash, label={lst:example_flag_in}]
 echo out: "output.txt", "Hello World"
 
 output = new ByteArrayOutput Stream()
@@ -35,9 +34,8 @@ file or a stream. If a generic \code{Object} is specified, the string
 representation of this object is used as file name for the redirect target.
 
 \subparagraph{Example:}
-~
 
-\begin{lstlisting}[style=Groovybash, label={lst:example_cd}]
+\begin{lstlisting}[style=Groovybash, label={lst:example_flag_out}]
 echo out: "output.txt", "Hello World"
 
 output = new ByteArrayOutput Stream()
@@ -51,21 +49,33 @@ file or a stream. If a generic \code{Object} is specified, the string
 representation of this object is used as file name for the redirect target.
 
 \subparagraph{Example:}
-~
 
-\begin{lstlisting}[style=Groovybash, label={lst:example_cd}]
+\begin{lstlisting}[style=Groovybash, label={lst:example_flag_err}]
 echo err: "error.txt", "Hello World"
 
 output = new ByteArrayOutput Stream()
 echo err: output, "Hello World"
 \end{lstlisting}
 
+\paragraph{\code{fromIn: true|false}}
+
+Reads the first line from the standard input and injects it as the first
+arguments for the command.
+
+\subparagraph{Example:}
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_flag_fromin}]
+echo fromIn: true
+run fromIn: true
+\end{lstlisting}
+
 \subsection{Return Value}
 
 External and build-in commands returning a return value from type
-\code{ReturnValue}. The return value contains a return code or a value of
-\code{true} indicating the successfull execution of a command.
+\code{ReturnValue}. The most basic return value contains only a human readable
+representation of the status of the command.
 
-With the return value the standard output and standard error can be accessed
-with \code{ReturnValue\#getOutput()} and \code{ReturnValue\#getError()}.
-
+Most commands return \code{ReturnCode} as the return value. It contains a number
+value as the return code from the command. As a convention the
+code \code{0} is equavalent to the value \code{true} and any value not \code{0}
+is equavalent to \code{false} and is representing an error code.
