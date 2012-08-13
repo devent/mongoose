@@ -28,7 +28,7 @@ import com.anrisoftware.groovybash.buildins.StandardStreams;
  * Log a message at the error level of the logger.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 class ErrorBuildin extends AbstractLogBuildin {
 

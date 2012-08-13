@@ -8,7 +8,7 @@ import com.anrisoftware.globalpom.log.AbstractLogger;
  * Logging messages for {@link AbstractLogBuildin}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 class LogBuildinLogger extends AbstractLogger {
 

@@ -18,6 +18,7 @@
  */
 package com.anrisoftware.groovybash.buildins.logbuildins;
 
+import com.anrisoftware.groovybash.buildins.returns.ReturnsModule;
 import com.anrisoftware.groovybash.core.Buildin;
 import com.google.inject.AbstractModule;
 
@@ -25,12 +26,13 @@ import com.google.inject.AbstractModule;
  * Binds the error build-in command.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 public class ErrorModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		install(new ReturnsModule());
 		bind(Buildin.class).to(ErrorBuildin.class);
 	}
 }
