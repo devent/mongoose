@@ -19,7 +19,6 @@
 package com.anrisoftware.groovybash.environment;
 
 import static com.google.common.collect.ImmutableList.copyOf;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import groovy.lang.GroovyObjectSupport;
 
@@ -52,6 +51,8 @@ import com.google.inject.Injector;
  */
 class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
+	private static final String ARGS_VARIABLE = "ARGS";
+
 	private static final String WORKING_DIRECTORY = "PWD";
 
 	private final EnvironmentImplLogger log;
@@ -70,8 +71,6 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private Injector injector;
 
-	private List<String> args;
-
 	private Logger scriptLogger;
 
 	@Inject
@@ -88,13 +87,13 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		this.argumentsWorker = argumentsWorker;
 		this.executorServiceHandler = executorServiceHandler;
 		this.variables = newHashMap();
-		this.args = newArrayList();
 		loadBuildins(buildins);
 		setupVariables();
 	}
 
 	private void setupVariables() {
 		setWorkingDirectory(new File("."));
+		setArguments(new String[0]);
 	}
 
 	private void loadBuildins(Set<BuildinPlugin> plugins) {
@@ -110,14 +109,19 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	@Override
 	public void setArguments(String[] args) {
-		this.args = copyOf(args);
-		variables.put("ARGS", this.args);
+		variables.put(ARGS_VARIABLE, copyOf(args));
 		log.argumentsSet(args);
 	}
 
 	@Override
 	public String[] getArguments() {
+		List<String> args = asList(String.class);
 		return args.toArray(new String[args.size()]);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> List<T> asList(Class<T> type) {
+		return (List<T>) variables.get(ARGS_VARIABLE);
 	}
 
 	@Override
