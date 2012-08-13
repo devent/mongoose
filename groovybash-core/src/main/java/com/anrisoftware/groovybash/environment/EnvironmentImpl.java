@@ -53,7 +53,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private static final String ARGS_VARIABLE = "ARGS";
 
-	private static final String WORKING_DIRECTORY = "PWD";
+	private static final String WORKING_DIRECTORY_VARIABLE = "PWD";
 
 	private final EnvironmentImplLogger log;
 
@@ -126,13 +126,13 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	@Override
 	public void setWorkingDirectory(File directory) {
-		variables.put(WORKING_DIRECTORY, directory);
+		variables.put(WORKING_DIRECTORY_VARIABLE, directory);
 		log.workingDirectorySet(directory);
 	}
 
 	@Override
 	public File getWorkingDirectory() {
-		return (File) variables.get(WORKING_DIRECTORY);
+		return (File) variables.get(WORKING_DIRECTORY_VARIABLE);
 	}
 
 	@Override
