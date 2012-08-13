@@ -23,7 +23,6 @@ import static org.apache.commons.lang3.StringUtils.join;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -94,14 +93,28 @@ class EchoBuildin extends AbstractBuildin {
 	}
 
 	@Override
-	public void setArguments(Map<?, ?> flags, Object[] args) {
-		super.setArguments(flags, args);
+	protected void setupArguments() throws Exception {
 		if (getFlag(NONEWLINE, false)) {
 			output = createOutputNoNewline();
 		}
-		if (getFlag("in", null) != null && args.length == 0) {
+		if (getFlag("in", null) != null && getArgs().length == 0) {
 			output = createOutputFromInputStream();
 		}
+	}
+
+	private OutputWorker createOutputNoNewline() {
+		return new OutputWorker() {
+
+			@Override
+			public void output(PrintStream output, String text) {
+				output.print(text);
+			}
+
+			@Override
+			public String getOutput() {
+				return EchoBuildin.this.getOutput();
+			}
+		};
 	}
 
 	private OutputWorker createOutputFromInputStream() {
@@ -118,21 +131,6 @@ class EchoBuildin extends AbstractBuildin {
 			public String getOutput() throws IOException {
 				InputStreamReader i = new InputStreamReader(getInputStream());
 				return CharStreams.toString(i);
-			}
-		};
-	}
-
-	private OutputWorker createOutputNoNewline() {
-		return new OutputWorker() {
-
-			@Override
-			public void output(PrintStream output, String text) {
-				output.print(text);
-			}
-
-			@Override
-			public String getOutput() {
-				return EchoBuildin.this.getOutput();
 			}
 		};
 	}

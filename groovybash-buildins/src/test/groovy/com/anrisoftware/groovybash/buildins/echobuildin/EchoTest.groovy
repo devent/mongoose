@@ -88,4 +88,11 @@ class EchoTest extends BuildinTestUtils {
 		assertStringContent output, "$text"
 	}
 
+	@Test
+	void "echo line read from input"() {
+		inputBuffer = "TextA\nTextB".bytes
+		createBuildin(EchoBuildin, [[in: inputStream, fromIn: true]])()
+		assertStringContent output, "TextA\n"
+	}
+
 }
