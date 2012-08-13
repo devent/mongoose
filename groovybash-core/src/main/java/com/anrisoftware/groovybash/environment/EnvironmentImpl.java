@@ -55,6 +55,10 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private static final String WORKING_DIRECTORY_VARIABLE = "PWD";
 
+	private static final String HOME_VARIABLE = "HOME";
+
+	private static final String USER_HOME_VARIABLE = "USER_HOME";
+
 	private final EnvironmentImplLogger log;
 
 	private final ContextProperties properties;
@@ -91,15 +95,22 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		setupVariables();
 	}
 
-	private void setupVariables() {
-		setWorkingDirectory(new File("."));
-		setArguments(new String[0]);
-	}
-
 	private void loadBuildins(Set<BuildinPlugin> plugins) {
 		for (BuildinPlugin plugin : plugins) {
 			buildinPlugins.put(plugin.getName(), plugin);
 		}
+	}
+
+	private void setupVariables() {
+		setWorkingDirectory(new File("."));
+		setArguments(new String[0]);
+		setHomeDirectory();
+	}
+
+	private void setHomeDirectory() {
+		variables.put(USER_HOME_VARIABLE,
+				new File(System.getProperty("user.home")));
+		variables.put(HOME_VARIABLE, new File(System.getProperty("user.home")));
 	}
 
 	@Override
@@ -137,7 +148,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	@Override
 	public File getUserHome() {
-		return new File(System.getProperty("user.home"));
+		return (File) variables.get(HOME_VARIABLE);
 	}
 
 	@Override

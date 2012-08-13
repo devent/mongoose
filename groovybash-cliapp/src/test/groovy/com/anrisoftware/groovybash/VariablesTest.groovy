@@ -59,5 +59,16 @@ echo PWD
 		runParser script
 		assertStringContent "$dir\n", output
 	}
+
+	@Test
+	void "echo user_home"() {
+		def script = """
+echo HOME
+echo USER_HOME
+"""
+		def parser = runParser script
+		def home = parser.environment.userHome
+		assertStringContent "$home\n$home\n", output
+	}
 }
 
