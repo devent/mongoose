@@ -35,7 +35,7 @@ public class ParseModule extends AbstractModule {
 	protected void configure() {
 		bind(Buildin.class).to(ParseBuildin.class);
 		install(new ReturnsModule());
-		install(new FactoryModuleBuilder().implement(ParsedReturnValue.class,
-				ParsedReturnValue.class).build(ParsedReturnValueFactory.class));
+		install(new FactoryModuleBuilder().implement(ParameterValue.class,
+				ParameterValue.class).build(ParameterValueFactory.class));
 	}
 }

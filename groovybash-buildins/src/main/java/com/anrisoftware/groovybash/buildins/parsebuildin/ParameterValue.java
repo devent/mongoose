@@ -37,12 +37,12 @@ import com.anrisoftware.groovybash.core.ReturnValue;
 import com.google.inject.assistedinject.Assisted;
 
 /**
- * Returns the parsed parameters.
+ * Returns the parsed parameters from the build-in command {@code parse}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 0.1
  */
-class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
+class ParameterValue extends GroovyObjectSupport implements ReturnValue {
 
 	private final CmdLineParser parser;
 
@@ -72,7 +72,7 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 *            contains the valid parameter.
 	 */
 	@Inject
-	public ParsedReturnValue(@Assisted PrintStream output,
+	ParameterValue(@Assisted PrintStream output,
 			@Assisted CmdLineParser parser, @Assisted Object bean,
 			@Assisted boolean valid) {
 		this.output = output;
@@ -150,7 +150,15 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 		return valid;
 	}
 
-	public Object valid(Closure<?> closure) {
+	/**
+	 * Runs the specified closure if the parameter are valid.
+	 * 
+	 * @param closure
+	 *            the {@link Closure} to run.
+	 * 
+	 * @return this {@link ParameterValue}.
+	 */
+	public ParameterValue valid(Closure<?> closure) {
 		if (valid) {
 			closure.call(parser);
 			return this;
@@ -158,6 +166,14 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 		return this;
 	}
 
+	/**
+	 * Runs the specified closure if the parameter are not valid.
+	 * 
+	 * @param closure
+	 *            the {@link Closure} to run.
+	 * 
+	 * @return this {@link ParameterValue} or the return value of the closure.
+	 */
 	public Object notValid(Closure<?> closure) {
 		if (!valid) {
 			return closure.call(parser);
@@ -185,9 +201,17 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 	}
 
 	/**
-	 * Equals only if the object is a boolean and the valid equals to the
-	 * expected boolean value, or if of the same class and valid and the bean
-	 * are equals.
+	 * Compare this return value and a different return value if they are
+	 * equals.
+	 * 
+	 * @return {@code true} if one of the following conditions apply:
+	 *         <dl>
+	 *         <dt>{@code obj} is of type {@code Boolean}:</dt>
+	 *         <dd>if this value valid flag equals the specified boolean value.</dd>
+	 *         <dt>{@code obj} is of type {@code ParameterValue}:</dt>
+	 *         <dd>if this value valid flag equals the specified value valid
+	 *         flag and the parameter bean object is the same.</dd>
+	 *         </dl>
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -204,7 +228,7 @@ class ParsedReturnValue extends GroovyObjectSupport implements ReturnValue {
 		if (obj.getClass() != getClass()) {
 			return false;
 		}
-		ParsedReturnValue rhs = (ParsedReturnValue) obj;
+		ParameterValue rhs = (ParameterValue) obj;
 		return new EqualsBuilder().append(valid, rhs.valid)
 				.append(bean, rhs.bean).isEquals();
 

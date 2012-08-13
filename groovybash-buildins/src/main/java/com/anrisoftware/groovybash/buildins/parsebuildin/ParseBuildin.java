@@ -50,7 +50,7 @@ class ParseBuildin extends AbstractBuildin {
 
 	private String[] arguments;
 
-	private final ParsedReturnValueFactory valueFactory;
+	private final ParameterValueFactory valueFactory;
 
 	private Object bean;
 
@@ -63,7 +63,7 @@ class ParseBuildin extends AbstractBuildin {
 	 */
 	@Inject
 	ParseBuildin(ParseBuildinLogger logger, StandardStreams streams,
-			ParsedReturnValueFactory returnValueFactory) {
+			ParameterValueFactory returnValueFactory) {
 		super(streams);
 		this.log = logger;
 		this.valueFactory = returnValueFactory;
@@ -81,7 +81,7 @@ class ParseBuildin extends AbstractBuildin {
 		return createReturnValue(true);
 	}
 
-	private ParsedReturnValue createReturnValue(boolean valid) {
+	private ParameterValue createReturnValue(boolean valid) {
 		return valueFactory.create(getOutputStream(), parser, bean, valid);
 	}
 

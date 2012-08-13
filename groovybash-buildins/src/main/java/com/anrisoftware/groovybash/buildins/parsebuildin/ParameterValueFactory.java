@@ -29,7 +29,7 @@ import org.kohsuke.args4j.CmdLineParser;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 0.1
  */
-interface ParsedReturnValueFactory {
+interface ParameterValueFactory {
 
 	/**
 	 * Creates a new return value for parsed command line arguments.
@@ -48,8 +48,8 @@ interface ParsedReturnValueFactory {
 	 *            whether or not the arguments are parsed and the bean class
 	 *            contains the valid parameter.
 	 * 
-	 * @return the {@link ParsedReturnValue}.
+	 * @return the {@link ParameterValue}.
 	 */
-	ParsedReturnValue create(PrintStream output, CmdLineParser parser,
+	ParameterValue create(PrintStream output, CmdLineParser parser,
 			Object bean, boolean valid);
 }
