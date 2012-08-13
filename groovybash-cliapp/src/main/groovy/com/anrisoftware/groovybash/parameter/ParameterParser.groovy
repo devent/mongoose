@@ -4,7 +4,7 @@ import org.kohsuke.args4j.CmdLineParser
 import org.kohsuke.args4j.spi.StringArrayOptionHandler
 
 import com.anrisoftware.groovybash.core.factories.BashParserFactory
-import com.anrisoftware.groovybash.core.parser.BashParser
+import com.anrisoftware.groovybash.parser.BashParser
 import com.google.common.io.Files
 import com.google.inject.Inject
 import com.google.inject.Injector
@@ -14,7 +14,7 @@ import com.google.inject.Injector
  * type.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 1.0
+ * @since 0.1
  */
 class ParameterParser {
 
