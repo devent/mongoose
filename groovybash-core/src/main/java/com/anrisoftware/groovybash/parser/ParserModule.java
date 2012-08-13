@@ -18,10 +18,7 @@
  */
 package com.anrisoftware.groovybash.parser;
 
-import static com.google.common.io.Resources.getResource;
-
 import java.io.IOException;
-import java.net.URL;
 import java.util.Properties;
 
 import javax.inject.Named;
@@ -40,8 +37,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  */
 public class ParserModule extends AbstractModule {
 
-	private static final URL PARSER_PROPERTIES = getResource(
-			ParserModule.class, "parser.properties");
+	private static final String PARSER_PROPERTIES = "core.properties";
 
 	@Override
 	protected void configure() {
