@@ -26,6 +26,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+import com.anrisoftware.groovybash.core.ReturnCode;
 import com.anrisoftware.groovybash.core.ReturnValue;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.assistedinject.Assisted;
@@ -36,7 +39,7 @@ import com.google.inject.assistedinject.Assisted;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 0.1
  */
-class FilesReturnValue extends GroovyObjectSupport implements ReturnValue {
+class FilesList extends GroovyObjectSupport implements ReturnValue {
 
 	private final List<File> files;
 
@@ -47,7 +50,7 @@ class FilesReturnValue extends GroovyObjectSupport implements ReturnValue {
 	 *            the {@link Collection} containing the found files.
 	 */
 	@Inject
-	public FilesReturnValue(@Assisted Collection<File> files) {
+	public FilesList(@Assisted Collection<File> files) {
 		this.files = ImmutableList.copyOf(files);
 	}
 
@@ -63,5 +66,37 @@ class FilesReturnValue extends GroovyObjectSupport implements ReturnValue {
 	@Override
 	public String toString() {
 		return files.toString();
+	}
+
+	/**
+	 * Compare this return value and a different return value if they are
+	 * equals.
+	 * 
+	 * @return {@code true} if one of the following conditions apply:
+	 *         <dl>
+	 *         <dt>{@code obj} is of type {@link List}:</dt>
+	 *         <dd>if this found files equals to the files in the specified
+	 *         list.</dd>
+	 *         <dt>{@code obj} is of type {@link FilesList}:</dt>
+	 *         <dd>if this found files equals to the files in the specified
+	 *         return value.</dd>
+	 *         </dl>
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof List) {
+			return files.equals(obj);
+		}
+		if (!(obj instanceof ReturnCode)) {
+			return false;
+		}
+		FilesList o = (FilesList) obj;
+		return new EqualsBuilder().append(files, o.getFiles()).isEquals();
 	}
 }

@@ -42,7 +42,7 @@ class ListFilesBuildin extends AbstractBuildin {
 
 	private final WildcardListFactory wildcardListFactory;
 
-	private final FilesReturnValueFactory filesReturnValueFactory;
+	private final FilesListFactory filesReturnValueFactory;
 
 	private final List<ListWorker> listFilesWorkers;
 
@@ -55,7 +55,7 @@ class ListFilesBuildin extends AbstractBuildin {
 	 */
 	@Inject
 	ListFilesBuildin(StandardStreams streams,
-			FilesReturnValueFactory filesReturnValueFactory,
+			FilesListFactory filesReturnValueFactory,
 			WildcardListFactory wildcardListFactory) {
 		super(streams);
 		this.filesReturnValueFactory = filesReturnValueFactory;

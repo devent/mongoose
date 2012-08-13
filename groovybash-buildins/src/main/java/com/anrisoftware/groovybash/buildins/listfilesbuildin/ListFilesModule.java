@@ -35,8 +35,8 @@ public class ListFilesModule extends AbstractModule {
 	protected void configure() {
 		bind(Buildin.class).to(ListFilesBuildin.class);
 		install(new ReturnsModule());
-		install(new FactoryModuleBuilder().implement(FilesReturnValue.class,
-				FilesReturnValue.class).build(FilesReturnValueFactory.class));
+		install(new FactoryModuleBuilder().implement(FilesList.class,
+				FilesList.class).build(FilesListFactory.class));
 		install(new FactoryModuleBuilder().implement(ListWorker.class,
 				WildcardListWorker.class).build(WildcardListFactory.class));
 	}

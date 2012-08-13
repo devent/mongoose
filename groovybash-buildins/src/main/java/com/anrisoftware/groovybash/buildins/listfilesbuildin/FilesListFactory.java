@@ -27,7 +27,7 @@ import java.util.Collection;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 0.1
  */
-interface FilesReturnValueFactory {
+interface FilesListFactory {
 
 	/**
 	 * Creates a new return value for found files.
@@ -35,7 +35,7 @@ interface FilesReturnValueFactory {
 	 * @param files
 	 *            the {@link Collection} containing the found files.
 	 * 
-	 * @return the {@link FilesReturnValue}.
+	 * @return the {@link FilesList}.
 	 */
-	FilesReturnValue create(Collection<File> files);
+	FilesList create(Collection<File> files);
 }

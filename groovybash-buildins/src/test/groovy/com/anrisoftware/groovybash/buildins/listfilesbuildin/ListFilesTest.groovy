@@ -95,6 +95,13 @@ class ListFilesTest extends BuildinTestUtils {
 	}
 
 	@Test
+	void "listFiles buildin with wildcat and test against a list"() {
+		environment.workingDirectory = directory
+		def result = createBuildin(ListFilesBuildin, ["*.txt"])()
+		assert result == [file("baz.txt"), file("bar.txt"), file("foo.txt")]
+	}
+
+	@Test
 	void "listFiles buildin with multiple wildcats"() {
 		environment.workingDirectory = directory
 		def result = createBuildin(ListFilesBuildin, ["*.jpg", "*.txt"])()
