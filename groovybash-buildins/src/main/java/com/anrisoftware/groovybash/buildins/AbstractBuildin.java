@@ -35,7 +35,6 @@ import com.anrisoftware.groovybash.buildins.returns.ReturnCodeFactory;
 import com.anrisoftware.groovybash.core.Buildin;
 import com.anrisoftware.groovybash.core.Environment;
 import com.anrisoftware.groovybash.core.ReturnValue;
-import com.anrisoftware.groovybash.core.exceptions.CommandException;
 import com.google.common.collect.Maps;
 
 /**
@@ -194,21 +193,17 @@ public abstract class AbstractBuildin implements Buildin {
 		log.outputStreamSet(this, flag);
 	}
 
-	private void setupFromInput(Object[] args) throws CommandException {
+	private void setupFromInput(Object[] args) throws IOException {
 		if (getFlag(FROM_INPUT_FLAG, false)) {
 			String string = readLineFromInput();
 			this.args = ArrayUtils.add(args, 0, string);
 		}
 	}
 
-	private String readLineFromInput() throws CommandException {
+	private String readLineFromInput() throws IOException {
 		BufferedReader reader;
 		reader = new BufferedReader(new InputStreamReader(getInputStream()));
-		try {
-			return reader.readLine();
-		} catch (IOException e) {
-			throw log.errorReadLineFromInput(this, e);
-		}
+		return reader.readLine();
 	}
 
 	/**

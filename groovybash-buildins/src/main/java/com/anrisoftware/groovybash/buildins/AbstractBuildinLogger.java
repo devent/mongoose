@@ -18,10 +18,7 @@
  */
 package com.anrisoftware.groovybash.buildins;
 
-import java.io.IOException;
-
 import com.anrisoftware.globalpom.log.AbstractLogger;
-import com.anrisoftware.groovybash.core.exceptions.CommandException;
 
 /**
  * Logging messages for {@link AbstractBuildin}.
@@ -46,15 +43,5 @@ class AbstractBuildinLogger extends AbstractLogger {
 	void inputStreamSet(AbstractBuildin buildin, Object flag) {
 		log.debug("Set input stream {} for the build-in command {}.", flag,
 				buildin);
-	}
-
-	CommandException errorReadLineFromInput(AbstractBuildin buildin,
-			IOException e) {
-		CommandException ex = new CommandException(
-				e,
-				"Error read line from the standard input for the build-in command %s.",
-				buildin);
-		log.error(ex.getLocalizedMessage());
-		return ex;
 	}
 }
