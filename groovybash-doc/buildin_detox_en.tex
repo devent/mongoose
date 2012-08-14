@@ -1,0 +1,29 @@
+%%
+\label{par:detox}
+\parparameter{\parcommand{detox} \partype{file}}
+
+Remove all ``toxic'' characters from a file name. The \partype{file} argument
+can be a \code{File} or the file name. Toxic characters are:
+\begin{compactitem}
+\item white space characters \code{[ \textbackslash{t}\textbackslash{n}\textbackslash{x0B}\textbackslash{f}\textbackslash{r}]}
+\item control characters: \code{[\textbackslash{x00}-\textbackslash{x1F}\textbackslash{x7F}]}
+\item punctuation characters that have special meanings in the GNU Bash: \code{["'`]}
+\item punctuation characters that are the file and path separator characters on systems: \code{[/\textbackslash;:]}
+\end{compactitem}
+
+The name is trimmed on both ends, white space and punctuation characters are replaced with the underscore character \codequoted{\_}
+whereas control characters are deleted from the file name. Double underscore characters are replaced with a single
+underscore.
+
+\subparagraph{Return Value:}
+
+The return value is an instance of \code{FileValue}. It is the file name converted
+to a file after the removal of toxic characters.
+
+\subparagraph{Example:}
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_cd}]
+fileName = "  my file with \t\n stuff.txt"
+name = detox fileName
+\end{lstlisting}
+

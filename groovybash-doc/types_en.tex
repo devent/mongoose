@@ -122,4 +122,54 @@ flag and the parameter bean object is the same.
 \end{compactitem}
 
 
+%%
+\label{par:filevalue}
+\parparameter{\parcommand{FileValue}}
+
+Value for a file name.
+
+\subparagraph{Methods}
+
+\begin{asparadesc}
+%
+\item[asType(Class)] Returns this value as the specified type.
+The type can be of class:
+\begin{compactitem}
+\item \code{String}: returns the absolute path of the file.
+\item \code{File}: returns the file.
+\end{compactitem}
+%
+\end{asparadesc}
+
+\subparagraph{Properties}
+
+\begin{asparadesc}
+%
+\item[file] Returns the file.
+%
+\end{asparadesc}
+
+\subparagraph{Comparison}
+
+\begin{compactitem}
+%
+\item to \code{Object}: if this file equals to the string representation of the
+object interpreted as a file path.
+%
+\item to \code{File}: if this file equals to the specified file.
+%
+\item to \code{FileValue}: if this file equals to the specified value file.
+%
+\end{compactitem}
+
+\subparagraph{Used By}
+
+\begin{compactitem}
+%
+\item \parcommand{detox}, see \refpar{par:detox};
+%
+\end{compactitem}
+
+
+
 
