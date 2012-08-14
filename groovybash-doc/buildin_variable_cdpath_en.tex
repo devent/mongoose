@@ -1,0 +1,12 @@
+%%
+\label{par:cdpath}
+\parparameter{\parcommand{CDPATH}}
+
+A list of search paths for the cd command.
+The cd command looks up destination directories in this list.
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_cdpath}]
+CDPATH << "."
+CDPATH << "/home/user" << "/usr"
+\end{lstlisting}
+

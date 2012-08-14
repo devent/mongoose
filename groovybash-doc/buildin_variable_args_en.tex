@@ -1,0 +1,15 @@
+%%
+\label{par:args}
+\parparameter{\parcommand{ARGS}}
+
+An immutable list of the passed command line arguments of the script.
+Can be used with the build-in command \parcommand{parse}, see \refpar{},
+to parse them.
+
+\subparagraph{Example:}
+
+\begin{lstlisting}[style=Groovybash, label={lst:example_args_echo}]
+echo ARGS
+def parser = parse new Parameter(), ARGS
+\end{lstlisting}
+
