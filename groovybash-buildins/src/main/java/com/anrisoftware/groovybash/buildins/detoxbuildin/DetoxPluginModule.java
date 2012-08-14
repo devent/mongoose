@@ -7,10 +7,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 
 /**
- * Add a binding to the {@code echo} build-in plug-in.
+ * Add a binding to the {@code detox} build-in plug-in.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.2
+ * @since 0.1
  */
 public class DetoxPluginModule extends AbstractModule {
 

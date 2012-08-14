@@ -19,6 +19,7 @@
 package com.anrisoftware.groovybash.buildins;
 
 import com.anrisoftware.groovybash.buildins.cdbuildin.CdPluginModule;
+import com.anrisoftware.groovybash.buildins.detoxbuildin.DetoxPluginModule;
 import com.anrisoftware.groovybash.buildins.echobuildin.EchoPluginModule;
 import com.anrisoftware.groovybash.buildins.listfilesbuildin.ListFilesPluginModule;
 import com.anrisoftware.groovybash.buildins.logbuildins.LogPluginModule;
@@ -44,6 +45,7 @@ public class BuildinsModule extends AbstractModule {
 
 	private void installBuildins() {
 		install(new CdPluginModule());
+		install(new DetoxPluginModule());
 		install(new EchoPluginModule());
 		install(new ListFilesPluginModule());
 		install(new LogPluginModule());

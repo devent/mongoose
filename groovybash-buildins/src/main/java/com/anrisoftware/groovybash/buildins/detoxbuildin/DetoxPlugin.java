@@ -23,7 +23,7 @@ import com.anrisoftware.groovybash.core.BuildinPlugin;
 import com.google.inject.Injector;
 
 /**
- * Returns the build-in command {@code echo}.
+ * Returns the build-in command {@code detox}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 0.1
@@ -35,11 +35,11 @@ public class DetoxPlugin implements BuildinPlugin {
 	/**
 	 * Returns the name of the build-in command.
 	 * 
-	 * @return the name {@code echo}.
+	 * @return the name {@code detox}.
 	 */
 	@Override
 	public String getName() {
-		return "echo";
+		return "detox";
 	}
 
 	/**
