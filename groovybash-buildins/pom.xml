@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>groovybash-buildins</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<name>Build-in Commands</name>
 
 	<dependencyManagement>
