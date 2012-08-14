@@ -54,11 +54,11 @@ class RunBuildinLogger extends AbstractLogger {
 	}
 
 	void startingCommand(RunBuildin buildin) {
-		log.debug("Starting the command in the build-in command %s...", buildin);
+		log.debug("Starting the command in the build-in command {}...", buildin);
 	}
 
 	void commandFinished(RunBuildin buildin) {
-		log.info("Finish the command in the build-in command %s...", buildin);
+		log.info("Finish the command in the build-in command {}...", buildin);
 	}
 
 }
