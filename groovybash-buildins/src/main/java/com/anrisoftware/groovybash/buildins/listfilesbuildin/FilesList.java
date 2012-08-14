@@ -22,6 +22,7 @@ import groovy.lang.GroovyObjectSupport;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,7 +40,8 @@ import com.google.inject.assistedinject.Assisted;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 0.1
  */
-class FilesList extends GroovyObjectSupport implements ReturnValue {
+class FilesList extends GroovyObjectSupport implements ReturnValue,
+		Iterable<File> {
 
 	private final List<File> files;
 
@@ -61,6 +63,11 @@ class FilesList extends GroovyObjectSupport implements ReturnValue {
 	 */
 	public List<File> getFiles() {
 		return files;
+	}
+
+	@Override
+	public Iterator<File> iterator() {
+		return files.iterator();
 	}
 
 	@Override

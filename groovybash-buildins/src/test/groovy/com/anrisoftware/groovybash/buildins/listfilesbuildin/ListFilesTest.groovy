@@ -79,6 +79,18 @@ class ListFilesTest extends BuildinTestUtils {
 	}
 	
 	@Test
+	void "listFiles buildin iterate over files"() {
+		environment.workingDirectory = directory
+		def list = ["foo.txt", "bar.txt"]
+		def result = createBuildin(ListFilesBuildin, [list])()
+		def files = []
+		result.each {
+			files << it
+		}
+		assert files == [file("foo.txt"), file("bar.txt")]
+	}
+	
+	@Test
 	void "listFiles buildin with no arguments"() {
 		environment.workingDirectory = directory
 		def result = createBuildin(ListFilesBuildin)()
