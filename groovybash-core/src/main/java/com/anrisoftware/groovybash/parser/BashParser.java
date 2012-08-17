@@ -99,6 +99,7 @@ public class BashParser implements Runnable {
 		addPackageNameToClassPath(script);
 
 		parserMetaClass.setDelegate(script, environment);
+		environment.setScriptClassLoader(script.getClass().getClassLoader());
 		environment.setScriptLoggerContext(script.getClass());
 		return script;
 	}

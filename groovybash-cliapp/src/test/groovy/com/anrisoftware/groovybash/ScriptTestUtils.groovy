@@ -31,6 +31,7 @@ import com.anrisoftware.groovybash.parameter.ParameterModule
 import com.anrisoftware.groovybash.parameter.ParameterParser
 import com.anrisoftware.groovybash.parser.BashParser
 import com.anrisoftware.groovybash.parser.ParserModule
+import com.anrisoftware.groovybash.resources.ResourcesModule
 import com.google.common.io.Files
 import com.google.inject.Guice
 import com.google.inject.Injector
@@ -98,7 +99,8 @@ class ScriptTestUtils extends TestUtils {
 		new ParserModule(),
 		new EnvironmentModule(),
 		new ExecutorModule(),
-		new ParameterModule()
+		new ParameterModule(),
+		new ResourcesModule()
 	}
 	
 	void setInputBuffer(byte[] inputBuffer) {

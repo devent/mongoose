@@ -40,6 +40,7 @@ import com.anrisoftware.groovybash.core.Buildin;
 import com.anrisoftware.groovybash.core.BuildinPlugin;
 import com.anrisoftware.groovybash.core.Environment;
 import com.anrisoftware.groovybash.core.ExecutorServiceHandler;
+import com.anrisoftware.groovybash.resources.TextsResources;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.Injector;
 
@@ -50,6 +51,8 @@ import com.google.inject.Injector;
  * @since 0.1
  */
 class EnvironmentImpl extends GroovyObjectSupport implements Environment {
+
+	private static final String TEXTS_VARIABLE = "TEXTS";
 
 	private static final String ARGS_VARIABLE = "ARGS";
 
@@ -77,12 +80,15 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private Logger scriptLogger;
 
+	private final TextsResources textsResources;
+
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
 			@Named("environmentProperties") Properties properties,
 			Set<BuildinPlugin> buildins, ArgumentsWorker argumentsWorker,
 			CallCommandWorker callCommandWorker,
-			ExecutorServiceHandler executorServiceHandler) {
+			ExecutorServiceHandler executorServiceHandler,
+			TextsResources textsResources) {
 		super();
 		this.log = logger;
 		this.properties = new ContextProperties(this, properties);
@@ -91,6 +97,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		this.argumentsWorker = argumentsWorker;
 		this.executorServiceHandler = executorServiceHandler;
 		this.variables = newHashMap();
+		this.textsResources = textsResources;
 		loadBuildins(buildins);
 		setupVariables();
 	}
@@ -111,6 +118,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		variables.put(USER_HOME_VARIABLE,
 				new File(System.getProperty("user.home")));
 		variables.put(HOME_VARIABLE, new File(System.getProperty("user.home")));
+		variables.put(TEXTS_VARIABLE, textsResources);
 	}
 
 	@Override
@@ -159,6 +167,11 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	@Override
 	public Logger getScriptLogger() {
 		return scriptLogger;
+	}
+
+	@Override
+	public void setScriptClassLoader(ClassLoader classLoader) {
+		textsResources.setClassLoader(classLoader);
 	}
 
 	/**

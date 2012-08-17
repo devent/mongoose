@@ -52,6 +52,10 @@ class StubEnvironment implements Environment {
 	}
 
 	@Override
+	void setScriptClassLoader(ClassLoader classLoader) {
+	}
+
+	@Override
 	Future<?> submitTask(Runnable task) {
 		return null
 	}

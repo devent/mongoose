@@ -99,6 +99,16 @@ public interface Environment {
 	File getUserHome();
 
 	/**
+	 * Sets the class loader of the script.
+	 * 
+	 * @param classLoader
+	 *            the {@link ClassLoader}.
+	 * 
+	 * @since 0.3
+	 */
+	void setScriptClassLoader(ClassLoader classLoader);
+
+	/**
 	 * Submit the task for execution in a different thread.
 	 * 
 	 * @param task
