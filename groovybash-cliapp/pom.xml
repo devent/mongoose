@@ -78,7 +78,7 @@
 			<dependency>
 				<groupId>com.anrisoftware.groovybash</groupId>
 				<artifactId>groovybash-core</artifactId>
-				<version>0.2-SNAPSHOT</version>
+				<version>0.3-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>com.anrisoftware.groovybash</groupId>
