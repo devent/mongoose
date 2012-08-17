@@ -26,6 +26,8 @@ import com.anrisoftware.resources.texts.maps.TextsDefaultMapsModule;
 import com.google.inject.AbstractModule;
 
 /**
+ * Install the resources modules.
+ * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 0.3
  */
