@@ -18,9 +18,12 @@
  */
 package com.anrisoftware.groovybash.parser;
 
+import static org.apache.commons.lang3.StringUtils.replace;
+import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
+import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
@@ -44,9 +47,13 @@ import com.google.inject.assistedinject.Assisted;
  */
 public class BashParser implements Runnable {
 
+	private static final String ADD_PACKAGE_AS_CLASSPATH_PROPERTY = "add_package_as_classpath";
+
 	private static final String IMPORTS_PROPERTY = "imports";
 
 	private static final String STAR_IMPORTS_PROPERTY = "star_imports";
+
+	private final BashParserLogger log;
 
 	private final Script script;
 
@@ -73,9 +80,11 @@ public class BashParser implements Runnable {
 	 *            the script text to run.
 	 */
 	@Inject
-	BashParser(@Named("parser-properties") Properties parserProperties,
+	BashParser(BashParserLogger logger,
+			@Named("parser-properties") Properties parserProperties,
 			Environment environment, ParserMetaClass parserMetaClass,
 			@Assisted String scriptText) {
+		this.log = logger;
 		this.parserProperties = new ContextProperties(this, parserProperties);
 		this.environment = environment;
 		this.parserMetaClass = parserMetaClass;
@@ -87,9 +96,31 @@ public class BashParser implements Runnable {
 		CompilationCustomizer imports = createImports();
 		config.addCompilationCustomizers(imports);
 		Script script = new GroovyShell(config).parse(scriptText);
+		addPackageNameToClassPath(script);
+
 		parserMetaClass.setDelegate(script, environment);
 		environment.setScriptLoggerContext(script.getClass());
 		return script;
+	}
+
+	private void addPackageNameToClassPath(Script script) {
+		if (!parserProperties.getBooleanProperty(
+				ADD_PACKAGE_AS_CLASSPATH_PROPERTY, false)) {
+			return;
+		}
+
+		String path;
+		GroovyClassLoader loader;
+		loader = (GroovyClassLoader) script.getClass().getClassLoader();
+		Package scriptPackage = script.getClass().getPackage();
+		if (scriptPackage == null) {
+			path = ".";
+		} else {
+			String name = scriptPackage.getName();
+			path = new File(".", replace(name, ".", "/")).getAbsolutePath();
+		}
+		loader.addClasspath(path);
+		log.addClasspathToScript(path);
 	}
 
 	private ImportCustomizer createImports() {

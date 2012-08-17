@@ -22,6 +22,7 @@ import groovy.util.logging.Slf4j
 
 import org.junit.Test
 
+import com.google.common.io.Files
 import com.google.inject.Injector
 
 /**
@@ -69,6 +70,28 @@ echo USER_HOME
 		def parser = runParser script
 		def home = parser.environment.userHome
 		assertStringContent "$home\n$home\n", output
+	}
+
+	@Test
+	void "resources"() {
+		def texts = """text_foo = Foo Text
+"""
+		File tmpdir = new File(System.getProperty("java.io.tmpdir"))
+		File packageFile = new File(tmpdir, "com/anrisoftware/groovybash")
+		packageFile.mkdirs()
+		Files.write texts, new File(packageFile, "Texts.properties"), charset
+		System.setProperty "user.dir", tmpdir.getAbsolutePath()
+		def script = """
+package com.anrisoftware.groovybash
+resource = this.class.classLoader.getResource("Texts.properties")
+assert resource
+
+ResourceBundle.getBundle "Texts", Locale.GERMAN, this.class.classLoader
+"""
+		def parser = runParser script
+		print "``${output}''"
+		
+		//packageFile.deleteDir()
 	}
 }
 
