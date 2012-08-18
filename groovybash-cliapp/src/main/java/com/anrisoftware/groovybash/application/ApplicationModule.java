@@ -5,6 +5,7 @@ import com.anrisoftware.groovybash.environment.EnvironmentModule;
 import com.anrisoftware.groovybash.executor.ExecutorModule;
 import com.anrisoftware.groovybash.parameter.ParameterModule;
 import com.anrisoftware.groovybash.parser.ParserModule;
+import com.anrisoftware.groovybash.resources.ResourcesModule;
 import com.google.inject.AbstractModule;
 
 /**
@@ -22,5 +23,6 @@ class ApplicationModule extends AbstractModule {
 		install(new EnvironmentModule());
 		install(new BuildinsModule());
 		install(new ExecutorModule());
+		install(new ResourcesModule());
 	}
 }
