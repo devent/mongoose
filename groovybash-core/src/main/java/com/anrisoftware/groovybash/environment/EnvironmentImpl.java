@@ -40,6 +40,7 @@ import com.anrisoftware.groovybash.core.Buildin;
 import com.anrisoftware.groovybash.core.BuildinPlugin;
 import com.anrisoftware.groovybash.core.Environment;
 import com.anrisoftware.groovybash.core.ExecutorServiceHandler;
+import com.anrisoftware.groovybash.resources.TemplatesResources;
 import com.anrisoftware.groovybash.resources.TextsResources;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.Injector;
@@ -62,6 +63,8 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private static final String USER_HOME_VARIABLE = "USER_HOME";
 
+	private static final String TEMPLATES_VARIABLE = "TEMPLATES";
+
 	private final EnvironmentImplLogger log;
 
 	private final ContextProperties properties;
@@ -76,11 +79,13 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private final Map<String, Object> variables;
 
+	private final TextsResources textsResources;
+
+	private final TemplatesResources templatesResources;
+
 	private Injector injector;
 
 	private Logger scriptLogger;
-
-	private final TextsResources textsResources;
 
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
@@ -88,7 +93,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 			Set<BuildinPlugin> buildins, ArgumentsWorker argumentsWorker,
 			CallCommandWorker callCommandWorker,
 			ExecutorServiceHandler executorServiceHandler,
-			TextsResources textsResources) {
+			TextsResources textsResources, TemplatesResources templatesResources) {
 		super();
 		this.log = logger;
 		this.properties = new ContextProperties(this, properties);
@@ -98,6 +103,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 		this.executorServiceHandler = executorServiceHandler;
 		this.variables = newHashMap();
 		this.textsResources = textsResources;
+		this.templatesResources = templatesResources;
 		loadBuildins(buildins);
 		setupVariables();
 	}
@@ -119,6 +125,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 				new File(System.getProperty("user.home")));
 		variables.put(HOME_VARIABLE, new File(System.getProperty("user.home")));
 		variables.put(TEXTS_VARIABLE, textsResources);
+		variables.put(TEMPLATES_VARIABLE, templatesResources);
 	}
 
 	@Override
@@ -172,6 +179,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	@Override
 	public void setScriptClassLoader(ClassLoader classLoader) {
 		textsResources.setClassLoader(classLoader);
+		templatesResources.setClassLoader(classLoader);
 	}
 
 	/**

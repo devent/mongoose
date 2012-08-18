@@ -67,6 +67,11 @@
         	<artifactId>resources-binary</artifactId>
         	<version>1.2</version>
         </dependency>
+        <dependency>
+        	<groupId>com.anrisoftware.resources</groupId>
+        	<artifactId>resources-st</artifactId>
+        	<version>1.0.1-SNAPSHOT</version>
+        </dependency>
 	</dependencies>
 
 </project>

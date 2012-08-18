@@ -20,6 +20,9 @@ package com.anrisoftware.groovybash.resources;
 
 import com.anrisoftware.resources.binary.BinariesResourcesModule;
 import com.anrisoftware.resources.binary.maps.BinariesDefaultMapsModule;
+import com.anrisoftware.resources.st.StResourcesModule;
+import com.anrisoftware.resources.st.maps.TemplatesDefaultMapsModule;
+import com.anrisoftware.resources.st.worker.STTemplateDefaultPropertiesModule;
 import com.anrisoftware.resources.texts.ResourcesTextsCharsetModule;
 import com.anrisoftware.resources.texts.TextsResourcesModule;
 import com.anrisoftware.resources.texts.maps.TextsDefaultMapsModule;
@@ -35,10 +38,21 @@ public class ResourcesModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		installTextsResources();
+		installSTResources();
+	}
+
+	private void installTextsResources() {
 		install(new BinariesResourcesModule());
 		install(new BinariesDefaultMapsModule());
 		install(new TextsResourcesModule());
 		install(new TextsDefaultMapsModule());
 		install(new ResourcesTextsCharsetModule());
+	}
+
+	private void installSTResources() {
+		install(new StResourcesModule());
+		install(new TemplatesDefaultMapsModule());
+		install(new STTemplateDefaultPropertiesModule());
 	}
 }
