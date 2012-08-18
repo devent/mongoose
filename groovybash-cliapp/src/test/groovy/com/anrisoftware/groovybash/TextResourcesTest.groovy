@@ -53,7 +53,7 @@ class TextResourcesTest extends ScriptTestUtils {
 		Files.write texts_de, new File(packageDir, "Texts_de.properties"), charset
 		Files.write textFoo, new File(packageDir, "text_foo.txt"), charset
 		Files.write textFoo_de, new File(packageDir, "text_foo_de.txt"), charset
-		System.setProperty "user.dir", tmpdir
+		System.setProperty "com.anrisoftware.groovybash.parser.script_home", tmpdir
 	}
 
 	File createPackageDir() {

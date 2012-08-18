@@ -63,11 +63,28 @@ public class BashParser implements Runnable {
 
 	private final ContextProperties parserProperties;
 
+	private final String scriptHome;
+
 	/**
 	 * Sets the dependencies of the parser.
 	 * 
-	 * @param parserProperties
-	 *            the parser {@link Properties}.
+	 * @param properties
+	 *            the parser {@link Properties}. Expects the properties:
+	 *            <dl>
+	 *            <dt>{@code com.anrisoftware.groovybash.parser.star_imports}</dt>
+	 *            <dd>
+	 *            A list of all packages that should be imported in the script
+	 *            as a star import. Star import will import all classes in the
+	 *            package.</dd>
+	 * 
+	 *            <dt>{@code com.anrisoftware.groovybash.parser.imports}</dt>
+	 *            <dd>A list of all classes that should be imported in the
+	 *            script.</dd>
+	 * 
+	 *            <dt>{@code com.anrisoftware.groovybash.parser.script_home}</dt>
+	 *            <dd>The home directory of the script. Defaults to the user's
+	 *            current working directory.</dd>
+	 *            </dl>
 	 * 
 	 * @param environment
 	 *            the {@link Environment} of the script.
@@ -81,13 +98,15 @@ public class BashParser implements Runnable {
 	 */
 	@Inject
 	BashParser(BashParserLogger logger,
-			@Named("parser-properties") Properties parserProperties,
+			@Named("parser-properties") Properties properties,
 			Environment environment, ParserMetaClass parserMetaClass,
 			@Assisted String scriptText) {
 		this.log = logger;
-		this.parserProperties = new ContextProperties(this, parserProperties);
+		this.parserProperties = new ContextProperties(this, properties);
 		this.environment = environment;
 		this.parserMetaClass = parserMetaClass;
+		this.scriptHome = properties.getProperty("script_home",
+				System.getProperty("user.dir"));
 		this.script = createScript(scriptText);
 	}
 
@@ -115,10 +134,10 @@ public class BashParser implements Runnable {
 		loader = (GroovyClassLoader) script.getClass().getClassLoader();
 		Package scriptPackage = script.getClass().getPackage();
 		if (scriptPackage == null) {
-			path = ".";
+			path = scriptHome;
 		} else {
-			String name = scriptPackage.getName();
-			path = new File(".", replace(name, ".", "/")).getAbsolutePath();
+			String name = replace(scriptPackage.getName(), ".", "/");
+			path = new File(scriptHome, name).getAbsolutePath();
 		}
 		loader.addClasspath(path);
 		log.addClasspathToScript(path);

@@ -67,7 +67,7 @@ public class ParserModule extends AbstractModule {
 	@Provides
 	@Named("parser-properties")
 	public Properties getParserProperties() throws IOException {
-		return new ContextPropertiesFactory(this)
+		return new ContextPropertiesFactory(this, System.getProperties())
 				.fromResource(PARSER_PROPERTIES);
 	}
 }
