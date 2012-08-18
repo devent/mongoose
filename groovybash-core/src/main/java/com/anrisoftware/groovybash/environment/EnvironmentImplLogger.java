@@ -39,10 +39,10 @@ class EnvironmentImplLogger extends AbstractLogger {
 	}
 
 	void workingDirectorySet(File directory) {
-		log.info("Set working directory {}.", directory);
+		log.debug("Set working directory {}.", directory);
 	}
 
 	void argumentsSet(String[] args) {
-		log.info("Set command line arguments {}.", Arrays.toString(args));
+		log.debug("Set command line arguments {}.", Arrays.toString(args));
 	}
 }
