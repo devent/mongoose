@@ -120,6 +120,7 @@ public class BashParser implements Runnable {
 		parserMetaClass.setDelegate(script, environment);
 		environment.setScriptClassLoader(script.getClass().getClassLoader());
 		environment.setScriptLoggerContext(script.getClass());
+		environment.setScriptHome(new File(scriptHome));
 		return script;
 	}
 

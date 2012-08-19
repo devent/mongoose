@@ -99,6 +99,25 @@ public interface Environment {
 	File getUserHome();
 
 	/**
+	 * Sets the script home directory.
+	 * 
+	 * @param dir
+	 *            the {@link File} directory.
+	 * 
+	 * @since 0.3
+	 */
+	void setScriptHome(File dir);
+
+	/**
+	 * Returns the script home directory.
+	 * 
+	 * @return the {@link File} directory.
+	 * 
+	 * @since 0.3
+	 */
+	File getScriptHome();
+
+	/**
 	 * Sets the class loader of the script.
 	 * 
 	 * @param classLoader

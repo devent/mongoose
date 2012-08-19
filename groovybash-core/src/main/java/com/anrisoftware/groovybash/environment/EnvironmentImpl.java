@@ -65,6 +65,8 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private static final String TEMPLATES_VARIABLE = "TEMPLATES";
 
+	private static final String SCRIPT_HOME_VARIABLE = "SCRIPT_HOME";
+
 	private final EnvironmentImplLogger log;
 
 	private final ContextProperties properties;
@@ -115,15 +117,20 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	}
 
 	private void setupVariables() {
-		setWorkingDirectory(new File("."));
-		setArguments(new String[0]);
+		putArguments(new String[0]);
+		putScriptHome(new File("."));
+		putWorkingDirectory(new File("."));
 		setHomeDirectory();
+		setResources();
 	}
 
 	private void setHomeDirectory() {
 		variables.put(USER_HOME_VARIABLE,
 				new File(System.getProperty("user.home")));
 		variables.put(HOME_VARIABLE, new File(System.getProperty("user.home")));
+	}
+
+	private void setResources() {
 		variables.put(TEXTS_VARIABLE, textsResources);
 		variables.put(TEMPLATES_VARIABLE, templatesResources);
 	}
@@ -135,8 +142,12 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	@Override
 	public void setArguments(String[] args) {
-		variables.put(ARGS_VARIABLE, copyOf(args));
+		putArguments(args);
 		log.argumentsSet(args);
+	}
+
+	private void putArguments(String[] args) {
+		variables.put(ARGS_VARIABLE, copyOf(args));
 	}
 
 	@Override
@@ -152,8 +163,12 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	@Override
 	public void setWorkingDirectory(File directory) {
-		variables.put(WORKING_DIRECTORY_VARIABLE, directory);
+		putWorkingDirectory(directory);
 		log.workingDirectorySet(directory);
+	}
+
+	private void putWorkingDirectory(File directory) {
+		variables.put(WORKING_DIRECTORY_VARIABLE, directory);
 	}
 
 	@Override
@@ -164,6 +179,21 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	@Override
 	public File getUserHome() {
 		return (File) variables.get(HOME_VARIABLE);
+	}
+
+	@Override
+	public void setScriptHome(File dir) {
+		putScriptHome(dir);
+		log.scriptHomeSet(dir);
+	}
+
+	private void putScriptHome(File dir) {
+		variables.put(SCRIPT_HOME_VARIABLE, dir);
+	}
+
+	@Override
+	public File getScriptHome() {
+		return (File) variables.get(SCRIPT_HOME_VARIABLE);
 	}
 
 	@Override

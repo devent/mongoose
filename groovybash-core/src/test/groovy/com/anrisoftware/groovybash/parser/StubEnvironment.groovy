@@ -25,7 +25,6 @@ class StubEnvironment implements Environment {
 
 	@Override
 	String[] getArguments() {
-		return null
 	}
 
 	@Override
@@ -34,7 +33,6 @@ class StubEnvironment implements Environment {
 
 	@Override
 	File getWorkingDirectory() {
-		return null
 	}
 
 	@Override
@@ -43,12 +41,18 @@ class StubEnvironment implements Environment {
 
 	@Override
 	Logger getScriptLogger() {
-		return null
 	}
 
 	@Override
 	File getUserHome() {
-		return null
+	}
+
+	@Override
+	void setScriptHome(File dir) {
+	}
+
+	@Override
+	File getScriptHome() {
 	}
 
 	@Override
@@ -57,7 +61,6 @@ class StubEnvironment implements Environment {
 
 	@Override
 	Future<?> submitTask(Runnable task) {
-		return null
 	}
 
 	@Override

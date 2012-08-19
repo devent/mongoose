@@ -70,5 +70,17 @@ echo USER_HOME
 		def home = parser.environment.userHome
 		assertStringContent "$home\n$home\n", output
 	}
+
+	@Test
+	void "echo script_home"() {
+		def dir = createTempDirectory()
+		System.setProperty "com.anrisoftware.groovybash.parser.script_home", dir.absolutePath
+		def script = """
+echo SCRIPT_HOME
+"""
+		def parser = runParser script
+		assert parser.environment.scriptHome == dir
+		assertStringContent "$dir\n", output
+	}
 }
 
