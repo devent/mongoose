@@ -21,8 +21,8 @@ file with the same name but with an appropriate suffix.
     force the overriding of existing files in the output format. Without the
     flag the script will not override existing files.
     
--preserve|-P:
-    preserve the original file.
+-keep-toxic|-keep|-k:
+    keep the original file with the toxic characters.
     
 FILES...: 
     the files to convert.

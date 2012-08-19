@@ -17,8 +17,8 @@ class Parameter {
     @Option(name = "-override", aliases = ["-O"])
     boolean override = false
     
-    @Option(name = "-preserve", aliases = ["-P"])
-    boolean preserve = false
+    @Option(name = "-keep-toxic", aliases = ["-keep", "-k"])
+    boolean keepToxic = false
     
     @Option(name = "-delete", aliases = ["-D"])
     boolean delete = false
@@ -64,7 +64,7 @@ File detoxFile(File file) {
     if (name == file) {
         return file
     }
-    if (parameter.preserve) {
+    if (parameter.keepToxic) {
         FileUtils.copyFile file, name.file
         info TEXTS.Logging.copied_file, file, name
     } else {

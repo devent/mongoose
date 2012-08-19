@@ -21,9 +21,9 @@ Format der Datei passt.
     Überschreibt bereits exisierende Dateien bei der Konvertierung. Ohne diesen
     Flag eine bereits exisierende Datei wird nicht überschrieben.
     
--preserve|-P:
+-keep-toxic|-keep|-k:
     
-    Erhält die Quelldatei.
+    Erhält die Originaldatei mit den ungewollten Zeichen.
     
 FILES...: 
     die Dateien zur Konvertierung.
