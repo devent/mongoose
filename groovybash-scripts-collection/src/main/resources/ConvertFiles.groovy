@@ -31,7 +31,7 @@ class Parameter {
 enum Format {
 	theora({ inputfile, outputfile ->  "ffmpeg2theora -o ${outputfile} ${inputfile}" }, ".ogv"),
 
-	ffmpegtheora({ inputfile, outputfile ->  "ffmpeg -y -i $inputfile -vcodec libtheora -b 1024k -acodec libvorbis -ab 128k ${outputfile}" }, ".ogv"),
+	ffmpegtheora({ inputfile, outputfile ->  "ffmpeg -y -i $inputfile -vcodec libtheora -b:v 1024k -acodec libvorbis -b:a 128k ${outputfile}" }, ".ogv"),
 
 	mp3({ inputfile, outputfile ->  "ffmpeg -y -i $inputfile -ab 128 -ar 44100 ${outputfile}" }, ".mp3");
 
