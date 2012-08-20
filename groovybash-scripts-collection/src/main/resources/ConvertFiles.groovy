@@ -56,15 +56,15 @@ def convertFiles() {
 }
 
 File detoxFile(File file, def lastModifiedTime) {
-	def name = detox file
-	if (name == file || name.file.isFile()) {
+	File detoxFile = detox(file) as File
+	if (detoxFile == file || detoxFile.isFile()) {
 		return file
 	}
 	parameter.keepToxic ?
-					copyDetoxFile(file, name.file) :
-					moveDetoxFile(file, name.file)
-	updateLastModifiedTime name.file, lastModifiedTime
-	return name.file
+					copyDetoxFile(file, detoxFile) :
+					moveDetoxFile(file, detoxFile)
+	updateLastModifiedTime detoxFile, lastModifiedTime
+	return detoxFile
 }
 
 def copyDetoxFile(File source, File destination) {
