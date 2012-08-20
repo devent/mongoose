@@ -87,4 +87,11 @@ class DetoxTest extends BuildinTestUtils {
 		assert resultFile == file.absolutePath
 	}
 	
+	@Test
+	void "use file methods"() {
+		def file = new File("somefilefoo")
+		def result = createBuildin(DetoxBuildin, ["$file"])()
+		assert !result.isFile()
+	}
+	
 }

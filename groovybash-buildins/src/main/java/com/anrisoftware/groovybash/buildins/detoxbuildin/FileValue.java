@@ -25,6 +25,8 @@ import java.io.File;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import org.codehaus.groovy.runtime.InvokerHelper;
+
 import com.anrisoftware.groovybash.core.ReturnCode;
 import com.anrisoftware.groovybash.core.ReturnValue;
 import com.google.inject.assistedinject.Assisted;
@@ -93,6 +95,33 @@ class FileValue implements ReturnValue {
 	@Override
 	public String toString() {
 		return file.toString();
+	}
+
+	/**
+	 * Delegate missing methods to the file that this value is representing.
+	 * 
+	 * @param name
+	 *            the name of the method.
+	 * 
+	 * @param args
+	 *            the arguments of the method.
+	 * 
+	 * @return the return value of the {@link File} method.
+	 */
+	public Object methodMissing(String name, Object args) {
+		return InvokerHelper.invokeMethod(file, name, args);
+	}
+
+	/**
+	 * Delegate missing properties to the file that this value is representing.
+	 * 
+	 * @param name
+	 *            the name of the property.
+	 * 
+	 * @return the value of the property from the {@link File}.
+	 */
+	public Object propertyMissing(String name) {
+		return InvokerHelper.getProperty(file, name);
 	}
 
 	/**
