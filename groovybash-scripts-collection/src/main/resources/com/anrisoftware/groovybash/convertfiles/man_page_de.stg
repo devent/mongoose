@@ -25,8 +25,12 @@ Format der Datei passt.
     
     Erhält die Originaldatei mit den ungewollten Zeichen.
     
+-preserve-time|-p:
+    Erhalte die Zeit in der die Quelldatei zuletzt modifiziert wurde in der
+    aufgeräumten Datei und in der konvertierten Datei.
+    
 FILES...: 
-    die Dateien zur Konvertierung.
+    Die Dateien zur Konvertierung.
     
 Examples:
     <programname> -f theora *.avi

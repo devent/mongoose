@@ -23,6 +23,9 @@ class Parameter {
     @Option(name = "-delete", aliases = ["-D"])
     boolean delete = false
     
+    @Option(name = "-preserve-time", aliases = ["-p"])
+    boolean preserveTime = false
+    
     @Argument(required = true, metaVar = "FILES")
     List<String> arguments
 }
@@ -53,28 +56,41 @@ enum Format {
 def convertFiles() {
     def files = listFiles parameter.arguments
     files.each {
-        def file = detoxFile it
-        convertFile file, parameter.format
+		def lastModifiedTime = it.lastModified()
+        def file = detoxFile it, lastModifiedTime
+        convertFile file, parameter.format, lastModifiedTime
         deleteFile file
     }
 }
 
-File detoxFile(File file) {
+File detoxFile(File file, def lastModifiedTime) {
     def name = detox file
     if (name == file) {
         return file
     }
     if (parameter.keepToxic) {
-        FileUtils.copyFile file, name.file
+        FileUtils.copyFile file, name.file, parameter.preserveTime
         info TEXTS.Logging.copied_file, file, name
     } else {
         FileUtils.moveFile file, name.file
+		name.file.setLastModified Calendar.instance.timeInMillis
         info TEXTS.Logging.moved_file, file, name
     }
+	updateLastModifiedTime name.file, lastModifiedTime
     return name.file
 }
 
-def convertFile(File file, Format format) {
+def updateLastModifiedTime(File file, long time) {
+	if (!parameter.preserveTime) {
+		return
+	}
+	def success = file.setLastModified(time)
+	if (!success) {
+		warn TEXTS.Logging.preserve_time_not_successull, file
+	}
+}
+
+def convertFile(File file, Format format, def lastModifiedTime) {
     def name = FilenameUtils.removeExtension file.absolutePath
     File outputfile = "$name${format.extention}"as File
     if (!parameter.override && outputfile.isFile()) {
@@ -84,6 +100,7 @@ def convertFile(File file, Format format) {
     def command = format.getCommand file, outputfile
     info TEXTS.Logging.run_command, command
     run "nice $command"
+	updateLastModifiedTime outputfile, lastModifiedTime
 }
 
 def deleteFile(File file) {

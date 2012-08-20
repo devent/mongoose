@@ -24,6 +24,10 @@ file with the same name but with an appropriate suffix.
 -keep-toxic|-keep|-k:
     keep the original file with the toxic characters.
     
+-preserve-time|-p:
+    preserve the last modified time of the original file in the cleaned up
+    file and in the converted file.
+    
 FILES...: 
     the files to convert.
     
