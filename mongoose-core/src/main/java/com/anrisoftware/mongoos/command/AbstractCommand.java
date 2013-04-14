@@ -171,6 +171,11 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	@Override
+	public InputStream getOutputStream() {
+		return streams.getOutputStream();
+	}
+
+	@Override
 	public void setOutput(Object target) throws Exception {
 		setOutput(target);
 	}
@@ -210,6 +215,11 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public void setErrorStream(InputStream stream) {
 		streams.setErrorStream(stream);
+	}
+
+	@Override
+	public InputStream getErrorStream() {
+		return streams.getErrorStream();
 	}
 
 	@Override
