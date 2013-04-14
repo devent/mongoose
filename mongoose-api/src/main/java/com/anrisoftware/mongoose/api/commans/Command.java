@@ -317,6 +317,13 @@ public interface Command extends Callable<Command> {
 	void setError(Object obj, boolean append) throws Exception;
 
 	/**
+	 * @see #setError(Object)
+	 * 
+	 * @return this command.
+	 */
+	Command error(Object target) throws Exception;
+
+	/**
 	 * @see VetoableChangeSupport#addVetoableChangeListener(VetoableChangeListener)
 	 * @see #OUTPUT_TARGET_PROPERTY
 	 * @see #ERROR_TARGET_PROPERTY

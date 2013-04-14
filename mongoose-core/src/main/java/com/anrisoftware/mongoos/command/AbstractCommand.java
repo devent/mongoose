@@ -213,6 +213,12 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	@Override
+	public Command output(Object target) throws Exception {
+		setOutput(target);
+		return this;
+	}
+
+	@Override
 	public void setErrorStream(InputStream stream) {
 		streams.setErrorStream(stream);
 	}
@@ -246,6 +252,12 @@ public abstract class AbstractCommand implements Command {
 				newValue);
 		streams.setErrorTarget(stream);
 		log.errorTargetSet(this, target);
+	}
+
+	@Override
+	public Command error(Object target) throws Exception {
+		setError(target);
+		return this;
 	}
 
 	/**
