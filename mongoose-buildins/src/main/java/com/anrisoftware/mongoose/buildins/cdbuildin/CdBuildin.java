@@ -67,7 +67,7 @@ class CdBuildin extends AbstractCommand {
 	@Override
 	public void setArgs(Object args) throws Exception {
 		super.setArgs(args);
-		this.directory = asFile(getArgsList().get(0));
+		this.directory = asFile(getUnnamedArgs());
 		log.checkDirectory(directory);
 	}
 

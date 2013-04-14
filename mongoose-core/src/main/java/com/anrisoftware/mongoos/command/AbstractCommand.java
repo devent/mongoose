@@ -8,10 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -134,12 +132,13 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	/**
-	 * Returns the argument values as list.
+	 * Returns the unnamed arguments.
 	 * 
-	 * @return the argument values {@link List}.
+	 * @return the unnamed arguments.
 	 */
-	public List<Object> getArgsList() {
-		return new ArrayList<Object>(args.values());
+	@SuppressWarnings("unchecked")
+	public <T> T getUnnamedArgs() {
+		return (T) args.get(UNNAMED_KEY);
 	}
 
 	@Override
