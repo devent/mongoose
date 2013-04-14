@@ -24,6 +24,8 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
+
 /**
  * Command that can be executed.
  * 
@@ -57,15 +59,25 @@ public interface Command extends Callable<Command> {
 	String getName();
 
 	/**
-	 * Sets the arguments for the command.
+	 * Executes the command and waits until the command is finished.
+	 * 
+	 * @return the {@link Command} that was executed.
+	 * 
+	 * @throws ExecutionException
+	 *             if there was an error executing the command.
+	 */
+	@Override
+	Command call() throws ExecutionException;
+
+	/**
+	 * @see #call()
+	 * @see #setArgs(Object)
 	 * 
 	 * @param args
 	 *            the arguments.
 	 * 
-	 * @throws Exception
-	 *             if some errors are encountered.
 	 */
-	void setArgs(Object args) throws Exception;
+	Command call(Object args) throws Exception;
 
 	/**
 	 * Sets the arguments for the command.
@@ -73,8 +85,16 @@ public interface Command extends Callable<Command> {
 	 * @param args
 	 *            the arguments.
 	 * 
+	 * @throws NullPointerException
+	 *             if the specified arguments are {@code null}.
+	 * 
 	 * @throws Exception
 	 *             if some errors are encountered.
+	 */
+	void setArgs(Object args) throws Exception;
+
+	/**
+	 * @see #setArgs(Object)
 	 * 
 	 * @return this {@link Command}.
 	 */
@@ -92,6 +112,9 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @param stream
 	 *            the {@link OutputStream} for standard input.
+	 * 
+	 * @throws NullPointerException
+	 *             if the specified stream is {@code null}.
 	 */
 	void setInputStream(OutputStream stream);
 
@@ -143,6 +166,9 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @param stream
 	 *            the {@link InputStream} for standard output.
+	 * 
+	 * @throws NullPointerException
+	 *             if the specified stream is {@code null}.
 	 */
 	void setOutputStream(InputStream stream);
 
@@ -211,6 +237,9 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @param stream
 	 *            the {@link InputStream} for the standard errors.
+	 * 
+	 * @throws NullPointerException
+	 *             if the specified stream is {@code null}.
 	 */
 	void setErrorStream(InputStream stream);
 
@@ -256,16 +285,5 @@ public interface Command extends Callable<Command> {
 	 *            set to {@code true} to append the file instead of overriding.
 	 */
 	void setError(Object obj, boolean append) throws Exception;
-
-	/**
-	 * Execute the command.
-	 * 
-	 * @return the {@link Command} that was executed.
-	 * 
-	 * @throws Exception
-	 *             if there was an error executing the command.
-	 */
-	@Override
-	Command call() throws Exception;
 
 }

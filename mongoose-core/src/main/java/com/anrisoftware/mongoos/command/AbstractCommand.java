@@ -10,9 +10,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.Environment;
-import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
 
 /**
  * Sets the standard streams of the command and implements the stream
@@ -23,11 +24,18 @@ import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
  */
 public abstract class AbstractCommand implements Command {
 
+	private AbstractCommandLogger log;
+
 	private StandardStreams streams;
 
 	private Map<Object, Object> args;
 
 	private Environment environment;
+
+	@Inject
+	void setAbstractCommandLogger(AbstractCommandLogger logger) {
+		this.log = logger;
+	}
 
 	public void setStreams(StandardStreams streams) {
 		this.streams = streams;
@@ -47,9 +55,16 @@ public abstract class AbstractCommand implements Command {
 		return environment;
 	}
 
+	@Override
+	public Command call(Object args) throws Exception {
+		setArgs(args);
+		return call();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setArgs(Object args) throws Exception {
+		log.checkArgs(this, args);
 		if (args instanceof Map) {
 			this.args = asMap((Map<Object, Object>) args);
 		} else if (args instanceof List) {
@@ -57,6 +72,7 @@ public abstract class AbstractCommand implements Command {
 		} else {
 			this.args = asObj(args);
 		}
+		log.argumentsSet(this, args);
 	}
 
 	private Map<Object, Object> asMap(Map<Object, Object> args) {
@@ -101,6 +117,7 @@ public abstract class AbstractCommand implements Command {
 
 	@Override
 	public void setInput(Object source) throws Exception {
+		log.checkSource(this, source);
 		if (source instanceof InputStream) {
 			streams.setInputSource((InputStream) source);
 		} else if (source instanceof File) {
@@ -108,6 +125,7 @@ public abstract class AbstractCommand implements Command {
 		} else {
 			streams.setInputSource(createInputStream(new File(source.toString())));
 		}
+		log.sourceSet(this, source);
 	}
 
 	private InputStream createInputStream(File file)
@@ -144,6 +162,7 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public void setOutput(int descriptor, Object target, boolean append)
 			throws Exception {
+		log.checkTarget(this, target);
 		if (target instanceof InputStream) {
 			streams.setOutputTarget(descriptor, (OutputStream) target);
 		} else if (target instanceof File) {
@@ -153,6 +172,7 @@ public abstract class AbstractCommand implements Command {
 			streams.setOutputTarget(descriptor,
 					createOutputStream(new File(target.toString()), append));
 		}
+		log.outputTargetSet(this, target);
 	}
 
 	private OutputStream createOutputStream(File file, boolean append)
@@ -172,6 +192,7 @@ public abstract class AbstractCommand implements Command {
 
 	@Override
 	public void setError(Object target, boolean append) throws Exception {
+		log.checkTarget(this, target);
 		if (target instanceof OutputStream) {
 			streams.setErrorTarget((OutputStream) target);
 		} else if (target instanceof File) {
@@ -180,6 +201,7 @@ public abstract class AbstractCommand implements Command {
 			streams.setErrorTarget(createOutputStream(
 					new File(target.toString()), append));
 		}
+		log.errorTargetSet(this, target);
 	}
 
 	/**
@@ -191,10 +213,11 @@ public abstract class AbstractCommand implements Command {
 	 * 
 	 * @return the right hand side {@link Command}.
 	 * 
-	 * @throws ExecutionException
-	 *             if the left command returns with an error.
+	 * @throws Exception
+	 *             if there was an error set the input of the command; if the
+	 *             left command returns with an error.
 	 */
-	public Command or(Command rhs) throws ExecutionException {
+	public Command or(Command rhs) throws Exception {
 		rhs.setInput(getOutputStream());
 		environment.executeCommandAndWait(this);
 		return rhs;
