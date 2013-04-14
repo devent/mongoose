@@ -4,6 +4,8 @@ import static org.apache.commons.lang3.Validate.inclusiveBetween;
 
 import java.io.File;
 
+import javax.inject.Singleton;
+
 import com.anrisoftware.globalpom.log.AbstractLogger;
 import com.anrisoftware.mongoose.api.exceptions.DirectoryNotFoundException;
 
@@ -13,6 +15,7 @@ import com.anrisoftware.mongoose.api.exceptions.DirectoryNotFoundException;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
+@Singleton
 class CdBuildinLogger extends AbstractLogger {
 
 	private static final String ARGUMENTS = "Can have only zero or one arguments.";
