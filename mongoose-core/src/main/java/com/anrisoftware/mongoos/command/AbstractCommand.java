@@ -1,5 +1,7 @@
 package com.anrisoftware.mongoos.command;
 
+import java.beans.VetoableChangeListener;
+import java.beans.VetoableChangeSupport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +26,8 @@ import com.anrisoftware.mongoose.api.commans.Environment;
  */
 public abstract class AbstractCommand implements Command {
 
+	private final VetoableChangeSupport vetoable;
+
 	private AbstractCommandLogger log;
 
 	private StandardStreams streams;
@@ -31,6 +35,10 @@ public abstract class AbstractCommand implements Command {
 	private Map<Object, Object> args;
 
 	private Environment environment;
+
+	protected AbstractCommand() {
+		this.vetoable = new VetoableChangeSupport(this);
+	}
 
 	@Inject
 	void setAbstractCommandLogger(AbstractCommandLogger logger) {
@@ -65,13 +73,18 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public void setArgs(Object args) throws Exception {
 		log.checkArgs(this, args);
+		Map<Object, Object> oldValue = this.args;
+		Map<Object, Object> newValue;
 		if (args instanceof Map) {
-			this.args = asMap((Map<Object, Object>) args);
+			newValue = asMap((Map<Object, Object>) args);
 		} else if (args instanceof List) {
-			this.args = asList((List<Object>) args);
+			newValue = asList((List<Object>) args);
 		} else {
-			this.args = asObj(args);
+			newValue = asObj(args);
 		}
+		vetoable.fireVetoableChange(Command.ARGUMENTS_PROPERTY, oldValue,
+				newValue);
+		this.args = newValue;
 		log.argumentsSet(this, args);
 	}
 
@@ -118,13 +131,21 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public void setInput(Object source) throws Exception {
 		log.checkSource(this, source);
+		Object newValue;
+		InputStream stream;
 		if (source instanceof InputStream) {
-			streams.setInputSource((InputStream) source);
+			newValue = source;
+			stream = (InputStream) source;
 		} else if (source instanceof File) {
-			streams.setInputSource(createInputStream((File) source));
+			newValue = source;
+			stream = createInputStream((File) source);
 		} else {
-			streams.setInputSource(createInputStream(new File(source.toString())));
+			newValue = new File(source.toString());
+			stream = createInputStream((File) newValue);
 		}
+		vetoable.fireVetoableChange(Command.INPUT_SOURCE_PROPERTY, null,
+				newValue);
+		streams.setInputSource(stream);
 		log.sourceSet(this, source);
 	}
 
@@ -163,15 +184,21 @@ public abstract class AbstractCommand implements Command {
 	public void setOutput(int descriptor, Object target, boolean append)
 			throws Exception {
 		log.checkTarget(this, target);
+		Object newValue;
+		OutputStream stream;
 		if (target instanceof InputStream) {
-			streams.setOutputTarget(descriptor, (OutputStream) target);
+			newValue = target;
+			stream = (OutputStream) target;
 		} else if (target instanceof File) {
-			streams.setOutputTarget(descriptor,
-					createOutputStream((File) target, append));
+			newValue = target;
+			stream = createOutputStream((File) target, append);
 		} else {
-			streams.setOutputTarget(descriptor,
-					createOutputStream(new File(target.toString()), append));
+			newValue = new File(target.toString());
+			stream = createOutputStream((File) newValue, append);
 		}
+		vetoable.fireVetoableChange(Command.OUTPUT_TARGET_PROPERTY, null,
+				newValue);
+		streams.setOutputTarget(descriptor, stream);
 		log.outputTargetSet(this, target);
 	}
 
@@ -193,14 +220,21 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public void setError(Object target, boolean append) throws Exception {
 		log.checkTarget(this, target);
-		if (target instanceof OutputStream) {
-			streams.setErrorTarget((OutputStream) target);
+		Object newValue;
+		OutputStream stream;
+		if (target instanceof InputStream) {
+			newValue = target;
+			stream = (OutputStream) target;
 		} else if (target instanceof File) {
-			streams.setErrorTarget(createOutputStream((File) target, append));
+			newValue = target;
+			stream = createOutputStream((File) target, append);
 		} else {
-			streams.setErrorTarget(createOutputStream(
-					new File(target.toString()), append));
+			newValue = new File(target.toString());
+			stream = createOutputStream((File) newValue, append);
 		}
+		vetoable.fireVetoableChange(Command.ERROR_TARGET_PROPERTY, null,
+				newValue);
+		streams.setErrorTarget(stream);
 		log.errorTargetSet(this, target);
 	}
 
@@ -231,4 +265,25 @@ public abstract class AbstractCommand implements Command {
 		return this;
 	}
 
+	@Override
+	public void addVetoableChangeListener(VetoableChangeListener listener) {
+		vetoable.addVetoableChangeListener(listener);
+	}
+
+	@Override
+	public void removeVetoableChangeListener(VetoableChangeListener listener) {
+		vetoable.removeVetoableChangeListener(listener);
+	}
+
+	@Override
+	public void addVetoableChangeListener(String propertyName,
+			VetoableChangeListener listener) {
+		vetoable.addVetoableChangeListener(propertyName, listener);
+	}
+
+	@Override
+	public void removeVetoableChangeListener(String propertyName,
+			VetoableChangeListener listener) {
+		vetoable.removeVetoableChangeListener(propertyName, listener);
+	}
 }

@@ -18,6 +18,8 @@
  */
 package com.anrisoftware.mongoose.api.commans;
 
+import java.beans.VetoableChangeListener;
+import java.beans.VetoableChangeSupport;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,6 +35,26 @@ import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
  * @since 1.0
  */
 public interface Command extends Callable<Command> {
+
+	/**
+	 * Property for the output target object.
+	 */
+	static final String OUTPUT_TARGET_PROPERTY = "output_target";
+
+	/**
+	 * Property for the error target object.
+	 */
+	static final String ERROR_TARGET_PROPERTY = "error_target";
+
+	/**
+	 * Property for the input source object.
+	 */
+	static final String INPUT_SOURCE_PROPERTY = "input_source";
+
+	/**
+	 * Property for the command arguments.
+	 */
+	static final String ARGUMENTS_PROPERTY = "arguments";
 
 	/**
 	 * Sets the environment of the command. The environment contains the global
@@ -90,6 +112,8 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @throws Exception
 	 *             if some errors are encountered.
+	 * 
+	 * @see #ARGUMENTS_PROPERTY
 	 */
 	void setArgs(Object args) throws Exception;
 
@@ -150,6 +174,8 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @throws Exception
 	 *             if the file could not be found.
+	 * 
+	 * @see #INPUT_SOURCE_PROPERTY
 	 */
 	void setInput(Object source) throws Exception;
 
@@ -204,6 +230,8 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @throws Exception
 	 *             if the file could not be found.
+	 * 
+	 * @see #OUTPUT_TARGET_PROPERTY
 	 */
 	void setOutput(Object target) throws Exception;
 
@@ -275,6 +303,8 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @throws Exception
 	 *             if the file could not be found.
+	 * 
+	 * @see #ERROR_TARGET_PROPERTY
 	 */
 	void setError(Object target) throws Exception;
 
@@ -286,4 +316,43 @@ public interface Command extends Callable<Command> {
 	 */
 	void setError(Object obj, boolean append) throws Exception;
 
+	/**
+	 * @see VetoableChangeSupport#addVetoableChangeListener(VetoableChangeListener)
+	 * @see #OUTPUT_TARGET_PROPERTY
+	 * @see #ERROR_TARGET_PROPERTY
+	 * @see #INPUT_SOURCE_PROPERTY
+	 * @see #ARGUMENTS_PROPERTY
+	 */
+	void addVetoableChangeListener(VetoableChangeListener listener);
+
+	/**
+	 * @see VetoableChangeSupport#removeVetoableChangeListener(VetoableChangeListener)
+	 * @see #OUTPUT_TARGET_PROPERTY
+	 * @see #ERROR_TARGET_PROPERTY
+	 * @see #INPUT_SOURCE_PROPERTY
+	 * @see #ARGUMENTS_PROPERTY
+	 */
+	void removeVetoableChangeListener(VetoableChangeListener listener);
+
+	/**
+	 * @see VetoableChangeSupport#addVetoableChangeListener(String,
+	 *      VetoableChangeListener)
+	 * @see #OUTPUT_TARGET_PROPERTY
+	 * @see #ERROR_TARGET_PROPERTY
+	 * @see #INPUT_SOURCE_PROPERTY
+	 * @see #ARGUMENTS_PROPERTY
+	 */
+	void addVetoableChangeListener(String propertyName,
+			VetoableChangeListener listener);
+
+	/**
+	 * @see VetoableChangeSupport#removeVetoableChangeListener(String,
+	 *      VetoableChangeListener)
+	 * @see #OUTPUT_TARGET_PROPERTY
+	 * @see #ERROR_TARGET_PROPERTY
+	 * @see #INPUT_SOURCE_PROPERTY
+	 * @see #ARGUMENTS_PROPERTY
+	 */
+	void removeVetoableChangeListener(String propertyName,
+			VetoableChangeListener listener);
 }
