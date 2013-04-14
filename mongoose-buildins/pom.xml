@@ -33,20 +33,23 @@
 			<artifactId>mongoose-api</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.anrisoftware.mongoose</groupId>
+			<artifactId>mongoose-core</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 
 		<!-- compile dependencies -->
-		<dependency>
-			<groupId>com.google.inject.extensions</groupId>
-			<artifactId>guice-multibindings</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>com.csvreader</groupId>
 			<artifactId>javacsv</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
+			<groupId>org.mangosdk</groupId>
+			<artifactId>spi</artifactId>
+			<optional>true</optional>
 		</dependency>
+
 	</dependencies>
 
 </project>
