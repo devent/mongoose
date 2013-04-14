@@ -168,7 +168,7 @@ public interface Command extends Callable<Command> {
 	OutputStream getInputStream();
 
 	/**
-	 * Sets the specified file name as the data source for the input of the
+	 * Sets the specified object as the data source for the input of the
 	 * command.
 	 * <dl>
 	 * <dt>{@link InputStream}</dt>
@@ -195,6 +195,13 @@ public interface Command extends Callable<Command> {
 	 * @see #INPUT_SOURCE_PROPERTY
 	 */
 	void setInput(Object source) throws Exception;
+
+	/**
+	 * Returns the source of the input of the command.
+	 * 
+	 * @return the {@link InputStream} source.
+	 */
+	InputStream getInput();
 
 	/**
 	 * @see #setInput(Object)
@@ -270,6 +277,13 @@ public interface Command extends Callable<Command> {
 			throws Exception;
 
 	/**
+	 * Returns the target of the standard output of the command.
+	 * 
+	 * @return the {@link OutputStream} target.
+	 */
+	OutputStream getOutput();
+
+	/**
 	 * @see #setOutput(Object)
 	 * 
 	 * @return this command.
@@ -332,6 +346,13 @@ public interface Command extends Callable<Command> {
 	 *            set to {@code true} to append the file instead of overriding.
 	 */
 	void setError(Object obj, boolean append) throws Exception;
+
+	/**
+	 * Returns the target of the standard error output of the command.
+	 * 
+	 * @return the {@link OutputStream} target.
+	 */
+	OutputStream getError();
 
 	/**
 	 * @see #setError(Object)

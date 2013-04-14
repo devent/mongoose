@@ -49,29 +49,72 @@ public class StandardStreams {
 
 	private PumpStreamHandler streams;
 
+	private InputStream inputSource;
+
+	private OutputStream outputTarget;
+
+	private OutputStream errorTarget;
+
 	/**
 	 * Sets the standard input stream, standard output stream and standard error
 	 * stream.
+	 */
+	public StandardStreams() {
+		this(System.in, System.out, System.err);
+	}
+
+	/**
+	 * @see StandardStreams#StandardStreams()
+	 * 
+	 * @param inputSource
+	 *            the input source {@link InputStream}.
+	 * 
+	 * @param outputTarget
+	 *            the output target {@link OutputStream}.
+	 * 
+	 * @param errorTarget
+	 *            the error output target {@link OutputStream}.
+	 * 
+	 */
+	public StandardStreams(InputStream inputSource, OutputStream outputTarget,
+			OutputStream errorTarget) {
+		this(inputSource, outputTarget, errorTarget, null, null, null);
+	}
+
+	/**
+	 * @see StandardStreams#StandardStreams(InputStream, OutputStream,
+	 *      OutputStream)
 	 * 
 	 * @param inputStream
-	 *            the {@link OutputStream} for the standard input.
+	 *            the {@link OutputStream} to write to the standard input.
 	 * 
 	 * @param outputStream
-	 *            the {@link InputStream} for the standard output.
+	 *            the {@link InputStream} to read from the standard output.
 	 * 
 	 * @param errorStream
-	 *            the {@link InputStream} for the standard error.
+	 *            the {@link InputStream} to read from the standard error.
 	 */
-	public StandardStreams(OutputStream inputStream, InputStream outputStream,
-			InputStream errorStream) {
+	public StandardStreams(InputStream inputSource, OutputStream outputTarget,
+			OutputStream errorTarget, OutputStream inputStream,
+			InputStream outputStream, InputStream errorStream) {
 		this.log = new StandardStreamsLogger();
+		this.inputSource = inputSource;
+		this.outputTarget = outputTarget;
+		this.errorTarget = errorTarget;
 		this.inputStream = inputStream;
 		this.outputStream = outputStream;
 		this.errorStream = errorStream;
-		this.streams = new PumpStreamHandler();
-		streams.setProcessInputStream(inputStream);
-		streams.setProcessOutputStream(outputStream);
-		streams.setProcessErrorStream(errorStream);
+		this.streams = new PumpStreamHandler(outputTarget, errorTarget,
+				inputSource);
+		if (inputStream != null) {
+			setInputStream(inputStream);
+		}
+		if (outputStream != null) {
+			setOutputStream(outputStream);
+		}
+		if (errorStream != null) {
+			setErrorStream(errorStream);
+		}
 	}
 
 	/**
@@ -84,13 +127,7 @@ public class StandardStreams {
 	}
 
 	/**
-	 * Sets the stream to write to the standard input of the command.
-	 * 
-	 * @param stream
-	 *            the {@link OutputStream} stream.
-	 * 
-	 * @throws NullPointerException
-	 *             if the specified stream is {@code null}.
+	 * @see Command#setInputStream(OutputStream)
 	 */
 	public void setInputStream(OutputStream stream) {
 		log.checkInputStream(stream);
@@ -99,33 +136,32 @@ public class StandardStreams {
 	}
 
 	/**
-	 * @see Command#setInput(InputStream)
-	 */
-	public void setInputSource(InputStream stream) {
-		log.checkSource(stream);
-		streams = new PumpStreamHandler(System.out, System.err, stream);
-		streams.setProcessOutputStream(outputStream);
-		streams.setProcessErrorStream(errorStream);
-	}
-
-	/**
-	 * Returns the stream to write to the standard input of the command.
-	 * 
-	 * @return the {@link OutputStream} stream.
+	 * @see Command#getInputStream()
 	 */
 	public OutputStream getInputStream() {
 		return inputStream;
 	}
 
 	/**
-	 * Sets the stream that is connected with the standard output of the
-	 * command.
-	 * 
-	 * @param stream
-	 *            the {@link InputStream} for the standard output.
-	 * 
-	 * @throws NullPointerException
-	 *             if the specified stream is {@code null}.
+	 * @see Command#setInput(InputStream)
+	 */
+	public void setInputSource(InputStream stream) {
+		log.checkSource(stream);
+		this.inputSource = stream;
+		streams = new PumpStreamHandler(System.out, System.err, stream);
+		streams.setProcessOutputStream(outputStream);
+		streams.setProcessErrorStream(errorStream);
+	}
+
+	/**
+	 * @see Command#getInput()
+	 */
+	public InputStream getInputSource() {
+		return inputSource;
+	}
+
+	/**
+	 * @see Command#setOutputStream(InputStream)
 	 */
 	public void setOutputStream(InputStream stream) {
 		log.checkOutputStream(stream);
@@ -134,10 +170,7 @@ public class StandardStreams {
 	}
 
 	/**
-	 * Returns the stream that is connected with the standard output of the
-	 * command.
-	 * 
-	 * @return the {@link InputStream} for the standard output.
+	 * @see Command#getOutputStream()
 	 */
 	public InputStream getOutputStream() {
 		return outputStream;
@@ -150,11 +183,12 @@ public class StandardStreams {
 		log.checkTarget(stream);
 		switch (descriptor) {
 		case STANDRD_OUTPUT_DESCRIPTOR:
+			this.outputTarget = stream;
 			streams = new PumpStreamHandler(stream, System.err, System.in);
 			streams.setProcessInputStream(inputStream);
 			streams.setProcessErrorStream(errorStream);
 			break;
-		case 2:
+		case STANDRD_ERROR_DESCRIPTOR:
 			streams = new PumpStreamHandler(System.out, stream, System.in);
 			streams.setProcessInputStream(inputStream);
 			streams.setProcessOutputStream(outputStream);
@@ -171,6 +205,7 @@ public class StandardStreams {
 		log.checkTarget(stream);
 		switch (descriptor) {
 		case STANDRD_INPUT_DESCRIPTOR:
+			this.inputSource = stream;
 			streams = new PumpStreamHandler(System.out, System.err, stream);
 			streams.setProcessOutputStream(outputStream);
 			streams.setProcessErrorStream(errorStream);
@@ -181,14 +216,14 @@ public class StandardStreams {
 	}
 
 	/**
-	 * Sets the stream that is connected with the standard error output of the
-	 * command.
-	 * 
-	 * @param stream
-	 *            the {@link InputStream} for the error output.
-	 * 
-	 * @throws NullPointerException
-	 *             if the specified stream is {@code null}.
+	 * @see Command#getOutput()
+	 */
+	public OutputStream getOutputTarget() {
+		return outputTarget;
+	}
+
+	/**
+	 * @see Command#setErrorStream(InputStream)
 	 */
 	public void setErrorStream(InputStream stream) {
 		log.checkErrorStream(stream);
@@ -197,10 +232,7 @@ public class StandardStreams {
 	}
 
 	/**
-	 * Returns the stream that is connected with the standard error output of
-	 * the command.
-	 * 
-	 * @return the {@link InputStream} for the standard error.
+	 * @see Command#getErrorStream()
 	 */
 	public InputStream getErrorStream() {
 		return errorStream;
@@ -211,9 +243,16 @@ public class StandardStreams {
 	 */
 	public void setErrorTarget(OutputStream stream) {
 		log.checkTarget(stream);
+		this.errorTarget = stream;
 		streams = new PumpStreamHandler(System.out, stream, System.in);
 		streams.setProcessInputStream(inputStream);
 		streams.setProcessOutputStream(outputStream);
 	}
 
+	/**
+	 * @see Command#getError()
+	 */
+	public OutputStream getErrorTarget() {
+		return errorTarget;
+	}
 }
