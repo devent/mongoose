@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +28,18 @@ import com.anrisoftware.mongoose.api.commans.Environment;
  */
 public abstract class AbstractCommand implements Command {
 
+	/**
+	 * Key for the unnamed arguments.
+	 */
+	public static final String UNNAMED_KEY = "unnamed";
+
 	private final VetoableChangeSupport vetoable;
 
 	private AbstractCommandLogger log;
 
 	private StandardStreams streams;
 
-	private Map<Object, Object> args;
+	private Map<String, Object> args;
 
 	private Environment environment;
 
@@ -64,8 +71,15 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	@Override
-	public Command call(Object args) throws Exception {
-		setArgs(args);
+	public Command call(Object... args) throws Exception {
+		args(args);
+		return call();
+	}
+
+	@Override
+	public Command call(Map<String, Object> named, Object... args)
+			throws Exception {
+		args(named, args);
 		return call();
 	}
 
@@ -73,54 +87,59 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public void setArgs(Object args) throws Exception {
 		log.checkArgs(this, args);
-		Map<Object, Object> oldValue = this.args;
-		Map<Object, Object> newValue;
+		Map<String, Object> oldValue = this.args;
+		Map<String, Object> newValue = createMap(10);
 		if (args instanceof Map) {
-			newValue = asMap((Map<Object, Object>) args);
-		} else if (args instanceof List) {
-			newValue = asList((List<Object>) args);
+			newValue.putAll((Map<String, Object>) args);
 		} else {
-			newValue = asObj(args);
+			newValue.put(UNNAMED_KEY, args);
 		}
-		vetoable.fireVetoableChange(Command.ARGUMENTS_PROPERTY, oldValue,
-				newValue);
+		vetoable.fireVetoableChange(ARGUMENTS_PROPERTY, oldValue, newValue);
 		this.args = newValue;
 		log.argumentsSet(this, args);
 	}
 
-	private Map<Object, Object> asMap(Map<Object, Object> args) {
-		Map<Object, Object> map = createMap(args.size());
-		map.putAll(map);
-		return map;
-	}
-
-	private Map<Object, Object> asObj(Object obj) {
-		Map<Object, Object> map = createMap(1);
-		map.put(0, obj);
-		return map;
-	}
-
-	private Map<Object, Object> asList(List<Object> list) {
-		Map<Object, Object> map = createMap(list.size());
-		for (int i = 0; i < list.size(); i++) {
-			map.put(i, list.get(i));
-		}
-		return map;
-	}
-
-	private Map<Object, Object> createMap(int size) {
-		return new LinkedHashMap<Object, Object>(size);
+	private Map<String, Object> createMap(int size) {
+		return new LinkedHashMap<String, Object>(size);
 	}
 
 	@Override
-	public Command args(Object args) throws Exception {
-		setArgs(args);
+	public Command args(Object... args) throws Exception {
+		Map<String, Object> oldValue = this.args;
+		Map<String, Object> newValue = createMap(10);
+		newValue.put(UNNAMED_KEY, Arrays.asList(args));
+		vetoable.fireVetoableChange(ARGUMENTS_PROPERTY, oldValue, newValue);
+		this.args = newValue;
+		log.argumentsSet(this, args);
 		return this;
 	}
 
 	@Override
-	public Map<Object, Object> getArgs() {
+	public Command args(Map<String, Object> named, Object... args)
+			throws Exception {
+		log.checkArgs(this, named);
+		Map<String, Object> oldValue = this.args;
+		Map<String, Object> newValue = createMap(10);
+		newValue.putAll(named);
+		newValue.put(UNNAMED_KEY, Arrays.asList(args));
+		vetoable.fireVetoableChange(ARGUMENTS_PROPERTY, oldValue, newValue);
+		this.args = newValue;
+		log.argumentsSet(this, args);
+		return this;
+	}
+
+	@Override
+	public Map<String, Object> getArgs() {
 		return args;
+	}
+
+	/**
+	 * Returns the argument values as list.
+	 * 
+	 * @return the argument values {@link List}.
+	 */
+	public List<Object> getArgsList() {
+		return new ArrayList<Object>(args.values());
 	}
 
 	@Override

@@ -93,13 +93,23 @@ public interface Command extends Callable<Command> {
 
 	/**
 	 * @see #call()
-	 * @see #setArgs(Object)
+	 * @see #setArgs(Object...)
 	 * 
 	 * @param args
 	 *            the arguments.
 	 * 
 	 */
-	Command call(Object args) throws Exception;
+	Command call(Object... args) throws Exception;
+
+	/**
+	 * @see #call()
+	 * @see #setArgs(Map, Object...)
+	 * 
+	 * @param named
+	 *            the named arguments.
+	 * 
+	 */
+	Command call(Map<String, Object> named, Object... args) throws Exception;
 
 	/**
 	 * Sets the arguments for the command.
@@ -118,18 +128,25 @@ public interface Command extends Callable<Command> {
 	void setArgs(Object args) throws Exception;
 
 	/**
-	 * @see #setArgs(Object)
+	 * @see #setArgs(Object...)
 	 * 
 	 * @return this {@link Command}.
 	 */
-	Command args(Object args) throws Exception;
+	Command args(Object... args) throws Exception;
+
+	/**
+	 * @see #setArgs(Map, Object...)
+	 * 
+	 * @return this {@link Command}.
+	 */
+	Command args(Map<String, Object> named, Object... args) throws Exception;
 
 	/**
 	 * Returns the arguments of the command.
 	 * 
 	 * @return the arguments.
 	 */
-	Map<Object, Object> getArgs();
+	Map<String, Object> getArgs();
 
 	/**
 	 * Sets the stream that is connected with the standard input of the command.
