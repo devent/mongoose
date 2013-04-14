@@ -22,6 +22,8 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import com.anrisoftware.mongoos.command.AbstractCommand;
 import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
 
@@ -36,7 +38,8 @@ class PwdBuildin extends AbstractCommand {
 
 	private final PwdBuildinLogger log;
 
-	public PwdBuildin(PwdBuildinLogger logger) {
+	@Inject
+	PwdBuildin(PwdBuildinLogger logger) {
 		this.log = logger;
 	}
 
