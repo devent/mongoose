@@ -8,8 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -90,11 +92,25 @@ public abstract class AbstractCommand implements Command {
 		if (args instanceof Map) {
 			newValue.putAll((Map<String, Object>) args);
 		} else {
-			newValue.put(UNNAMED_KEY, args);
+			newValue.put(UNNAMED_KEY, asList(args));
 		}
 		vetoable.fireVetoableChange(ARGUMENTS_PROPERTY, oldValue, newValue);
 		this.args = newValue;
+		argumentsSet(getArgs(), getUnnamedArgs());
 		log.argumentsSet(this, args);
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<Object> asList(Object obj) {
+		if (obj instanceof List) {
+			return (List<Object>) obj;
+		} else if (obj.getClass().isArray()) {
+			return Arrays.asList((Object[]) obj);
+		} else {
+			List<Object> list = new ArrayList<Object>();
+			list.add(obj);
+			return list;
+		}
 	}
 
 	private Map<String, Object> createMap(int size) {
@@ -109,6 +125,7 @@ public abstract class AbstractCommand implements Command {
 		vetoable.fireVetoableChange(ARGUMENTS_PROPERTY, oldValue, newValue);
 		this.args = newValue;
 		log.argumentsSet(this, args);
+		argumentsSet(getArgs(), getUnnamedArgs());
 		return this;
 	}
 
@@ -123,7 +140,24 @@ public abstract class AbstractCommand implements Command {
 		vetoable.fireVetoableChange(ARGUMENTS_PROPERTY, oldValue, newValue);
 		this.args = newValue;
 		log.argumentsSet(this, args);
+		argumentsSet(getArgs(), getUnnamedArgs());
 		return this;
+	}
+
+	/**
+	 * Called after the arguments are set.
+	 * 
+	 * @param args
+	 *            the {@link Map} with the arguments.
+	 * 
+	 * @param unnamedArgs
+	 *            the {@link List} with the unnamed arguments.
+	 * 
+	 * @throws Exception
+	 *             if some errors are encountered.
+	 */
+	protected void argumentsSet(Map<String, Object> args,
+			List<Object> unnamedArgs) throws Exception {
 	}
 
 	@Override
@@ -137,8 +171,8 @@ public abstract class AbstractCommand implements Command {
 	 * @return the unnamed arguments.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T getUnnamedArgs() {
-		return (T) args.get(UNNAMED_KEY);
+	public List<Object> getUnnamedArgs() {
+		return (List<Object>) args.get(UNNAMED_KEY);
 	}
 
 	@Override

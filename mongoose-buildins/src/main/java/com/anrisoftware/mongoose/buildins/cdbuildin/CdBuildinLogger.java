@@ -1,5 +1,7 @@
 package com.anrisoftware.mongoose.buildins.cdbuildin;
 
+import static org.apache.commons.lang3.Validate.inclusiveBetween;
+
 import java.io.File;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
@@ -13,6 +15,7 @@ import com.anrisoftware.mongoose.api.exceptions.DirectoryNotFoundException;
  */
 class CdBuildinLogger extends AbstractLogger {
 
+	private static final String ARGUMENTS = "Can have only zero or one arguments.";
 	private static final String CHANGED_DIRECTORY = "Changed directory to '{}'.";
 
 	/**
@@ -30,5 +33,9 @@ class CdBuildinLogger extends AbstractLogger {
 
 	void changedDirectory(File directory) {
 		log.debug(CHANGED_DIRECTORY, directory);
+	}
+
+	void checkArguments(CdBuildin buildin, int size) {
+		inclusiveBetween(0, 1, size, ARGUMENTS);
 	}
 }

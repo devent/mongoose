@@ -19,6 +19,8 @@
 package com.anrisoftware.mongoose.buildins.cdbuildin;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -35,8 +37,6 @@ import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
  * @since 1.0
  */
 class CdBuildin extends AbstractCommand {
-
-	private static final String NAME = "cd";
 
 	private final CdBuildinLogger log;
 
@@ -65,10 +65,13 @@ class CdBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public void setArgs(Object args) throws Exception {
-		super.setArgs(args);
-		this.directory = asFile(getUnnamedArgs());
-		log.checkDirectory(directory);
+	protected void argumentsSet(Map<String, Object> args,
+			List<Object> unnamedArgs) throws Exception {
+		log.checkArguments(this, unnamedArgs.size());
+		if (unnamedArgs.size() == 1) {
+			this.directory = asFile(unnamedArgs.get(0));
+			log.checkDirectory(directory);
+		}
 	}
 
 	private File asFile(Object object) {
@@ -80,10 +83,10 @@ class CdBuildin extends AbstractCommand {
 	}
 
 	/**
-	 * Returns the name {@value #NAME}.
+	 * Returns the name {@code cd}.
 	 */
 	@Override
 	public String getName() {
-		return NAME;
+		return CdService.ID;
 	}
 }

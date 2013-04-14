@@ -19,6 +19,8 @@
 package com.anrisoftware.mongoose.buildins.pwdbuildin;
 
 import java.io.PrintStream;
+import java.util.List;
+import java.util.Map;
 
 import com.anrisoftware.mongoos.command.AbstractCommand;
 import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
@@ -32,6 +34,12 @@ import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
  */
 class PwdBuildin extends AbstractCommand {
 
+	private final PwdBuildinLogger log;
+
+	public PwdBuildin(PwdBuildinLogger logger) {
+		this.log = logger;
+	}
+
 	/**
 	 * Returns the current working directory.
 	 */
@@ -41,6 +49,13 @@ class PwdBuildin extends AbstractCommand {
 		stream.println(getEnvironment().getWorkingDirectory());
 		stream.flush();
 		return this;
+	}
+
+	@Override
+	protected void argumentsSet(Map<String, Object> args,
+			List<Object> unnamedArgs) throws Exception {
+		log.checkArguments(this, args.size());
+		log.checkArguments(this, unnamedArgs.size());
 	}
 
 	/**
