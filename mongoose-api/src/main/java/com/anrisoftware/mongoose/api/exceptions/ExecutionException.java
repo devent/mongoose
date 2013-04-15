@@ -67,7 +67,7 @@ public class ExecutionException extends IOException {
 	 * 
 	 * @return the exit value.
 	 */
-	public int getValue() {
+	public int getTheValue() {
 		return (Integer) context.getContext().get(EXIT_VALUE_KEY);
 	}
 

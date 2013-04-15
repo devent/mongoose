@@ -86,7 +86,7 @@ class CdBuildin extends AbstractCommand {
 	 * Returns the name {@code cd}.
 	 */
 	@Override
-	public String getName() {
+	public String getTheName() {
 		return CdService.ID;
 	}
 }

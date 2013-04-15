@@ -56,7 +56,7 @@ public class DirectoryNotFoundException extends FileNotFoundException {
 	 * 
 	 * @return the {@link File} directory.
 	 */
-	public File getDirectory() {
+	public File getTheDirectory() {
 		return (File) context.getContext().get(DIRECTORY_KEY);
 	}
 

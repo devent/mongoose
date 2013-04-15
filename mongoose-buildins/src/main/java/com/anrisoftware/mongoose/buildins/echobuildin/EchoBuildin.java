@@ -103,7 +103,7 @@ class EchoBuildin extends AbstractCommand {
 	 * Returns the name {@code echo}.
 	 */
 	@Override
-	public String getName() {
+	public String getTheName() {
 		return EchoService.ID;
 	}
 }

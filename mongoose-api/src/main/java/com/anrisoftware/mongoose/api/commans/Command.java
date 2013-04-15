@@ -78,7 +78,7 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @return the name of the command.
 	 */
-	String getName();
+	String getTheName();
 
 	/**
 	 * Executes the command and waits until the command is finished.

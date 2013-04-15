@@ -65,7 +65,7 @@ class PwdBuildin extends AbstractCommand {
 	 * Returns the name {@code pwd}.
 	 */
 	@Override
-	public String getName() {
+	public String getTheName() {
 		return PwdService.ID;
 	}
 }
