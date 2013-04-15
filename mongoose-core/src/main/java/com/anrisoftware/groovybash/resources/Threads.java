@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.api.resources;
+package com.anrisoftware.groovybash.resources;
 
 import java.util.concurrent.Future;
 
