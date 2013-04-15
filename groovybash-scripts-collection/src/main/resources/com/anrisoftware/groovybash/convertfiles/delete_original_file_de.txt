@@ -1,1 +1,0 @@
-Lösche original Datei ``{}''.
