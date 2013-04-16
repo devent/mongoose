@@ -24,65 +24,40 @@ import java.util.Map;
 import com.anrisoftware.globalpom.exceptions.Context;
 
 /**
- * Thrown if the executed command returns with an error exit value.
+ * Thrown if the command encounters an error while executing.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
 @SuppressWarnings("serial")
-public class ExecutionException extends CommandException {
+public class CommandException extends IOException {
 
-	private static final String EXIT_VALUE_KEY = "exit value";
-
-	private Context<ExecutionException> context;
+	private Context<CommandException> context;
 
 	/**
-	 * Sets the exit value that caused the exception.
-	 * 
-	 * @param exitValue
-	 *            the exit value.
-	 * 
 	 * @see IOException#IOException(String, Throwable)
 	 */
-	public ExecutionException(String message, Throwable cause, int exitValue) {
+	public CommandException(String message, Throwable cause) {
 		super(message, cause);
-		addContext(EXIT_VALUE_KEY, exitValue);
 	}
 
 	/**
-	 * Sets the return code that caused the exception.
-	 * 
-	 * @param exitValue
-	 *            the exit value.
-	 * 
 	 * @see IOException#IOException(String)
 	 */
-	public ExecutionException(String message, int exitValue) {
+	public CommandException(String message) {
 		super(message);
-		addContext(EXIT_VALUE_KEY, exitValue);
-	}
-
-	/**
-	 * Returns the exit value that caused the exception.
-	 * 
-	 * @return the exit value.
-	 */
-	public int getTheValue() {
-		return (Integer) context.getContext().get(EXIT_VALUE_KEY);
 	}
 
 	/**
 	 * @see Context#addContext(String, Object)
 	 */
-	@Override
-	public ExecutionException addContext(String name, Object value) {
+	public CommandException addContext(String name, Object value) {
 		return context.addContext(name, value);
 	}
 
 	/**
 	 * @see Context#getContext()
 	 */
-	@Override
 	public Map<String, Object> getContext() {
 		return context.getContext();
 	}

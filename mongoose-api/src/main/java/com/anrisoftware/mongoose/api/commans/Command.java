@@ -26,8 +26,6 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
-
 /**
  * Command that can be executed.
  * 
@@ -85,11 +83,11 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @return the {@link Command} that was executed.
 	 * 
-	 * @throws ExecutionException
+	 * @throws Exception
 	 *             if there was an error executing the command.
 	 */
 	@Override
-	Command call() throws ExecutionException;
+	Command call() throws Exception;
 
 	/**
 	 * @see #call()
