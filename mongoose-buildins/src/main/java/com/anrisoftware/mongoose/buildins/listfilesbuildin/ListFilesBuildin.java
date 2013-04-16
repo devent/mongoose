@@ -42,7 +42,7 @@ import com.anrisoftware.mongoos.command.AbstractCommand;
 import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
 
 /**
- * The build-in command {@code lfiles}.
+ * The build-in command {@code listFiles}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
@@ -83,8 +83,7 @@ class ListFilesBuildin extends AbstractCommand {
 
 	@Override
 	public String getTheName() {
-		// TODO Auto-generated method stub
-		return null;
+		return ListFilesService.ID;
 	}
 
 	@Override
