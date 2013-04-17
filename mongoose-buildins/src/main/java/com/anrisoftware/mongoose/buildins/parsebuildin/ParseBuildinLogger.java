@@ -24,6 +24,8 @@ import groovy.lang.Closure;
 
 import java.util.List;
 
+import javax.inject.Singleton;
+
 import org.kohsuke.args4j.CmdLineException;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
@@ -35,6 +37,7 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
+@Singleton
 class ParseBuildinLogger extends AbstractLogger {
 
 	private static final String NOT_VALID_CLOSURE_SET = "Not valid closure set {} for {}.";

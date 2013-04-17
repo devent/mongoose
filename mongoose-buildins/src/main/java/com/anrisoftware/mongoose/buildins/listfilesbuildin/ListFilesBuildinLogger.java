@@ -6,6 +6,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 import java.io.FileFilter;
 import java.lang.reflect.Constructor;
 
+import javax.inject.Singleton;
+
 import com.anrisoftware.globalpom.log.AbstractLogger;
 
 /**
@@ -14,6 +16,7 @@ import com.anrisoftware.globalpom.log.AbstractLogger;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
+@Singleton
 class ListFilesBuildinLogger extends AbstractLogger {
 
 	private static final String NO_CONSTRUCTOR = "No default constructor or constructor with string argument found for type %s.";
