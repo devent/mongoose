@@ -1,0 +1,155 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.anrisoftware.globalpom</groupId>
+		<artifactId>globalpom-groovyizpacksinglejar</artifactId>
+		<version>1.6-SNAPSHOT</version>
+		<relativePath />
+	</parent>
+
+	<artifactId>mongoose-cliapp</artifactId>
+	<groupId>com.anrisoftware.mongoose</groupId>
+	<version>0.2-SNAPSHOT</version>
+	<name>Groovybash CLI Application</name>
+
+	<properties>
+		<project.custom.mainclass>com.anrisoftware.mongoose.application.Start</project.custom.mainclass>
+		<project.custom.author.name>Erwin Müller</project.custom.author.name>
+		<project.custom.author.email>erwin.mueller@deventm.org</project.custom.author.email>
+	</properties>
+
+	<developers>
+		<developer>
+			<id>EM</id>
+			<name>Erwin Müller</name>
+			<organization>Advanced Natural Research Insitute GmbH</organization>
+			<email>erwin.mueller@deventm.org</email>
+			<roles>
+				<role>Owner</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>GPLv3</name>
+			<url>http://www.gnu.org/licenses/gpl.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:${custom.gitpublic.url}mongoose.git</connection>
+		<developerConnection>scm:git:${custom.gitpublic.url}mongoose.git</developerConnection>
+		<url>scm:git:${custom.gitpublic.url}mongoose.git</url>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>${custom.repository.anrispublic.id}</id>
+			<url>${custom.repository.root}${custom.repository.anrispublic.path}</url>
+		</repository>
+		<snapshotRepository>
+			<id>${custom.repository.anrispublicsnapshots.id}</id>
+			<url>${custom.repository.root}${custom.repository.anrispublicsnapshots.path}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.anrisoftware.globalpom</groupId>
+				<artifactId>globalpom-groovytestutils</artifactId>
+				<version>${project.custom.globalpom.groovytestutils.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.anrisoftware.globalpom</groupId>
+				<artifactId>globalpom-log</artifactId>
+				<version>${project.custom.globalpom.log.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.anrisoftware.propertiesutils</groupId>
+				<artifactId>propertiesutils</artifactId>
+				<version>1.1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.anrisoftware.mongoose</groupId>
+				<artifactId>mongoose-core</artifactId>
+				<version>0.3-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>com.anrisoftware.mongoose</groupId>
+				<artifactId>mongoose-buildins</artifactId>
+				<version>0.2-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.ivy</groupId>
+				<artifactId>ivy</artifactId>
+				<version>2.2.0</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+
+		<!-- test -->
+		<dependency>
+			<groupId>com.anrisoftware.globalpom</groupId>
+			<artifactId>globalpom-groovytestutils</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- compile -->
+		<dependency>
+			<groupId>args4j</groupId>
+			<artifactId>args4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.inject.extensions</groupId>
+			<artifactId>guice-assistedinject</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.anrisoftware.globalpom</groupId>
+			<artifactId>globalpom-log</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.sli4j</groupId>
+			<artifactId>sli4j-slf4j-log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ivy</groupId>
+			<artifactId>ivy</artifactId>
+		</dependency>
+
+		<!-- groovybsah -->
+		<dependency>
+			<groupId>com.anrisoftware.mongoose</groupId>
+			<artifactId>mongoose-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.anrisoftware.mongoose</groupId>
+			<artifactId>mongoose-buildins</artifactId>
+		</dependency>
+
+	</dependencies>
+
+</project>
