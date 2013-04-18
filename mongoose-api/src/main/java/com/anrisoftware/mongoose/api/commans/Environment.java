@@ -19,6 +19,7 @@
 package com.anrisoftware.mongoose.api.commans;
 
 import java.io.File;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
@@ -30,7 +31,7 @@ import com.google.inject.Injector;
  * The environment of the script.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
 public interface Environment {
 
@@ -73,12 +74,17 @@ public interface Environment {
 	File getWorkingDirectory();
 
 	/**
+	 * Returns the environment parameter.
+	 * 
+	 * @return
+	 */
+	Map<String, String> getEnv();
+
+	/**
 	 * Sets the context for the script logger.
 	 * 
 	 * @param context
 	 *            the {@link Class} context.
-	 * 
-	 * @since 0.2
 	 */
 	void setScriptLoggerContext(Class<?> context);
 
@@ -86,8 +92,6 @@ public interface Environment {
 	 * Returns the script logger.
 	 * 
 	 * @return the {@link Logger}.
-	 * 
-	 * @since 0.2
 	 */
 	Logger getScriptLogger();
 
