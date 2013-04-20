@@ -4,6 +4,8 @@ import org.junit.Before
 
 import com.anrisoftware.globalpom.utils.TestUtils
 import com.anrisoftware.groovybash.core.Environment
+import com.anrisoftware.mongoose.parser.BashParserFactory;
+import com.anrisoftware.mongoose.parser.ParserModule;
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.Injector

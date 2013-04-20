@@ -25,7 +25,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 
-import com.anrisoftware.mongoos.command.AbstractCommand;
+import com.anrisoftware.mongoose.command.AbstractCommand;
 
 /**
  * Log messages in the specified logging level.

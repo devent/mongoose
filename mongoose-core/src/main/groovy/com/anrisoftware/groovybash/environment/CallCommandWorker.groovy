@@ -20,6 +20,8 @@ package com.anrisoftware.groovybash.environment
 
 import javax.inject.Inject
 
+import com.anrisoftware.mongoose.environment.CallCommandWorkerLogger;
+
 /**
  * Call the command. The worker is used because 
  * {@link GroovyObject#invokeMethod(String, Object)} cannot throw any 

@@ -27,7 +27,7 @@ import javax.inject.Inject;
 
 import org.slf4j.LoggerFactory;
 
-import com.anrisoftware.mongoos.command.AbstractCommand;
+import com.anrisoftware.mongoose.command.AbstractCommand;
 
 /**
  * Create a logger.

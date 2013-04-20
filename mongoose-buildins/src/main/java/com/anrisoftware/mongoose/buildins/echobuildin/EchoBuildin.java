@@ -26,8 +26,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.anrisoftware.mongoos.command.AbstractCommand;
 import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
+import com.anrisoftware.mongoose.command.AbstractCommand;
 
 /**
  * The build-in command {@code echo}.
