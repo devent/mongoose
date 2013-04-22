@@ -1,4 +1,4 @@
-package com.anrisoftware.mongoose.resources.threads;
+package com.anrisoftware.mongoose.threads;
 
 import static org.apache.commons.lang3.Validate.notNull;
 

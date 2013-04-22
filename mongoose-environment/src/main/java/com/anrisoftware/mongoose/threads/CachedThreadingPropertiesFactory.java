@@ -1,4 +1,4 @@
-package com.anrisoftware.mongoose.resources.threads;
+package com.anrisoftware.mongoose.threads;
 
 import com.anrisoftware.propertiesutils.ContextProperties;
 

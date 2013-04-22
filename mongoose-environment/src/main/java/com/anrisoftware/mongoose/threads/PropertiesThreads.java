@@ -1,4 +1,4 @@
-package com.anrisoftware.mongoose.resources.threads;
+package com.anrisoftware.mongoose.threads;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,8 +13,16 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import com.anrisoftware.propertiesutils.ContextProperties;
 
+/**
+ * Loads the thread pool properties from a properties file.
+ * 
+ * @author Erwin Mueller, erwin.mueller@deventm.org
+ * @since 1.0
+ */
 class PropertiesThreads implements Threads {
 
 	private final PropertiesThreadsLogger log;
@@ -39,12 +47,10 @@ class PropertiesThreads implements Threads {
 			CachedThreadingPropertiesFactory cachedThreadingPropertiesFactory,
 			FixedThreadingPropertiesFactory fixedThreadingPropertiesFactory,
 			SingleThreadingPropertiesFactory singleThreadingPropertiesFactory,
-			@Named("threads-properties") ContextProperties p)
-			throws ThreadsException {
+			@Named("threads-properties") ContextProperties p) {
 		this.log = logger;
 		this.propertiesFactory = propertiesFactory;
 		this.properties = p;
-		this.executor = createExecutor();
 		this.cachedFactory = cachedThreadingPropertiesFactory;
 		this.fixedFactory = fixedThreadingPropertiesFactory;
 		this.singleFactory = singleThreadingPropertiesFactory;
@@ -170,4 +176,8 @@ class PropertiesThreads implements Threads {
 		return executor.invokeAny(tasks, timeout, unit);
 	}
 
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("name", name).toString();
+	}
 }

@@ -1,4 +1,4 @@
-package com.anrisoftware.mongoose.resources.threads;
+package com.anrisoftware.mongoose.threads;
 
 import static java.lang.String.format;
 import static java.util.concurrent.Executors.newFixedThreadPool;
