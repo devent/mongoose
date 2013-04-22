@@ -20,7 +20,10 @@ import com.google.inject.assistedinject.Assisted;
 @SuppressWarnings("serial")
 class FixedThreadingProperties extends ThreadingProperties {
 
-	private static final String MAX_THREADS_PROPERTY = "max_threads";
+	/**
+	 * Property name of number of maximum threads.
+	 */
+	public static final String MAX_THREADS_PROPERTY = "max_threads";
 
 	private final FixedThreadingPropertiesLogger log;
 
@@ -41,10 +44,12 @@ class FixedThreadingProperties extends ThreadingProperties {
 	 * 
 	 * @throws NullPointerException
 	 *             if no maximum number of threads property was found.
+	 * 
+	 * @see #MAX_THREADS_PROPERTY
 	 */
 	public int getMaxThreads() {
 		Number value = getProperties().getNumberProperty(
-				format(KEY_TEMPLATE, MAX_THREADS_PROPERTY));
+				format(KEY_TEMPLATE, getName(), MAX_THREADS_PROPERTY));
 		log.checkMaxThreads(this, value);
 		return value.intValue();
 	}
@@ -56,10 +61,13 @@ class FixedThreadingProperties extends ThreadingProperties {
 	 *            the default maximum number of threads.
 	 * 
 	 * @return the maximum number of threads or the default value.
+	 * 
+	 * @see #MAX_THREADS_PROPERTY
 	 */
 	public int getMaxThreads(int defaultValue) {
 		Number value = getProperties().getNumberProperty(
-				format(KEY_TEMPLATE, MAX_THREADS_PROPERTY), defaultValue);
+				format(KEY_TEMPLATE, getName(), MAX_THREADS_PROPERTY),
+				defaultValue);
 		return value.intValue();
 	}
 

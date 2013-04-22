@@ -55,6 +55,10 @@ class ThreadingProperties extends Properties {
 		return properties;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	/**
 	 * Returns the threading policy.
 	 * 
