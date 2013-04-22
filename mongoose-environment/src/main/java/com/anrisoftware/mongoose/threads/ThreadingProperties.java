@@ -1,5 +1,6 @@
 package com.anrisoftware.mongoose.threads;
 
+import static com.anrisoftware.mongoose.threads.ThreadingPolicy.parsePolicy;
 import static java.lang.String.format;
 
 import java.lang.reflect.InvocationTargetException;
@@ -31,23 +32,23 @@ class ThreadingProperties extends Properties {
 
 	private ThreadingPropertiesLogger log;
 
-	private ContextProperties properties;
+	private final ContextProperties properties;
 
-	private String name;
+	private final String name;
+
+	/**
+	 * @see ThreadingPropertiesFactory#create(ContextProperties, String)
+	 */
+	@Inject
+	protected ThreadingProperties(@Assisted ContextProperties p,
+			@Assisted String name) {
+		this.properties = p;
+		this.name = name;
+	}
 
 	@Inject
 	void setThreadingPropertiesLogger(ThreadingPropertiesLogger log) {
 		this.log = log;
-	}
-
-	@Assisted
-	void setName(String name) {
-		this.name = name;
-	}
-
-	@Assisted
-	void setProperties(ContextProperties properties) {
-		this.properties = properties;
 	}
 
 	protected ContextProperties getProperties() {

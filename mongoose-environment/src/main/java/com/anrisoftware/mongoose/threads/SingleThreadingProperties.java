@@ -5,6 +5,11 @@ import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
 
+import javax.inject.Inject;
+
+import com.anrisoftware.propertiesutils.ContextProperties;
+import com.google.inject.assistedinject.Assisted;
+
 /**
  * Single thread pool properties.
  * 
@@ -13,6 +18,15 @@ import java.util.concurrent.ThreadFactory;
  */
 @SuppressWarnings("serial")
 class SingleThreadingProperties extends ThreadingProperties {
+
+	/**
+	 * @see SingleThreadingPropertiesFactory#create(ContextProperties, String)
+	 */
+	@Inject
+	SingleThreadingProperties(@Assisted ContextProperties p,
+			@Assisted String name) {
+		super(p, name);
+	}
 
 	/**
 	 * Create the single executor service.

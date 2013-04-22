@@ -8,6 +8,9 @@ import java.util.concurrent.ThreadFactory;
 
 import javax.inject.Inject;
 
+import com.anrisoftware.propertiesutils.ContextProperties;
+import com.google.inject.assistedinject.Assisted;
+
 /**
  * Fixed thread pool properties.
  * 
@@ -21,8 +24,13 @@ class FixedThreadingProperties extends ThreadingProperties {
 
 	private final FixedThreadingPropertiesLogger log;
 
+	/**
+	 * @see FixedThreadingPropertiesFactory#create(ContextProperties, String)
+	 */
 	@Inject
-	FixedThreadingProperties(FixedThreadingPropertiesLogger logger) {
+	FixedThreadingProperties(FixedThreadingPropertiesLogger logger,
+			@Assisted ContextProperties p, @Assisted String name) {
+		super(p, name);
 		this.log = logger;
 	}
 

@@ -2,6 +2,7 @@ package com.anrisoftware.mongoose.threads;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -11,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -23,7 +23,7 @@ import com.anrisoftware.propertiesutils.ContextProperties;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class PropertiesThreads implements Threads {
+public class PropertiesThreads implements Threads {
 
 	private final PropertiesThreadsLogger log;
 
@@ -33,11 +33,11 @@ class PropertiesThreads implements Threads {
 
 	private final FixedThreadingPropertiesFactory fixedFactory;
 
-	private final ContextProperties properties;
-
 	private final SingleThreadingPropertiesFactory singleFactory;
 
 	private ExecutorService executor;
+
+	private ContextProperties properties;
 
 	private String name;
 
@@ -46,14 +46,22 @@ class PropertiesThreads implements Threads {
 			ThreadingPropertiesFactory propertiesFactory,
 			CachedThreadingPropertiesFactory cachedThreadingPropertiesFactory,
 			FixedThreadingPropertiesFactory fixedThreadingPropertiesFactory,
-			SingleThreadingPropertiesFactory singleThreadingPropertiesFactory,
-			@Named("threads-properties") ContextProperties p) {
+			SingleThreadingPropertiesFactory singleThreadingPropertiesFactory) {
 		this.log = logger;
 		this.propertiesFactory = propertiesFactory;
-		this.properties = p;
 		this.cachedFactory = cachedThreadingPropertiesFactory;
 		this.fixedFactory = fixedThreadingPropertiesFactory;
 		this.singleFactory = singleThreadingPropertiesFactory;
+	}
+
+	/**
+	 * Sets the properties for the thread pool.
+	 * 
+	 * @param properties
+	 *            the {@link Properties}.
+	 */
+	public void setProperties(Properties properties) {
+		this.properties = new ContextProperties(this, properties);
 	}
 
 	@Override
