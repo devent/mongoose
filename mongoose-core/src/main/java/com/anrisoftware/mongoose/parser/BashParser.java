@@ -180,7 +180,7 @@ public class BashParser implements Runnable {
 	 *            the command line arguments.
 	 */
 	public void setArguments(String[] args) {
-		environment.setArguments(args);
+		environment.setArgs(args);
 	}
 
 	/**

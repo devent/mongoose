@@ -7,12 +7,16 @@
 		<groupId>com.anrisoftware.mongoose</groupId>
 		<artifactId>mongoose-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
-		<relativePath>../mongoose-parent</relativePath>
 	</parent>
 
-	<artifactId>mongoose-core</artifactId>
-	<name>Mongoose :: Core</name>
-	<inceptionYear>2012</inceptionYear>
+	<artifactId>mongoose-environment</artifactId>
+	<name>Mongoose :: Environment</name>
+	<description>Execute build-ins and manage global variables and resources.</description>
+	<inceptionYear>2013</inceptionYear>
+
+	<properties>
+		<project.custom.year>${project.inceptionYear}</project.custom.year>
+	</properties>
 
 	<dependencies>
 
@@ -20,11 +24,6 @@
 		<dependency>
 			<groupId>com.anrisoftware.globalpom</groupId>
 			<artifactId>globalpom-groovytestutils</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.perfidix</groupId>
-			<artifactId>perfidix</artifactId>
 			<scope>test</scope>
 		</dependency>
 
@@ -45,28 +44,16 @@
 			<artifactId>guice-assistedinject</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.anrisoftware.propertiesutils</groupId>
-			<artifactId>propertiesutils-contextproperties</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.anrisoftware.globalpom</groupId>
 			<artifactId>globalpom-log</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>args4j</groupId>
-			<artifactId>args4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
+			<groupId>com.anrisoftware.propertiesutils</groupId>
+			<artifactId>propertiesutils-contextproperties</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.anrisoftware.resources</groupId>
@@ -77,5 +64,4 @@
 			<artifactId>resources-st</artifactId>
 		</dependency>
 	</dependencies>
-
 </project>

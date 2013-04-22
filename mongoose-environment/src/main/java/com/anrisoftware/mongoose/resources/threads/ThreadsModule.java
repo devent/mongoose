@@ -16,29 +16,34 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.executor;
+package com.anrisoftware.mongoose.resources.threads;
 
-import javax.inject.Singleton;
-
-import com.anrisoftware.mongoose.core.ExecutorServiceHandler;
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Provides the executor service handler.
+ * Install the threads resource.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
-public class ExecutorModule extends AbstractModule {
+public class ThreadsModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-	}
-
-	@Provides
-	@Singleton
-	public ExecutorServiceHandler getExecutorServiceHandler() {
-		return new FixedThreadPoolExecutorServiceHandler(4);
+		install(new FactoryModuleBuilder().implement(ThreadingProperties.class,
+				ThreadingProperties.class).build(
+				ThreadingPropertiesFactory.class));
+		install(new FactoryModuleBuilder().implement(
+				CachedThreadingProperties.class,
+				CachedThreadingProperties.class).build(
+				CachedThreadingPropertiesFactory.class));
+		install(new FactoryModuleBuilder().implement(
+				FixedThreadingProperties.class, FixedThreadingProperties.class)
+				.build(FixedThreadingPropertiesFactory.class));
+		install(new FactoryModuleBuilder().implement(
+				SingleThreadingProperties.class,
+				SingleThreadingProperties.class).build(
+				SingleThreadingPropertiesFactory.class));
 	}
 }

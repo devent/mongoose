@@ -25,7 +25,6 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 
 import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
-import com.google.inject.Injector;
 
 /**
  * The environment of the script.
@@ -36,27 +35,19 @@ import com.google.inject.Injector;
 public interface Environment {
 
 	/**
-	 * Sets the parent injector for the environment.
-	 * 
-	 * @param injector
-	 *            the parent {@link Injector}.
-	 */
-	void setInjector(Injector injector);
-
-	/**
 	 * Sets the specified command line arguments for the script.
 	 * 
 	 * @param args
 	 *            the command line arguments.
 	 */
-	void setArguments(String[] args);
+	void setArgs(String[] args);
 
 	/**
 	 * Returns the specified command line arguments for the script.
 	 * 
 	 * @return the command line arguments.
 	 */
-	String[] getArguments();
+	String[] getArgs();
 
 	/**
 	 * Sets the current working directory.
@@ -108,8 +99,6 @@ public interface Environment {
 	 * 
 	 * @param dir
 	 *            the {@link File} directory.
-	 * 
-	 * @since 0.3
 	 */
 	void setScriptHome(File dir);
 
@@ -117,8 +106,6 @@ public interface Environment {
 	 * Returns the script home directory.
 	 * 
 	 * @return the {@link File} directory.
-	 * 
-	 * @since 0.3
 	 */
 	File getScriptHome();
 
@@ -127,8 +114,6 @@ public interface Environment {
 	 * 
 	 * @param classLoader
 	 *            the {@link ClassLoader}.
-	 * 
-	 * @since 0.3
 	 */
 	void setScriptClassLoader(ClassLoader classLoader);
 
@@ -139,8 +124,6 @@ public interface Environment {
 	 *            the {@link Runnable} task.
 	 * 
 	 * @return the {@link Future} of the task.
-	 * 
-	 * @since 0.2
 	 */
 	Future<?> submitTask(Runnable task);
 

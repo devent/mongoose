@@ -18,14 +18,14 @@
  */
 package com.anrisoftware.groovybash.resources
 
-import com.anrisoftware.resources.api.Templates
+import com.anrisoftware.resources.templates.api.Templates
 
 /**
  * Delegates for the user specified method to return the template
  * from the template resource with the arguments.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.3
+ * @since 1.0
  */
 class TemplatesDelegate {
 

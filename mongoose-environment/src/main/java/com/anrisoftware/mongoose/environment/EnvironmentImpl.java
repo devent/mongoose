@@ -18,8 +18,6 @@
  */
 package com.anrisoftware.mongoose.environment;
 
-import static com.google.common.collect.ImmutableList.copyOf;
-import static com.google.common.collect.Maps.newHashMap;
 import groovy.lang.GroovyObjectSupport;
 
 import java.io.File;
@@ -37,20 +35,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.anrisoftware.groovybash.environment.CallCommandWorker;
-import com.anrisoftware.mongoose.core.Buildin;
-import com.anrisoftware.mongoose.core.BuildinPlugin;
-import com.anrisoftware.mongoose.core.Environment;
-import com.anrisoftware.mongoose.core.ExecutorServiceHandler;
+import com.anrisoftware.mongoose.api.commans.Environment;
 import com.anrisoftware.mongoose.resources.TemplatesResources;
 import com.anrisoftware.mongoose.resources.TextsResources;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.Injector;
 
 /**
- * Loads the build-in plugins and executes them in the script context.
+ * Use Groovy features to execute commands.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
 class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
@@ -93,8 +88,6 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
 			@Named("environmentProperties") Properties properties,
-			Set<BuildinPlugin> buildins, ArgumentsWorker argumentsWorker,
-			CallCommandWorker callCommandWorker,
 			ExecutorServiceHandler executorServiceHandler,
 			TextsResources textsResources, TemplatesResources templatesResources) {
 		super();
@@ -142,7 +135,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	}
 
 	@Override
-	public void setArguments(String[] args) {
+	public void setArgs(String[] args) {
 		putArguments(args);
 		log.argumentsSet(args);
 	}
@@ -152,7 +145,7 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	}
 
 	@Override
-	public String[] getArguments() {
+	public String[] getArgs() {
 		List<String> args = asList(String.class);
 		return args.toArray(new String[args.size()]);
 	}

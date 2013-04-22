@@ -26,8 +26,8 @@ import javax.inject.Inject;
 
 import com.anrisoftware.groovybash.resources.TemplatesDelegate;
 import com.anrisoftware.groovybash.resources.TextsDelegate;
-import com.anrisoftware.resources.api.Templates;
-import com.anrisoftware.resources.api.TemplatesFactory;
+import com.anrisoftware.resources.templates.api.Templates;
+import com.anrisoftware.resources.templates.api.TemplatesFactory;
 import com.google.common.collect.Maps;
 
 /**

@@ -73,7 +73,7 @@ class ParseBuildin extends AbstractCommand {
 	@Override
 	public void setEnvironment(Environment environment) {
 		super.setEnvironment(environment);
-		setArguments(Arrays.asList(environment.getArguments()));
+		setArguments(Arrays.asList(environment.getArgs()));
 	}
 
 	@Override
