@@ -77,6 +77,7 @@ class EnvironmentImpl implements Environment {
 	}
 
 	private void setupVariables() {
+		setEnv(System.getenv());
 		setArgs(new String[0]);
 		setScriptHome(new File("."));
 		setWorkingDirectory(new File("."));
@@ -93,6 +94,11 @@ class EnvironmentImpl implements Environment {
 	private void setResources() {
 		variables.put(TEXTS_VARIABLE, textsResources);
 		variables.put(TEMPLATES_VARIABLE, templatesResources);
+	}
+
+	@Override
+	public void setEnv(Map<String, String> env) {
+		variables.putAll(env);
 	}
 
 	@Override

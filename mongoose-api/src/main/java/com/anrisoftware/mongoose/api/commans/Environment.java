@@ -24,7 +24,7 @@ import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 
-import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
  * The environment of the script.
@@ -35,7 +35,52 @@ import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
 public interface Environment {
 
 	/**
-	 * Sets the specified command line arguments for the script.
+	 * Command line arguments of the script.
+	 */
+	static final String ARGS_VARIABLE = "ARGS";
+
+	/**
+	 * Current working directory.
+	 */
+	static final String WORKING_DIRECTORY_VARIABLE = "PWD";
+
+	/**
+	 * User home directory.
+	 */
+	static final String HOME_VARIABLE = "HOME";
+
+	/**
+	 * User home directory.
+	 */
+	static final String USER_HOME_VARIABLE = "USER_HOME";
+
+	/**
+	 * Directory in which the script was started.
+	 */
+	static final String SCRIPT_HOME_VARIABLE = "SCRIPT_HOME";
+
+	/**
+	 * Texts resources.
+	 */
+	static final String TEXTS_VARIABLE = "TEXTS";
+
+	/**
+	 * Templates resources.
+	 */
+	static final String TEMPLATES_VARIABLE = "TEMPLATES";
+
+	/**
+	 * Sets the environment variables of the script.
+	 * 
+	 * @param env
+	 *            the environment variables {@link Map}.
+	 * 
+	 * @see System#getenv()
+	 */
+	void setEnv(Map<String, String> env);
+
+	/**
+	 * Sets the command line arguments of the script.
 	 * 
 	 * @param args
 	 *            the command line arguments.
@@ -43,7 +88,7 @@ public interface Environment {
 	void setArgs(String[] args);
 
 	/**
-	 * Returns the specified command line arguments for the script.
+	 * Returns the command line arguments for the script.
 	 * 
 	 * @return the command line arguments.
 	 */
@@ -63,13 +108,6 @@ public interface Environment {
 	 * @return the {@link File} of the directory.
 	 */
 	File getWorkingDirectory();
-
-	/**
-	 * Returns the environment parameter.
-	 * 
-	 * @return
-	 */
-	Map<String, String> getEnv();
 
 	/**
 	 * Sets the context for the script logger.
