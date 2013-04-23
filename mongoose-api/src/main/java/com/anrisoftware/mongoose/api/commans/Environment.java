@@ -118,16 +118,6 @@ public interface Environment {
 	void setScriptClassLoader(ClassLoader classLoader);
 
 	/**
-	 * Submit the task for execution in a different thread.
-	 * 
-	 * @param task
-	 *            the {@link Runnable} task.
-	 * 
-	 * @return the {@link Future} of the task.
-	 */
-	Future<?> submitTask(Runnable task);
-
-	/**
 	 * Execute the command in the environment.
 	 * 
 	 * @param command
@@ -144,10 +134,10 @@ public interface Environment {
 	 * @param command
 	 *            the {@link Command} to execute.
 	 * 
-	 * @throws ExecutionException
-	 *             if the command returns with an error.
+	 * @throws CommandException
+	 *             if there was an error executing the command.
 	 */
-	void executeCommandAndWait(Command command) throws ExecutionException;
+	void executeCommandAndWait(Command command) throws CommandException;
 
 	/**
 	 * Close the environment.
