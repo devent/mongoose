@@ -140,8 +140,9 @@ public interface Environment {
 	void executeCommandAndWait(Command command) throws CommandException;
 
 	/**
-	 * Close the environment.
+	 * Shutdown the environment. After shutdown the environment can not execute
+	 * any commands.
 	 */
-	void close();
+	void shutdown();
 
 }
