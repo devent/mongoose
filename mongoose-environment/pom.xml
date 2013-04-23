@@ -63,5 +63,10 @@
 			<groupId>com.anrisoftware.resources</groupId>
 			<artifactId>resources-st</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.perfidix</groupId>
+			<artifactId>perfidix</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
