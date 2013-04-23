@@ -18,49 +18,43 @@
  */
 package com.anrisoftware.mongoose.resources;
 
-import groovy.lang.GroovyObjectSupport;
-
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.anrisoftware.groovybash.resources.TextsDelegate;
-import com.anrisoftware.resources.api.Texts;
-import com.anrisoftware.resources.api.TextsFactory;
-import com.google.common.collect.Maps;
+import com.anrisoftware.resources.texts.api.Texts;
+import com.anrisoftware.resources.texts.api.TextsFactory;
 
 /**
  * Returns the texts resources.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.3
+ * @since 1.0
  */
-public class TextsResources extends GroovyObjectSupport {
+public class TextsResources {
 
 	private final TextsFactory textsFactory;
 
-	private final Map<String, Texts> resources;
+	private final Map<String, Texts> cache;
 
 	private final TextsDelegate textsDelegate;
 
 	private ClassLoader classLoader;
 
+	private Locale locale;
+
 	/**
 	 * Sets the text resources factory.
-	 * 
-	 * @param textsFactory
-	 *            the {@link TextsFactory} that creates the text resources.
-	 * 
-	 * @param textsDelegate
-	 *            the {@link TextsDelegate} that delegates missing properties to
-	 *            the text resources.
 	 */
 	@Inject
 	TextsResources(TextsFactory textsFactory, TextsDelegate textsDelegate) {
 		this.textsFactory = textsFactory;
-		this.resources = Maps.newHashMap();
+		this.cache = new HashMap<String, Texts>();
 		this.classLoader = getClass().getClassLoader();
 		this.textsDelegate = textsDelegate;
+		this.locale = Locale.getDefault();
 	}
 
 	/**
@@ -74,23 +68,28 @@ public class TextsResources extends GroovyObjectSupport {
 	}
 
 	/**
-	 * Missing property is used as the base name of the text resources.
+	 * Sets the resources locale.
+	 * 
+	 * @param locale
+	 *            the {@link Locale}.
 	 */
-	@Override
-	public Object getProperty(String name) {
-		if (getMetaClass().hasProperty(this, name) != null) {
-			return super.getProperty(name);
-		}
-
-		Texts resource = lazyCreateResource(name);
-		return textsDelegate.setDelegate(resource);
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
-	private Texts lazyCreateResource(String name) {
-		Texts resource = resources.get(name);
+	/**
+	 * Missing property is used as the base name of the text resources.
+	 */
+	public Object propertyMissing(String name) {
+		Texts resource = getCachedResource(name);
+		return textsDelegate.setDelegate(resource, locale);
+	}
+
+	private Texts getCachedResource(String name) {
+		Texts resource = cache.get(name);
 		if (resource == null) {
 			resource = textsFactory.create(name, classLoader);
-			resources.put(name, resource);
+			cache.put(name, resource);
 		}
 		return resource;
 	}

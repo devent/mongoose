@@ -18,21 +18,21 @@
  */
 package com.anrisoftware.mongoose.resources;
 
-import com.anrisoftware.resources.binary.BinariesResourcesModule;
+import com.anrisoftware.resources.binary.binaries.BinariesResourcesModule;
 import com.anrisoftware.resources.binary.maps.BinariesDefaultMapsModule;
-import com.anrisoftware.resources.st.StResourcesModule;
-import com.anrisoftware.resources.st.maps.TemplatesDefaultMapsModule;
-import com.anrisoftware.resources.st.worker.STTemplateDefaultPropertiesModule;
-import com.anrisoftware.resources.texts.ResourcesTextsCharsetModule;
-import com.anrisoftware.resources.texts.TextsResourcesModule;
+import com.anrisoftware.resources.templates.maps.TemplatesDefaultMapsModule;
+import com.anrisoftware.resources.templates.worker.STDefaultPropertiesModule;
+import com.anrisoftware.resources.templates.worker.STWorkerModule;
 import com.anrisoftware.resources.texts.maps.TextsDefaultMapsModule;
+import com.anrisoftware.resources.texts.texts.TextsResourcesCharsetModule;
+import com.anrisoftware.resources.texts.texts.TextsResourcesModule;
 import com.google.inject.AbstractModule;
 
 /**
  * Install the resources modules.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.3
+ * @since 1.0
  */
 public class ResourcesModule extends AbstractModule {
 
@@ -47,12 +47,12 @@ public class ResourcesModule extends AbstractModule {
 		install(new BinariesDefaultMapsModule());
 		install(new TextsResourcesModule());
 		install(new TextsDefaultMapsModule());
-		install(new ResourcesTextsCharsetModule());
+		install(new TextsResourcesCharsetModule());
 	}
 
 	private void installSTResources() {
-		install(new StResourcesModule());
 		install(new TemplatesDefaultMapsModule());
-		install(new STTemplateDefaultPropertiesModule());
+		install(new STWorkerModule());
+		install(new STDefaultPropertiesModule());
 	}
 }

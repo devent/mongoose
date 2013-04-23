@@ -16,31 +16,39 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.groovybash.resources
+package com.anrisoftware.mongoose.resources
 
-import com.anrisoftware.resources.api.Texts
+import com.anrisoftware.resources.templates.api.Templates
 
 /**
- * Delegates for the user specified properties to return the text
- * from the text resource.
+ * Delegates for the user specified method to return the template
+ * from the template resource.
+ * <p>
+ * The property access example:
+ * <pre>
+ * TEMPLATES.base_name(args)
+ * </pre>
+ * Is delegated to: 
+ * <pre>
+ * TEMPLATES.getResource("base_name").getText(args)
+ * </pre>
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.3
+ * @since 1.0
  */
-class TextsDelegate {
+class TemplatesDelegate {
 
 	/**
-	 * Sets a delegate for the user specified properties to return the text
-	 * from the text resource.
+	 * Sets the delegate.
 	 * 
 	 * @param resource
-	 * 			  the {@link Texts} resource.
+	 * 			  the {@link Templates} resource.
 	 * 
-	 * @return the {@link Texts} resource with the property delegate.
+	 * @return the {@link Templates} resource with the method delegate.
 	 */
-	Texts setDelegate(Texts resource) {
-		resource.metaClass.propertyMissing = { name ->
-			resource.getResource(name).text
+	Templates setDelegate(Templates resource) {
+		resource.metaClass.methodMissing = { name, args ->
+			resource.getResource(name).getText(args)
 		}
 		return resource
 	}

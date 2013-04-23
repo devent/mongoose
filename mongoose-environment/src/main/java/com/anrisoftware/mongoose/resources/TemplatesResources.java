@@ -18,55 +18,44 @@
  */
 package com.anrisoftware.mongoose.resources;
 
-import groovy.lang.GroovyObjectSupport;
-
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.anrisoftware.groovybash.resources.TemplatesDelegate;
-import com.anrisoftware.groovybash.resources.TextsDelegate;
 import com.anrisoftware.resources.templates.api.Templates;
 import com.anrisoftware.resources.templates.api.TemplatesFactory;
-import com.google.common.collect.Maps;
 
 /**
  * Returns the templates resources.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.3
+ * @since 1.0
  */
-public class TemplatesResources extends GroovyObjectSupport {
+public class TemplatesResources {
 
 	private final TemplatesFactory templatesFactory;
 
-	private final Map<String, Templates> resources;
+	private final Map<String, Templates> cache;
 
 	private final TemplatesDelegate templatesDelegate;
 
 	private ClassLoader classLoader;
 
 	/**
-	 * Sets the text resources factory.
-	 * 
-	 * @param templatesFactory
-	 *            the {@link TemplatesFactory} that creates the text resources.
-	 * 
-	 * @param textsDelegate
-	 *            the {@link TextsDelegate} that delegates missing properties to
-	 *            the text resources.
+	 * Sets the templates resources factory.
 	 */
 	@Inject
 	TemplatesResources(TemplatesFactory templatesFactory,
 			TemplatesDelegate textsDelegate) {
 		this.templatesFactory = templatesFactory;
-		this.resources = Maps.newHashMap();
+		this.cache = new HashMap<String, Templates>();
 		this.classLoader = getClass().getClassLoader();
 		this.templatesDelegate = textsDelegate;
 	}
 
 	/**
-	 * Sets the class loaders that is used to load the text resources.
+	 * Sets the class loaders that is used to load the templates resources.
 	 * 
 	 * @param classLoader
 	 *            the {@link ClassLoader}.
@@ -76,23 +65,18 @@ public class TemplatesResources extends GroovyObjectSupport {
 	}
 
 	/**
-	 * Missing property is used as the base name of the text resources.
+	 * Missing property is used as the base name of the templates resources.
 	 */
-	@Override
-	public Object getProperty(String name) {
-		if (getMetaClass().hasProperty(this, name) != null) {
-			return super.getProperty(name);
-		}
-
-		Templates resource = lazyCreateResource(name);
+	public Object propertyMissing(String name) {
+		Templates resource = getCachedResource(name);
 		return templatesDelegate.setDelegate(resource);
 	}
 
-	private Templates lazyCreateResource(String name) {
-		Templates resource = resources.get(name);
+	private Templates getCachedResource(String name) {
+		Templates resource = cache.get(name);
 		if (resource == null) {
 			resource = templatesFactory.create(name, classLoader);
-			resources.put(name, resource);
+			cache.put(name, resource);
 		}
 		return resource;
 	}
