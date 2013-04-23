@@ -21,6 +21,7 @@ package com.anrisoftware.mongoose.resources;
 import com.anrisoftware.resources.binary.binaries.BinariesResourcesModule;
 import com.anrisoftware.resources.binary.maps.BinariesDefaultMapsModule;
 import com.anrisoftware.resources.templates.maps.TemplatesDefaultMapsModule;
+import com.anrisoftware.resources.templates.templates.TemplatesResourcesModule;
 import com.anrisoftware.resources.templates.worker.STDefaultPropertiesModule;
 import com.anrisoftware.resources.templates.worker.STWorkerModule;
 import com.anrisoftware.resources.texts.maps.TextsDefaultMapsModule;
@@ -51,6 +52,7 @@ public class ResourcesModule extends AbstractModule {
 	}
 
 	private void installSTResources() {
+		install(new TemplatesResourcesModule());
 		install(new TemplatesDefaultMapsModule());
 		install(new STWorkerModule());
 		install(new STDefaultPropertiesModule());

@@ -19,6 +19,7 @@
 package com.anrisoftware.mongoose.resources;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -42,6 +43,8 @@ public class TemplatesResources {
 
 	private ClassLoader classLoader;
 
+	private Locale locale;
+
 	/**
 	 * Sets the templates resources factory.
 	 */
@@ -52,6 +55,17 @@ public class TemplatesResources {
 		this.cache = new HashMap<String, Templates>();
 		this.classLoader = getClass().getClassLoader();
 		this.templatesDelegate = textsDelegate;
+		this.locale = Locale.getDefault();
+	}
+
+	/**
+	 * Sets the resources locale.
+	 * 
+	 * @param locale
+	 *            the {@link Locale}.
+	 */
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
 	/**
@@ -69,7 +83,7 @@ public class TemplatesResources {
 	 */
 	public Object propertyMissing(String name) {
 		Templates resource = getCachedResource(name);
-		return templatesDelegate.setDelegate(resource);
+		return templatesDelegate.setDelegate(resource, locale);
 	}
 
 	private Templates getCachedResource(String name) {

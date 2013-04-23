@@ -26,11 +26,11 @@ import com.anrisoftware.resources.templates.api.Templates
  * <p>
  * The property access example:
  * <pre>
- * TEMPLATES.base_name(args)
+ * TEMPLATES.TextsName.the_resource(args)
  * </pre>
  * Is delegated to: 
  * <pre>
- * TEMPLATES.getResource("base_name").getText(args)
+ * resource.getResource("the_resource").getText(args)
  * </pre>
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
@@ -44,11 +44,14 @@ class TemplatesDelegate {
 	 * @param resource
 	 * 			  the {@link Templates} resource.
 	 * 
+	 * @param locale
+	 * 			  the {@link Locale} of the resource.
+	 * 
 	 * @return the {@link Templates} resource with the method delegate.
 	 */
-	Templates setDelegate(Templates resource) {
+	Templates setDelegate(Templates resource, Locale locale) {
 		resource.metaClass.methodMissing = { name, args ->
-			resource.getResource(name).getText(args)
+			resource.getResource(name, locale).getText(args)
 		}
 		return resource
 	}
