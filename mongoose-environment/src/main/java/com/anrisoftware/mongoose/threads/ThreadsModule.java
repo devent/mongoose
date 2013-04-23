@@ -31,6 +31,8 @@ public class ThreadsModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		install(new FactoryModuleBuilder().implement(PropertiesThreads.class,
+				PropertiesThreads.class).build(PropertiesThreadsFactory.class));
 		install(new FactoryModuleBuilder().implement(ThreadingProperties.class,
 				ThreadingProperties.class).build(
 				ThreadingPropertiesFactory.class));

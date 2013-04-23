@@ -16,6 +16,8 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.anrisoftware.propertiesutils.ContextProperties;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 
 /**
  * Loads the thread pool properties from a properties file.
@@ -41,7 +43,26 @@ public class PropertiesThreads implements Threads {
 
 	private String name;
 
+	/**
+	 * @see PropertiesThreadsFactory#create(Properties, String)
+	 */
+	@AssistedInject
+	PropertiesThreads(PropertiesThreadsLogger logger,
+			ThreadingPropertiesFactory propertiesFactory,
+			CachedThreadingPropertiesFactory cachedThreadingPropertiesFactory,
+			FixedThreadingPropertiesFactory fixedThreadingPropertiesFactory,
+			SingleThreadingPropertiesFactory singleThreadingPropertiesFactory,
+			@Assisted Properties properties, @Assisted String name) {
+		this(logger, propertiesFactory, cachedThreadingPropertiesFactory,
+				fixedThreadingPropertiesFactory,
+				singleThreadingPropertiesFactory);
+	}
+
+	/**
+	 * @see PropertiesThreadsFactory#create()
+	 */
 	@Inject
+	@AssistedInject
 	PropertiesThreads(PropertiesThreadsLogger logger,
 			ThreadingPropertiesFactory propertiesFactory,
 			CachedThreadingPropertiesFactory cachedThreadingPropertiesFactory,
