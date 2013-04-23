@@ -18,8 +18,11 @@
  */
 package com.anrisoftware.mongoose.environment;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 import java.io.File;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.concurrent.CancellationException;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
@@ -34,6 +37,8 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
  */
 class EnvironmentImplLogger extends AbstractLogger {
 
+	private static final String LOCALE_NULL = "The script locale cannot be null.";
+	private static final String SET_LOCALE = "Set script locale {}.";
 	private static final String CANCELED_COMMAND_MESSAGE = "Canceled command %s.";
 	private static final String COMMAND_CANCELED = "Command canceled";
 	private static final String COMMAND_ERROR_MESSAGE = "Error in command %s: %s";
@@ -82,5 +87,13 @@ class EnvironmentImplLogger extends AbstractLogger {
 				new CommandException(COMMAND_CANCELED, e).addContext(COMMAND,
 						command), CANCELED_COMMAND_MESSAGE,
 				command.getTheName());
+	}
+
+	void localeSet(EnvironmentImpl env, Locale locale) {
+		log.debug(SET_LOCALE, locale);
+	}
+
+	void checkLocale(EnvironmentImpl env, Locale locale) {
+		notNull(locale, LOCALE_NULL);
 	}
 }

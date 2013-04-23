@@ -18,9 +18,14 @@
  */
 package com.anrisoftware.mongoose.environment;
 
+import static com.anrisoftware.mongoose.resources.LocaleHooks.DISPLAY_LOCALE_PROPERTY;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
@@ -38,6 +43,7 @@ import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.CommandService;
 import com.anrisoftware.mongoose.api.commans.Environment;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
+import com.anrisoftware.mongoose.resources.LocaleHooks;
 import com.anrisoftware.mongoose.resources.TemplatesResources;
 import com.anrisoftware.mongoose.resources.TextsResources;
 import com.anrisoftware.mongoose.threads.PropertiesThreads;
@@ -67,13 +73,27 @@ class EnvironmentImpl implements Environment {
 	EnvironmentImpl(EnvironmentImplLogger logger,
 			@Named("threads-properties") Properties properties,
 			PropertiesThreadsFactory threadsFactory,
-			TextsResources textsResources, TemplatesResources templatesResources) {
+			TextsResources textsResources,
+			TemplatesResources templatesResources, LocaleHooks localeHooks) {
 		this.log = logger;
 		this.threads = threadsFactory.create(properties, "script");
 		this.variables = new HashMap<String, Object>();
 		this.textsResources = textsResources;
 		this.templatesResources = templatesResources;
+		setupLocaleHooks(localeHooks);
 		setupVariables();
+	}
+
+	private void setupLocaleHooks(LocaleHooks localeHooks) {
+		localeHooks.addPropertyChangeListener(DISPLAY_LOCALE_PROPERTY,
+				new PropertyChangeListener() {
+
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						setLocale((Locale) evt.getNewValue());
+					}
+				});
+		localeHooks.hookDefaultLocale();
 	}
 
 	private void setupVariables() {
@@ -83,6 +103,7 @@ class EnvironmentImpl implements Environment {
 		setWorkingDirectory(new File("."));
 		setHomeDirectory();
 		setResources();
+		setLocale(Locale.getDefault());
 	}
 
 	private void setHomeDirectory() {
@@ -159,6 +180,20 @@ class EnvironmentImpl implements Environment {
 	public void setScriptClassLoader(ClassLoader classLoader) {
 		textsResources.setClassLoader(classLoader);
 		templatesResources.setClassLoader(classLoader);
+	}
+
+	@Override
+	public void setLocale(Locale locale) {
+		log.checkLocale(this, locale);
+		variables.put(LOCALE_VARIABLE, locale);
+		textsResources.setLocale(locale);
+		templatesResources.setLocale(locale);
+		log.localeSet(this, locale);
+	}
+
+	@Override
+	public Locale getLocale() {
+		return (Locale) variables.get(LOCALE_VARIABLE);
 	}
 
 	/**

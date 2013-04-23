@@ -1,7 +1,6 @@
 package com.anrisoftware.mongoose.resources
 
 import java.beans.PropertyChangeListener
-import java.beans.PropertyChangeSupport
 
 import org.junit.Before
 import org.junit.Test
@@ -47,7 +46,7 @@ class LocaleDelegateTest {
 		Locale.setDefault(Locale.GERMAN)
 	}
 
-	PropertyChangeSupport support
+	LocaleHooks localeHooks
 
 	PropertyChangeListener listener
 
@@ -55,10 +54,9 @@ class LocaleDelegateTest {
 
 	@Before
 	void createSupport() {
-		support = new PropertyChangeSupport(this)
 		displayLocaleChanged = false
 		listener = { evt -> displayLocaleChanged = true } as PropertyChangeListener
-		support.addPropertyChangeListener(LocaleHooks.DISPLAY_LOCALE_PROPERTY, listener)
-		new LocaleHooks().hookDefaultLocale(support)
+		localeHooks = new LocaleHooks().hookDefaultLocale()
+		localeHooks.addPropertyChangeListener(LocaleHooks.DISPLAY_LOCALE_PROPERTY, listener)
 	}
 }

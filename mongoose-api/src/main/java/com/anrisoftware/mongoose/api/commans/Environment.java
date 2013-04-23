@@ -19,6 +19,7 @@
 package com.anrisoftware.mongoose.api.commans;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -58,6 +59,11 @@ public interface Environment {
 	 * Directory in which the script was started.
 	 */
 	static final String SCRIPT_HOME_VARIABLE = "SCRIPT_HOME";
+
+	/**
+	 * The script locale.
+	 */
+	static final String LOCALE_VARIABLE = "LOCALE";
 
 	/**
 	 * Texts resources.
@@ -154,6 +160,24 @@ public interface Environment {
 	 *            the {@link ClassLoader}.
 	 */
 	void setScriptClassLoader(ClassLoader classLoader);
+
+	/**
+	 * Sets the script locale.
+	 * 
+	 * @param locale
+	 *            the {@link Locale}.
+	 * 
+	 * @throws NullPointerException
+	 *             if the specified locale is {@code null}.
+	 */
+	void setLocale(Locale locale);
+
+	/**
+	 * Returns the script locale.
+	 * 
+	 * @return the {@link Locale}.
+	 */
+	Locale getLocale();
 
 	/**
 	 * Execute the command in the environment.
