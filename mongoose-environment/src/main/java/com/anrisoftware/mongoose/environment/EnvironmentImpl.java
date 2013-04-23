@@ -18,62 +18,42 @@
  */
 package com.anrisoftware.mongoose.environment;
 
-import groovy.lang.GroovyObjectSupport;
-
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
+import java.util.ServiceLoader;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.anrisoftware.groovybash.environment.CallCommandWorker;
+import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.commans.CommandService;
 import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.resources.TemplatesResources;
 import com.anrisoftware.mongoose.resources.TextsResources;
-import com.anrisoftware.propertiesutils.ContextProperties;
-import com.google.inject.Injector;
+import com.anrisoftware.mongoose.threads.PropertiesThreads;
+import com.anrisoftware.mongoose.threads.PropertiesThreadsFactory;
 
 /**
- * Use Groovy features to execute commands.
+ * Provides the environment variables and loads commands as Java service.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class EnvironmentImpl extends GroovyObjectSupport implements Environment {
-
-	private static final String TEXTS_VARIABLE = "TEXTS";
-
-	private static final String ARGS_VARIABLE = "ARGS";
-
-	private static final String WORKING_DIRECTORY_VARIABLE = "PWD";
-
-	private static final String HOME_VARIABLE = "HOME";
-
-	private static final String USER_HOME_VARIABLE = "USER_HOME";
-
-	private static final String TEMPLATES_VARIABLE = "TEMPLATES";
-
-	private static final String SCRIPT_HOME_VARIABLE = "SCRIPT_HOME";
+class EnvironmentImpl implements Environment {
 
 	private final EnvironmentImplLogger log;
 
-	private final ContextProperties properties;
-
-	private final Map<String, BuildinPlugin> buildinPlugins;
-
-	private final CallCommandWorker callCommandWorker;
-
-	private final ExecutorServiceHandler executorServiceHandler;
-
-	private final ArgumentsWorker argumentsWorker;
+	private final PropertiesThreads threads;
 
 	private final Map<String, Object> variables;
 
@@ -81,39 +61,25 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	private final TemplatesResources templatesResources;
 
-	private Injector injector;
-
 	private Logger scriptLogger;
 
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
-			@Named("environmentProperties") Properties properties,
-			ExecutorServiceHandler executorServiceHandler,
+			@Named("threads-properties") Properties properties,
+			PropertiesThreadsFactory threadsFactory,
 			TextsResources textsResources, TemplatesResources templatesResources) {
-		super();
 		this.log = logger;
-		this.properties = new ContextProperties(this, properties);
-		this.buildinPlugins = newHashMap();
-		this.callCommandWorker = callCommandWorker;
-		this.argumentsWorker = argumentsWorker;
-		this.executorServiceHandler = executorServiceHandler;
-		this.variables = newHashMap();
+		this.threads = threadsFactory.create(properties, "script");
+		this.variables = new HashMap<String, Object>();
 		this.textsResources = textsResources;
 		this.templatesResources = templatesResources;
-		loadBuildins(buildins);
 		setupVariables();
 	}
 
-	private void loadBuildins(Set<BuildinPlugin> plugins) {
-		for (BuildinPlugin plugin : plugins) {
-			buildinPlugins.put(plugin.getTheName(), plugin);
-		}
-	}
-
 	private void setupVariables() {
-		putArguments(new String[0]);
-		putScriptHome(new File("."));
-		putWorkingDirectory(new File("."));
+		setArgs(new String[0]);
+		setScriptHome(new File("."));
+		setWorkingDirectory(new File("."));
 		setHomeDirectory();
 		setResources();
 	}
@@ -130,18 +96,9 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	}
 
 	@Override
-	public void setInjector(Injector injector) {
-		this.injector = injector;
-	}
-
-	@Override
 	public void setArgs(String[] args) {
-		putArguments(args);
+		variables.put(ARGS_VARIABLE, ArrayUtils.clone(args));
 		log.argumentsSet(args);
-	}
-
-	private void putArguments(String[] args) {
-		variables.put(ARGS_VARIABLE, copyOf(args));
 	}
 
 	@Override
@@ -157,12 +114,8 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	@Override
 	public void setWorkingDirectory(File directory) {
-		putWorkingDirectory(directory);
-		log.workingDirectorySet(directory);
-	}
-
-	private void putWorkingDirectory(File directory) {
 		variables.put(WORKING_DIRECTORY_VARIABLE, directory);
+		log.workingDirectorySet(directory);
 	}
 
 	@Override
@@ -177,12 +130,8 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 
 	@Override
 	public void setScriptHome(File dir) {
-		putScriptHome(dir);
-		log.scriptHomeSet(dir);
-	}
-
-	private void putScriptHome(File dir) {
 		variables.put(SCRIPT_HOME_VARIABLE, dir);
+		log.scriptHomeSet(dir);
 	}
 
 	@Override
@@ -207,64 +156,66 @@ class EnvironmentImpl extends GroovyObjectSupport implements Environment {
 	}
 
 	/**
-	 * Call the specified command.
+	 * Returns the script variable or command if it is not a property of the
+	 * environment.
+	 * 
+	 * @throws Exception
 	 */
-	@Override
-	public Object invokeMethod(String name, Object args) {
-		Object[] uargs = InvokerHelper.asUnwrappedArray(args);
-		if (getMetaClass().getMetaMethod(name, uargs) != null) {
-			return super.invokeMethod(name, args);
-		}
-		BuildinPlugin buildinPlugin = buildinPlugins.get(name);
-		if (buildinPlugin != null) {
-			return callBuildin(uargs, buildinPlugin);
+	public Object propertyMissing(String name) throws Exception {
+		if (variables.containsKey(name)) {
+			return variables.get(name);
 		} else {
-			return callCommand(name, uargs);
+			Command command = loadCommand(name);
+			command.setEnvironment(this);
+			command.setArgs(commandName(name));
+			return command;
 		}
 	}
 
-	private Object callBuildin(Object[] uargs, BuildinPlugin buildinPlugin) {
-		Buildin buildin = buildinPlugin.getBuildin(injector);
-		buildin.setEnvironment(this);
-		return callCommandWorker.call(buildin, uargs);
+	private Command loadCommand(String name) {
+		CommandService service = loadCommandService(name);
+		if (service == null) {
+			service = loadCommandService("run");
+		}
+		return service.getCommandFactory().create();
 	}
 
-	private Object callCommand(String name, Object[] uargs) {
-		Buildin buildin = getBuildin("run");
-		ArgumentsWorker arguments;
-		arguments = argumentsWorker.createCommandArgs(name, uargs);
-		Object[] args = arguments.getArgs();
-		Map<?, ?> flags = arguments.getFlags();
-		return callCommandWorker.callWithFlags(buildin, flags, args);
-	}
-
-	private Buildin getBuildin(String name) {
-		BuildinPlugin buildinPlugin = buildinPlugins.get(name);
-		Buildin buildin = buildinPlugin.getBuildin(injector);
-		buildin.setEnvironment(this);
-		return buildin;
-	}
-
-	@Override
-	public Object getProperty(String name) {
-		if (getMetaClass().hasProperty(this, name) != null) {
-			return super.getProperty(name);
-		} else {
-			Object var = variables.get(name);
-			if (var != null) {
-				return var;
+	private CommandService loadCommandService(String name) {
+		for (CommandService service : ServiceLoader.load(CommandService.class)) {
+			if (service.getInfo().getId().equals(name)) {
+				return service;
 			}
 		}
-		return invokeMethod(name, null);
+		return null;
+	}
+
+	private Map<String, Object> commandName(String name) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("commandName", name);
+		return map;
 	}
 
 	@Override
-	public Future<?> submitTask(Runnable task) {
-		return executorServiceHandler.submitTask(task);
+	public Future<Command> executeCommand(Command command) {
+		return threads.submit(command);
 	}
 
 	@Override
-	public void close() {
-		executorServiceHandler.shutdown();
+	public void executeCommandAndWait(Command command) throws CommandException {
+		Future<Command> task = threads.submit(command);
+		try {
+			task.get();
+		} catch (InterruptedException e) {
+			throw log.commandInterrupted(e, command);
+		} catch (java.util.concurrent.ExecutionException e) {
+			throw log.commandError(e.getCause(), command);
+		} catch (CancellationException e) {
+			throw log.commandCanceled(e, command);
+		}
+	}
+
+	@Override
+	public void shutdown() {
+		threads.shutdown();
 	}
 }
