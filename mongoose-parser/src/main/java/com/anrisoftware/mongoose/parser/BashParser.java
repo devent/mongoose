@@ -34,8 +34,8 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.CompilationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
-import com.anrisoftware.groovybash.parser.ParserMetaClass;
-import com.anrisoftware.mongoose.core.Environment;
+import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.mongoose.parser.ParserMetaClass;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;
@@ -44,7 +44,7 @@ import com.google.inject.assistedinject.Assisted;
  * Parse and run the script. Sets the environment of the script.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
 public class BashParser implements Runnable {
 
