@@ -19,10 +19,12 @@
 package com.anrisoftware.mongoose.api.commans;
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import org.joda.time.Duration;
 import org.slf4j.Logger;
 
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
@@ -180,6 +182,39 @@ public interface Environment {
 	Locale getLocale();
 
 	/**
+	 * Sets the policy how to proceed with commands started in the background.
+	 * 
+	 * @param policy
+	 *            the {@link BackgroundCommandsPolicy} policy.
+	 */
+	void setBackgroundCommandsPolicy(BackgroundCommandsPolicy policy);
+
+	/**
+	 * Returns the policy how to proceed with commands started in the
+	 * background.
+	 * 
+	 * @return the {@link BackgroundCommandsPolicy} policy.
+	 */
+	BackgroundCommandsPolicy getBackgroundCommandsPolicy();
+
+	/**
+	 * Sets the timeout duration for the background commands. After the script
+	 * is finished it will wait for background commands to finish before
+	 * canceling them.
+	 * 
+	 * @param duration
+	 *            the timeout {@link Duration}.
+	 */
+	void setBackgroundCommandsTimeout(Duration duration);
+
+	/**
+	 * Returns the timeout duration for the background commands.
+	 * 
+	 * @return the {@link Duration}.
+	 */
+	Duration getBackgroundCommandsTimeout();
+
+	/**
 	 * Execute the command in the environment.
 	 * 
 	 * @param command
@@ -204,7 +239,11 @@ public interface Environment {
 	/**
 	 * Shutdown the environment. After shutdown the environment can not execute
 	 * any commands.
+	 * 
+	 * @return a {@link List} of all canceled tasks.
+	 * 
+	 * @throws InterruptedException
+	 *             if interrupted while waiting for the tasks to finish.
 	 */
-	void shutdown();
-
+	List<Future<?>> shutdown() throws InterruptedException;
 }

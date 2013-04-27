@@ -19,10 +19,12 @@
 package com.anrisoftware.mongoose.environment;
 
 import static com.anrisoftware.mongoose.resources.LocaleHooks.DISPLAY_LOCALE_PROPERTY;
+import static java.util.Collections.synchronizedList;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -36,9 +38,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.anrisoftware.mongoose.api.commans.BackgroundCommandsPolicy;
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.CommandService;
 import com.anrisoftware.mongoose.api.commans.Environment;
@@ -48,6 +52,8 @@ import com.anrisoftware.mongoose.resources.TemplatesResources;
 import com.anrisoftware.mongoose.resources.TextsResources;
 import com.anrisoftware.mongoose.threads.PropertiesThreads;
 import com.anrisoftware.mongoose.threads.PropertiesThreadsFactory;
+import com.anrisoftware.mongoose.threads.PropertyListenerFuture;
+import com.anrisoftware.mongoose.threads.PropertyListenerFuture.Status;
 
 /**
  * Provides the environment variables and loads commands as Java service.
@@ -69,6 +75,12 @@ class EnvironmentImpl implements Environment {
 
 	private Logger scriptLogger;
 
+	private final List<Future<Command>> backgroundTasks;
+
+	private BackgroundCommandsPolicy backgroundCommandsPolicy;
+
+	private Duration backgroundCommandsTimeout;
+
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
 			@Named("threads-properties") Properties properties,
@@ -80,6 +92,7 @@ class EnvironmentImpl implements Environment {
 		this.variables = new HashMap<String, Object>();
 		this.textsResources = textsResources;
 		this.templatesResources = templatesResources;
+		this.backgroundTasks = synchronizedList(new ArrayList<Future<Command>>());
 		setupLocaleHooks(localeHooks);
 		setupVariables();
 	}
@@ -196,6 +209,26 @@ class EnvironmentImpl implements Environment {
 		return (Locale) variables.get(LOCALE_VARIABLE);
 	}
 
+	@Override
+	public void setBackgroundCommandsPolicy(BackgroundCommandsPolicy policy) {
+		this.backgroundCommandsPolicy = policy;
+	}
+
+	@Override
+	public BackgroundCommandsPolicy getBackgroundCommandsPolicy() {
+		return backgroundCommandsPolicy;
+	}
+
+	@Override
+	public void setBackgroundCommandsTimeout(Duration duration) {
+		this.backgroundCommandsTimeout = duration;
+	}
+
+	@Override
+	public Duration getBackgroundCommandsTimeout() {
+		return backgroundCommandsTimeout;
+	}
+
 	/**
 	 * Returns the script variable or command if it is not a property of the
 	 * environment.
@@ -238,7 +271,20 @@ class EnvironmentImpl implements Environment {
 
 	@Override
 	public Future<Command> executeCommand(Command command) {
-		return threads.submit(command);
+		final PropertyListenerFuture<Command> task;
+		task = (PropertyListenerFuture<Command>) threads.submit(command);
+		task.addPropertyChangeListener(new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				Status status = (Status) evt.getNewValue();
+				if (status == Status.DONE) {
+					backgroundTasks.remove(task);
+				}
+			}
+		});
+		backgroundTasks.add(task);
+		return task;
 	}
 
 	@Override
@@ -256,7 +302,34 @@ class EnvironmentImpl implements Environment {
 	}
 
 	@Override
-	public void shutdown() {
+	public List<Future<?>> shutdown() throws InterruptedException {
+		List<Future<?>> canceledTasks = new ArrayList<Future<?>>();
+		switch (backgroundCommandsPolicy) {
+		case CANCEL:
+			canceledTasks.addAll(cancelTasks(copyBackgroundTasks()));
+			break;
+		case WAIT:
+			canceledTasks.addAll(cancelTasks(threads
+					.waitForTasks(backgroundCommandsTimeout)));
+			break;
+		case WAIT_NO_TIMEOUT:
+			threads.waitForTasks();
+			break;
+		}
 		threads.shutdown();
+		return canceledTasks;
+	}
+
+	private ArrayList<Future<?>> copyBackgroundTasks() {
+		synchronized (backgroundTasks) {
+			return new ArrayList<Future<?>>(backgroundTasks);
+		}
+	}
+
+	private List<Future<?>> cancelTasks(List<Future<?>> tasks) {
+		for (Future<?> future : tasks) {
+			future.cancel(true);
+		}
+		return tasks;
 	}
 }
