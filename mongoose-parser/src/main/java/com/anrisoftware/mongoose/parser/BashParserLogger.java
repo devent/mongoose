@@ -10,6 +10,10 @@ import com.anrisoftware.globalpom.log.AbstractLogger;
  */
 class BashParserLogger extends AbstractLogger {
 
+	private static final String START_SCRIPT = "Start script {}.";
+
+	private static final String SHUTDOWN_SCRIPT = "Shutdown script {}, canceled commands: {}.";
+
 	/**
 	 * Creates logger for {@link BashParser}.
 	 */
@@ -17,7 +21,20 @@ class BashParserLogger extends AbstractLogger {
 		super(BashParser.class);
 	}
 
-	void addClasspathToScript(String path) {
-		log.debug("Add the classpath ``{}'' to the script.", path);
+	void startScript(BashParser parser) {
+		if (log.isDebugEnabled()) {
+			log.debug(START_SCRIPT, parser);
+		} else {
+			log.debug(START_SCRIPT, parser.getEnvironment().getScriptHome());
+		}
+	}
+
+	void shutdownScript(BashParser parser) {
+		if (log.isDebugEnabled()) {
+			log.debug(SHUTDOWN_SCRIPT, parser, parser.getCanceledCommands());
+		} else {
+			log.debug(SHUTDOWN_SCRIPT, parser.getEnvironment().getScriptHome(),
+					parser.getCanceledCommands());
+		}
 	}
 }

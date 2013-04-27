@@ -18,26 +18,24 @@
  */
 package com.anrisoftware.mongoose.parser;
 
-import static org.apache.commons.lang3.StringUtils.replace;
-import groovy.lang.GroovyClassLoader;
+import static java.util.Collections.unmodifiableList;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
 import java.io.File;
 import java.util.List;
-import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.control.customizers.CompilationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import com.anrisoftware.mongoose.api.commans.Environment;
-import com.anrisoftware.mongoose.parser.ParserMetaClass;
 import com.anrisoftware.propertiesutils.ContextProperties;
-import com.google.inject.Injector;
 import com.google.inject.assistedinject.Assisted;
 
 /**
@@ -46,13 +44,11 @@ import com.google.inject.assistedinject.Assisted;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public class BashParser implements Runnable {
+public class BashParser implements Callable<BashParser> {
 
-	private static final String ADD_PACKAGE_AS_CLASSPATH_PROPERTY = "add_package_as_classpath";
+	private static final String USER_DIR_PROPERTY = "user.dir";
 
-	private static final String IMPORTS_PROPERTY = "imports";
-
-	private static final String STAR_IMPORTS_PROPERTY = "star_imports";
+	private static final String SCRIPT_HOME_PROPERTY = "script_home";
 
 	private final BashParserLogger log;
 
@@ -62,115 +58,56 @@ public class BashParser implements Runnable {
 
 	private final ParserMetaClass parserMetaClass;
 
-	private final ContextProperties parserProperties;
-
 	private final String scriptHome;
 
+	private final ImportCustomizer importCustomizer;
+
+	private final ScriptPackageToClasspath scriptPackageToClasspath;
+
+	private List<Future<?>> canceledCommands;
+
 	/**
-	 * Sets the dependencies of the parser.
-	 * 
-	 * @param properties
-	 *            the parser {@link Properties}. Expects the properties:
+	 * @param p
+	 *            the parser {@link ContextProperties} properties:
+	 *            <p>
 	 *            <dl>
-	 *            <dt>{@code com.anrisoftware.groovybash.parser.star_imports}</dt>
-	 *            <dd>
-	 *            A list of all packages that should be imported in the script
-	 *            as a star import. Star import will import all classes in the
-	 *            package.</dd>
 	 * 
-	 *            <dt>{@code com.anrisoftware.groovybash.parser.imports}</dt>
-	 *            <dd>A list of all classes that should be imported in the
-	 *            script.</dd>
-	 * 
-	 *            <dt>{@code com.anrisoftware.groovybash.parser.script_home}</dt>
+	 *            <dt>{@code com.anrisoftware.mongoose.parser.script_home}</dt>
 	 *            <dd>The home directory of the script. Defaults to the user's
 	 *            current working directory.</dd>
+	 * 
 	 *            </dl>
 	 * 
 	 * @param environment
 	 *            the {@link Environment} of the script.
-	 * 
-	 * @param parserMetaClass
-	 *            the {@link ParserMetaClass} that sets the environment as the
-	 *            delegate.
-	 * 
-	 * @param scriptText
-	 *            the script text to run.
 	 */
 	@Inject
 	BashParser(BashParserLogger logger,
-			@Named("parser-properties") Properties properties,
-			Environment environment, ParserMetaClass parserMetaClass,
-			@Assisted String scriptText) {
+			ImportCustomizerProvider importCustomizerProvider,
+			ScriptPackageToClasspath scriptPackageToClasspath,
+			ParserMetaClass parserMetaClass,
+			@Named("parser-properties") ContextProperties p,
+			Environment environment, @Assisted String scriptText) {
 		this.log = logger;
-		this.parserProperties = new ContextProperties(this, properties);
+		this.importCustomizer = importCustomizerProvider.get();
+		this.scriptPackageToClasspath = scriptPackageToClasspath;
 		this.environment = environment;
 		this.parserMetaClass = parserMetaClass;
-		this.scriptHome = properties.getProperty("script_home",
-				System.getProperty("user.dir"));
+		this.scriptHome = p.getProperty(SCRIPT_HOME_PROPERTY,
+				System.getProperty(USER_DIR_PROPERTY));
 		this.script = createScript(scriptText);
 	}
 
 	private Script createScript(String scriptText) {
 		CompilerConfiguration config = new CompilerConfiguration();
-		CompilationCustomizer imports = createImports();
-		config.addCompilationCustomizers(imports);
+		config.addCompilationCustomizers(importCustomizer);
 		Script script = new GroovyShell(config).parse(scriptText);
-		addPackageNameToClassPath(script);
-
+		scriptPackageToClasspath.addPackageNameToClassPath(script, scriptHome);
 		parserMetaClass.setDelegate(script, environment);
 		environment.setScriptClassLoader(script.getClass().getClassLoader());
 		environment.setScriptLoggerContext(script.getClass());
 		environment.setScriptHome(new File(scriptHome));
 		return script;
-	}
-
-	private void addPackageNameToClassPath(Script script) {
-		if (!parserProperties.getBooleanProperty(
-				ADD_PACKAGE_AS_CLASSPATH_PROPERTY, false)) {
-			return;
-		}
-
-		String path;
-		GroovyClassLoader loader;
-		loader = (GroovyClassLoader) script.getClass().getClassLoader();
-		Package scriptPackage = script.getClass().getPackage();
-		if (scriptPackage == null) {
-			path = scriptHome;
-		} else {
-			String name = replace(scriptPackage.getName(), ".", "/");
-			path = new File(scriptHome, name).getAbsolutePath();
-		}
-		loader.addClasspath(path);
-		log.addClasspathToScript(path);
-	}
-
-	private ImportCustomizer createImports() {
-		ImportCustomizer imports = new ImportCustomizer();
-		addStarImports(imports);
-		addImports(imports);
-		return imports;
-	}
-
-	private void addStarImports(ImportCustomizer imports) {
-		List<String> list = parserProperties
-				.getListProperty(STAR_IMPORTS_PROPERTY);
-		imports.addStarImports(list.toArray(new String[list.size()]));
-	}
-
-	private void addImports(ImportCustomizer imports) {
-		List<String> list = parserProperties.getListProperty(IMPORTS_PROPERTY);
-		imports.addImports(list.toArray(new String[list.size()]));
-	}
-
-	/**
-	 * Sets the parent injector for the script.
-	 * 
-	 * @param injector
-	 *            the {@link Inject}
-	 */
-	public void setInjector(Injector injector) {
-		environment.setInjector(injector);
 	}
 
 	/**
@@ -179,17 +116,46 @@ public class BashParser implements Runnable {
 	 * @param args
 	 *            the command line arguments.
 	 */
-	public void setArguments(String[] args) {
+	public void setArgs(String[] args) {
 		environment.setArgs(args);
+	}
+
+	/**
+	 * Returns the script environment.
+	 * 
+	 * @return the {@link Environment}.
+	 */
+	public Environment getEnvironment() {
+		return environment;
+	}
+
+	/**
+	 * Returns a list of all canceled commands after the script was finished.
+	 * 
+	 * @return an unmodifiable {@link List} of the commands.
+	 */
+	public List<Future<?>> getCanceledCommands() {
+		return canceledCommands;
 	}
 
 	/**
 	 * Runs the script.
 	 */
 	@Override
-	public void run() {
-		script.run();
-		environment.shutdown();
+	public BashParser call() throws Exception {
+		try {
+			log.startScript(this);
+			script.run();
+		} finally {
+			canceledCommands = unmodifiableList(environment.shutdown());
+			log.shutdownScript(this);
+		}
+		return this;
 	}
 
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("environment", environment)
+				.toString();
+	}
 }

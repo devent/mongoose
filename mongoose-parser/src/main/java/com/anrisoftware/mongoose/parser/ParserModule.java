@@ -19,24 +19,27 @@
 package com.anrisoftware.mongoose.parser;
 
 import java.io.IOException;
-import java.util.Properties;
+import java.net.URL;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
+import com.anrisoftware.propertiesutils.ContextProperties;
 import com.anrisoftware.propertiesutils.ContextPropertiesFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Binds the bash parser factory and provides the parser properties.
+ * Installs the bash parser factory and provides the parser properties.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
 public class ParserModule extends AbstractModule {
 
-	private static final String PARSER_PROPERTIES = "core.properties";
+	private static final URL PARSER_PROPERTIES = ParserModule.class
+			.getResource("/parser.properties");
 
 	@Override
 	protected void configure() {
@@ -49,24 +52,28 @@ public class ParserModule extends AbstractModule {
 	 * {@code parser.properties}. The properties file can have the properties:
 	 * 
 	 * <dl>
-	 * <dt>{@code com.anrisoftware.groovybash.parser.star_imports}</dt>
-	 * <dd>
-	 * A list of all packages that should be imported in the script as a star
-	 * import. Star import will import all classes in the package.</dd>
+	 * 
+	 * <dt>{@code com.anrisoftware.mongoose.parser.script_package_to_classpath}</dt>
+	 * <dd>If the script package should be added to the script class path.
+	 * Default to {@code true}.</dd>
+	 * 
+	 * <dt>{@code com.anrisoftware.mongoose.parser.star_imports}</dt>
+	 * <dd>A list of packages that should be imported in the script.</dd>
 	 * 
 	 * <dt>{@code com.anrisoftware.groovybash.parser.imports}</dt>
-	 * <dd>A list of all classes that should be imported in the script.</dd>
+	 * <dd>A list of classes that should be imported in the script.</dd>
 	 * </dl>
 	 * 
-	 * @return the {@link Properties}.
+	 * @return the {@link ContextProperties}.
 	 * 
 	 * @throws IOException
 	 *             if there was an error reading the properties resource.
 	 */
 	@Provides
+	@Singleton
 	@Named("parser-properties")
-	public Properties getParserProperties() throws IOException {
-		return new ContextPropertiesFactory(this, System.getProperties())
-				.fromResource(PARSER_PROPERTIES);
+	public ContextProperties getParserProperties() throws IOException {
+		return new ContextPropertiesFactory(this).withProperties(
+				System.getProperties()).fromResource(PARSER_PROPERTIES);
 	}
 }

@@ -1,28 +1,35 @@
 package com.anrisoftware.groovybash.parser
 
-import org.apache.commons.io.FileUtils
-import org.apache.commons.io.FilenameUtils
-import org.junit.Test
-import org.kohsuke.args4j.Argument
-import org.kohsuke.args4j.Option
+import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.groovybash.parser.ParserTestUtils.*
 
-import com.anrisoftware.groovybash.core.exceptions.DirectoryNotFoundException
+import java.util.concurrent.Executors
+
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Test
+
+import com.anrisoftware.mongoose.api.exceptions.DirectoryNotFoundException
+import com.anrisoftware.mongoose.parser.BashParserFactory
+import com.google.inject.Injector
 
 /**
  * Test the loading and running of Groovy script.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.2
+ * @since 1.0
  */
-class ParserTest extends ParserTestUtils {
+class ParserTest {
 
 	@Test
 	void "run simple script"() {
 		def script = """
 println "Hello"
 """
-		factory.create(script).run()
-		assertStringContent output, "Hello\n"
+		factory.create(script)()
+		assertStringContent output(streams.byteOutputStream),
+				"""Hello
+"""
 	}
 
 	@Test
@@ -30,23 +37,37 @@ println "Hello"
 		def script = """
 println DirectoryNotFoundException.class
 """
-		factory.create(script).run()
-		assertStringContent output, "${DirectoryNotFoundException.class}\n"
+		factory.create(script)()
+		assertStringContent output(streams.byteOutputStream),
+				"""${DirectoryNotFoundException.class}
+"""
 	}
 
 	@Test
 	void "check imports"() {
 		def script = """
-println Argument.class
-println Option.class
-println FilenameUtils.class
-println FileUtils.class
+println Executors.class
 """
-		factory.create(script).run()
-		assertStringContent output, """${Argument.class}
-${Option.class}
-${FilenameUtils.class}
-${FileUtils.class}
+		factory.create(script)()
+		assertStringContent output(streams.byteOutputStream),
+				"""${Executors.class}
 """
+	}
+
+	Map streams
+
+	@Before
+	void setupStreams() {
+		streams = createOutputStream()
+	}
+
+	static Injector injector
+
+	static BashParserFactory factory
+
+	@BeforeClass
+	static void setupFactory() {
+		injector = createInjector()
+		factory = injector.getInstance BashParserFactory
 	}
 }
