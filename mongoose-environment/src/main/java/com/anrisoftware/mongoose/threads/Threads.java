@@ -18,7 +18,11 @@
  */
 package com.anrisoftware.mongoose.threads;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
+import org.joda.time.Duration;
 
 /**
  * Submits tasks for execution.
@@ -51,4 +55,25 @@ public interface Threads extends ExecutorService {
 	 * @return the {@link String} name.
 	 */
 	String getName();
+
+	/**
+	 * Waits for all tasks to finish.
+	 * 
+	 * @throws InterruptedException
+	 *             if interrupted while waiting.
+	 */
+	void waitForTasks() throws InterruptedException;
+
+	/**
+	 * Waits for all tasks to finish up until the specified timeout.
+	 * 
+	 * @param timeout
+	 *            the {@link Duration} timeout to wait for one task to finish.
+	 * 
+	 * @return the tasks {@link List} that was not finished before the timeout.
+	 * 
+	 * @throws InterruptedException
+	 *             if interrupted while waiting.
+	 */
+	List<Future<?>> waitForTasks(Duration timeout) throws InterruptedException;
 }

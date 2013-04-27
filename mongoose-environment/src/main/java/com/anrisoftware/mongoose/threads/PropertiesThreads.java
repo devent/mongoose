@@ -14,6 +14,7 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.joda.time.Duration;
 
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.assistedinject.Assisted;
@@ -37,11 +38,13 @@ public class PropertiesThreads implements Threads {
 
 	private final SingleThreadingPropertiesFactory singleFactory;
 
-	private ExecutorService executor;
+	private final ThreadsWatchdog watchdog;
 
 	private ContextProperties properties;
 
 	private String name;
+
+	private ExecutorService executor;
 
 	/**
 	 * @see PropertiesThreadsFactory#create(Properties, String)
@@ -49,11 +52,13 @@ public class PropertiesThreads implements Threads {
 	@AssistedInject
 	PropertiesThreads(PropertiesThreadsLogger logger,
 			ThreadingPropertiesFactory propertiesFactory,
+			ThreadsWatchdog threadsWatchdog,
 			CachedThreadingPropertiesFactory cachedThreadingPropertiesFactory,
 			FixedThreadingPropertiesFactory fixedThreadingPropertiesFactory,
 			SingleThreadingPropertiesFactory singleThreadingPropertiesFactory,
 			@Assisted Properties properties, @Assisted String name) {
-		this(logger, propertiesFactory, cachedThreadingPropertiesFactory,
+		this(logger, propertiesFactory, threadsWatchdog,
+				cachedThreadingPropertiesFactory,
 				fixedThreadingPropertiesFactory,
 				singleThreadingPropertiesFactory);
 	}
@@ -65,11 +70,13 @@ public class PropertiesThreads implements Threads {
 	@AssistedInject
 	PropertiesThreads(PropertiesThreadsLogger logger,
 			ThreadingPropertiesFactory propertiesFactory,
+			ThreadsWatchdog threadsWatchdog,
 			CachedThreadingPropertiesFactory cachedThreadingPropertiesFactory,
 			FixedThreadingPropertiesFactory fixedThreadingPropertiesFactory,
 			SingleThreadingPropertiesFactory singleThreadingPropertiesFactory) {
 		this.log = logger;
 		this.propertiesFactory = propertiesFactory;
+		this.watchdog = threadsWatchdog;
 		this.cachedFactory = cachedThreadingPropertiesFactory;
 		this.fixedFactory = fixedThreadingPropertiesFactory;
 		this.singleFactory = singleThreadingPropertiesFactory;
@@ -91,7 +98,8 @@ public class PropertiesThreads implements Threads {
 		String oldValue = this.name;
 		this.name = name;
 		if (!name.equals(oldValue)) {
-			this.executor = createExecutor();
+			executor = createExecutor();
+			watchdog.setExecutor(executor);
 		}
 	}
 
@@ -133,9 +141,12 @@ public class PropertiesThreads implements Threads {
 		return fixedProperties.createExecutorService(factory, maxThreads);
 	}
 
+	/**
+	 * Unsupported.
+	 */
 	@Override
 	public void execute(Runnable command) {
-		executor.execute(command);
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -166,25 +177,31 @@ public class PropertiesThreads implements Threads {
 
 	@Override
 	public <T> Future<T> submit(Callable<T> task) {
-		return executor.submit(task);
+		return watchdog.submit(task);
 	}
 
 	@Override
 	public <T> Future<T> submit(Runnable task, T result) {
-		return executor.submit(task, result);
+		return watchdog.submit(task, result);
 	}
 
 	@Override
-	public Future<?> submit(Runnable task) {
-		return executor.submit(task);
+	public Future<?> submit(Runnable runable) {
+		return watchdog.submit(runable, null);
 	}
 
+	/**
+	 * Unsupported.
+	 */
 	@Override
 	public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
 			throws InterruptedException {
-		return executor.invokeAll(tasks);
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Unsupported.
+	 */
 	@Override
 	public <T> List<Future<T>> invokeAll(
 			Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
@@ -192,17 +209,34 @@ public class PropertiesThreads implements Threads {
 		return executor.invokeAll(tasks, timeout, unit);
 	}
 
+	/**
+	 * Unsupported.
+	 */
 	@Override
 	public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
 			throws InterruptedException, ExecutionException {
-		return executor.invokeAny(tasks);
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Unsupported.
+	 */
 	@Override
 	public <T> T invokeAny(Collection<? extends Callable<T>> tasks,
 			long timeout, TimeUnit unit) throws InterruptedException,
 			ExecutionException, TimeoutException {
-		return executor.invokeAny(tasks, timeout, unit);
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void waitForTasks() throws InterruptedException {
+		watchdog.waitForTasks();
+	}
+
+	@Override
+	public List<Future<?>> waitForTasks(Duration timeout)
+			throws InterruptedException {
+		return watchdog.waitForTasks(timeout);
 	}
 
 	@Override
