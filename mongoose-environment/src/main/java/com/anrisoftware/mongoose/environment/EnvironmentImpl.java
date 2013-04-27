@@ -38,6 +38,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -331,5 +332,11 @@ class EnvironmentImpl implements Environment {
 			future.cancel(true);
 		}
 		return tasks;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("variables", variables)
+				.toString();
 	}
 }
