@@ -93,14 +93,14 @@ public interface Environment {
 	 * @param args
 	 *            the command line arguments.
 	 */
-	void setArgs(String[] args);
+	void setArgs(List<String> args);
 
 	/**
 	 * Returns the command line arguments for the script.
 	 * 
 	 * @return the command line arguments.
 	 */
-	String[] getArgs();
+	List<String> getArgs();
 
 	/**
 	 * Sets the current working directory.
@@ -246,4 +246,5 @@ public interface Environment {
 	 *             if interrupted while waiting for the tasks to finish.
 	 */
 	List<Future<?>> shutdown() throws InterruptedException;
+
 }

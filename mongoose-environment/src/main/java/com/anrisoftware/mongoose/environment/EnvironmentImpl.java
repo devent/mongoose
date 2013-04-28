@@ -20,11 +20,13 @@ package com.anrisoftware.mongoose.environment;
 
 import static com.anrisoftware.mongoose.resources.LocaleHooks.DISPLAY_LOCALE_PROPERTY;
 import static java.util.Collections.synchronizedList;
+import static java.util.Collections.unmodifiableList;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +39,6 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
@@ -112,7 +113,7 @@ class EnvironmentImpl implements Environment {
 
 	private void setupVariables() {
 		setEnv(System.getenv());
-		setArgs(new String[0]);
+		setArgs(Collections.<String> emptyList());
 		setScriptHome(new File("."));
 		setWorkingDirectory(new File("."));
 		setHomeDirectory();
@@ -137,20 +138,23 @@ class EnvironmentImpl implements Environment {
 	}
 
 	@Override
-	public void setArgs(String[] args) {
-		variables.put(ARGS_VARIABLE, ArrayUtils.clone(args));
+	public void setArgs(List<String> args) {
+		variables.put(ARGS_VARIABLE, copyArgs(args));
 		log.argumentsSet(args);
 	}
 
-	@Override
-	public String[] getArgs() {
-		List<String> args = asList(String.class);
-		return args.toArray(new String[args.size()]);
+	private List<String> copyArgs(List<?> args) {
+		List<String> list = new ArrayList<String>();
+		for (Object string : args) {
+			list.add(string.toString());
+		}
+		return unmodifiableList(list);
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> List<T> asList(Class<T> type) {
-		return (List<T>) variables.get(ARGS_VARIABLE);
+	@Override
+	public List<String> getArgs() {
+		return (List<String>) variables.get(ARGS_VARIABLE);
 	}
 
 	@Override

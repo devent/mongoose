@@ -32,13 +32,14 @@ import com.anrisoftware.globalpom.exceptions.Context;
 @SuppressWarnings("serial")
 public class CommandException extends IOException {
 
-	private Context<CommandException> context;
+	private final Context<CommandException> context;
 
 	/**
 	 * @see IOException#IOException(String, Throwable)
 	 */
 	public CommandException(String message, Throwable cause) {
 		super(message, cause);
+		this.context = new Context<CommandException>(this);
 	}
 
 	/**
@@ -46,6 +47,7 @@ public class CommandException extends IOException {
 	 */
 	public CommandException(String message) {
 		super(message);
+		this.context = new Context<CommandException>(this);
 	}
 
 	/**

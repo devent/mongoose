@@ -21,7 +21,7 @@ package com.anrisoftware.mongoose.environment;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CancellationException;
 
@@ -61,8 +61,8 @@ class EnvironmentImplLogger extends AbstractLogger {
 		log.debug(SET_WORKING_DIRECTORY, directory);
 	}
 
-	void argumentsSet(String[] args) {
-		log.debug(SET_ARGS, Arrays.toString(args));
+	void argumentsSet(List<String> args) {
+		log.debug(SET_ARGS, args);
 	}
 
 	void scriptHomeSet(File dir) {

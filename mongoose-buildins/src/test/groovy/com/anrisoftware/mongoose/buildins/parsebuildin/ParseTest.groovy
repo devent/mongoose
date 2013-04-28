@@ -18,118 +18,143 @@
  */
 package com.anrisoftware.mongoose.buildins.parsebuildin
 
+import static com.anrisoftware.globalpom.utils.TestUtils.*
+
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import org.kohsuke.args4j.Argument
 import org.kohsuke.args4j.Option
 
-import com.anrisoftware.groovybash.buildins.BuildinTestUtils
-import com.anrisoftware.mongoose.buildins.parsebuildin.ParseBuildin;
-import com.anrisoftware.mongoose.buildins.parsebuildin.ParseModule;
+import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.api.exceptions.CommandException
+import com.anrisoftware.mongoose.environment.EnvironmentModule
+import com.anrisoftware.mongoose.resources.ResourcesModule
+import com.anrisoftware.mongoose.threads.ThreadsModule
+import com.google.inject.Guice
+import com.google.inject.Injector
 
 /**
- * Test the build-in command {@code parse}.
+ * @see ParseBuildin
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
-class ParseTest extends BuildinTestUtils {
+class ParseTest {
 
-	static validArgs = ["-a", "foo", "-b", "10", "-c", "more", "arguments"]
-	
-	static notValidArgs = ["-x"]
+	@Test(expected = IllegalArgumentException)
+	void "no args"() {
+		command()
+	}
+
+	@Test(expected = CommandException)
+	void "no arguments"() {
+		command new Parameter()
+	}
+
+	@Test
+	void "all args"() {
+		def a = "str"
+		def b = 10
+		def c = true
+		def args = ["a", "b"]
+		environment.setArgs arguments
+		command.setEnvironment environment
+		command new Parameter()
+		assert command.theParameter.parameterA == a
+		assert command.theParameter.parameterB == b
+		assert command.theParameter.parameterC == c
+		assert command.theParameter.arguments.size() == 2
+	}
+
+	@Test
+	void "set args"() {
+		command arguments: arguments, new Parameter()
+		assert command.theParameter.parameterA == a
+		assert command.theParameter.parameterB == b
+		assert command.theParameter.parameterC == c
+		assert command.theParameter.arguments.size() == 2
+	}
+
+	@Test
+	void "valid"() {
+		boolean validCalled = false
+		def valid = { validCalled = true }
+		command arguments: arguments, valid: valid, new Parameter()
+		assert validCalled
+	}
+
+	@Test
+	void "not valid"() {
+		boolean notValidCalled = false
+		def notValid = { notValidCalled = true }
+		try {
+			command arguments: [], notValid: notValid, new Parameter()
+		} catch (e) {
+			assert notValidCalled
+		}
+	}
 
 	static example = " -a VAL -b N -c"
-	
+
 	static singleLineUsage = " [VAL ...] -a VAL -b N [-c]"
-	
+
 	static usage = """ -a VAL : Parameter A
  -b N   : Parameter B
  -c     : Parameter C
 """
-	
+
 	static class Parameter {
-		
+
 		@Option(name = "-a", required = true, usage = "Parameter A")
 		String parameterA
-		
+
 		@Option(name = "-b", required = true, usage = "Parameter B")
 		int parameterB
-		
+
 		@Option(name = "-c", usage = "Parameter C")
 		boolean parameterC
-		
+
 		@Argument
 		List<String> arguments
 	}
-	
-	static assertValidArguments(def result) {
-		assert result.isValid == true
-		assert result.parameterA == validArgs[1]
-		assert result.parameterB == validArgs[3]as int
-		assert result.parameterC == true
-		assert result.arguments == [validArgs[5], validArgs[6]]
-	}
 
-	def assertNotValidArguments(def result) {
-		assert result.isValid == false
-		shouldFailWith IllegalStateException, {
-			assert result.parameterA
-		}
-	}
+	ParseBuildin command
+
+	Environment environment
 
 	@Before
-	void beforeTest() {
-		super.beforeTest()
-		injector = injector.createChildInjector new ParseModule()
+	void setupCommand() {
+		command = injector.getInstance(ParseBuildin)
+		environment = injector.getInstance(Environment)
+		command.setEnvironment environment
 	}
 
-	@Test
-	void "parse command line arguments with no arguments specified"() {
-		def result = createBuildin(ParseBuildin, [new Parameter()])()
-		assertNotValidArguments result
-	}
+	static a = "str"
 
-	@Test
-	void "parse command line arguments with valid arguments"() {
-		def result = createBuildin(ParseBuildin, [new Parameter(), validArgs])()
-		assertValidArguments result
-	}
+	static b = 10
 
-	@Test
-	void "parse command line arguments with valid arguments so result equals true"() {
-		def result = createBuildin(ParseBuildin, [new Parameter(), validArgs])()
-		assert result == true
-	}
+	static c = true
 
-	@Test
-	void "parse command line arguments with valid arguments access not defined parameter"() {
-		def result = createBuildin(ParseBuildin, [new Parameter(), validArgs])()
-		shouldFailWith MissingFieldException, {
-			assert result.xxx
-		}
-	}
+	static args = ["a", "b"]
 
-	@Test
-	void "parse command line arguments with not valid arguments"() {
-		def result = createBuildin(ParseBuildin, [new Parameter(), notValidArgs])()
-		assertNotValidArguments result
-	}
+	static arguments = [
+		"-a",
+		"$a",
+		"-b",
+		"$b",
+		"-c",
+		"${args[0]}",
+		"${args[1]}"
+	]
 
-	@Test
-	void "print example of the command line arguments"() {
-		def result = createBuildin(ParseBuildin, [new Parameter(), validArgs])()
-		result.printExample()
-		result.printSingleLineUsage()
-		result.printUsage()
-		assertStringContent output, "$example$singleLineUsage$usage"
-	}
+	static Injector injector
 
-	@Test
-	void "get example of the command line arguments"() {
-		def result = createBuildin(ParseBuildin, [new Parameter(), validArgs])()
-		assertStringContent result.example, example
-		assertStringContent result.singleLineUsage, singleLineUsage
-		assertStringContent result.usage, usage
+	@BeforeClass
+	static void setupInjector() {
+		toStringStyle
+		injector = Guice.createInjector(
+				new ParseModule(), new EnvironmentModule(), new ThreadsModule(),
+				new ResourcesModule())
 	}
 }

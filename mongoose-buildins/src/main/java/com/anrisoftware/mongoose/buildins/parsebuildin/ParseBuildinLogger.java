@@ -18,7 +18,7 @@
  */
 package com.anrisoftware.mongoose.buildins.parsebuildin;
 
-import static org.apache.commons.lang3.Validate.inclusiveBetween;
+import static org.apache.commons.lang3.Validate.isTrue;
 import static org.apache.commons.lang3.Validate.notNull;
 import groovy.lang.Closure;
 
@@ -50,7 +50,7 @@ class ParseBuildinLogger extends AbstractLogger {
 	private static final String PARAMETER_SET = "Parameter set {} for {}";
 	private static final String ARGUMENTS_SET = "Arguments set {} for {}.";
 	private static final String ARGUMENTS_NULL = "The arguments cannot be null.";
-	private static final String EXPECTING_ONE_PARAMETER = "Expecting one parameter.";
+	private static final String EXPECTING_PARAMETER_TO_PARSE = "Expecting the parameter to parse.";
 
 	/**
 	 * Creates a logger for {@link ParseBuildin}.
@@ -68,7 +68,7 @@ class ParseBuildinLogger extends AbstractLogger {
 	}
 
 	void checkParameter(ParseBuildin buildin, List<Object> args) {
-		inclusiveBetween(0, 1, args.size(), EXPECTING_ONE_PARAMETER);
+		isTrue(args.size() > 0, EXPECTING_PARAMETER_TO_PARSE);
 	}
 
 	void checkArguments(ParseBuildin buildin, List<String> arguments) {

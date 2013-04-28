@@ -18,9 +18,10 @@
  */
 package com.anrisoftware.mongoose.buildins.parsebuildin;
 
+import static java.util.Collections.unmodifiableList;
 import groovy.lang.Closure;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,12 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
  */
 class ParseBuildin extends AbstractCommand {
 
+	private static final String NOT_VALID_KEY = "notValid";
+
+	private static final String VALID_KEY = "valid";
+
+	private static final String ARGUMENTS_KEY = "arguments";
+
 	private final ParseBuildinLogger log;
 
 	private List<String> arguments;
@@ -57,8 +64,16 @@ class ParseBuildin extends AbstractCommand {
 		this.arguments = null;
 		this.parameter = null;
 		this.valid = new Closure<Void>(this) {
+			@Override
+			public Void call(Object arguments) {
+				return null;
+			}
 		};
 		this.notValid = new Closure<Void>(this) {
+			@Override
+			public Void call() {
+				return null;
+			}
 		};
 	}
 
@@ -73,7 +88,7 @@ class ParseBuildin extends AbstractCommand {
 	@Override
 	public void setEnvironment(Environment environment) {
 		super.setEnvironment(environment);
-		setArguments(Arrays.asList(environment.getArgs()));
+		setArguments(environment.getArgs());
 	}
 
 	@Override
@@ -93,15 +108,22 @@ class ParseBuildin extends AbstractCommand {
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
 		setParameter(unnamedArgs);
-		if (args.containsKey("arguments")) {
-			setArguments((List<String>) args.get("arguments"));
+		if (args.containsKey(ARGUMENTS_KEY)) {
+			setArguments((List<String>) args.get(ARGUMENTS_KEY));
 		}
-		if (args.containsKey("valid")) {
-			setValid((Closure<?>) args.get("valid"));
+		if (args.containsKey(VALID_KEY)) {
+			setValid((Closure<?>) args.get(VALID_KEY));
 		}
-		if (args.containsKey("notValid")) {
-			setNotValid((Closure<?>) args.get("notValid"));
+		if (args.containsKey(NOT_VALID_KEY)) {
+			setNotValid((Closure<?>) args.get(NOT_VALID_KEY));
 		}
+	}
+
+	private void setParameter(List<Object> args) {
+		log.checkParameter(this, args);
+		Object parameter = args.get(0);
+		this.parameter = parameter;
+		log.parameterSet(this, parameter);
 	}
 
 	/**
@@ -115,8 +137,16 @@ class ParseBuildin extends AbstractCommand {
 	 */
 	public void setArguments(List<String> arguments) {
 		log.checkArguments(this, arguments);
-		this.arguments = arguments;
+		this.arguments = copyArgs(arguments);
 		log.argumentsSet(this, arguments);
+	}
+
+	private List<String> copyArgs(List<?> list) {
+		List<String> args = new ArrayList<String>();
+		for (Object item : list) {
+			args.add(item.toString());
+		}
+		return unmodifiableList(args);
 	}
 
 	/**
@@ -181,11 +211,12 @@ class ParseBuildin extends AbstractCommand {
 		return notValid;
 	}
 
-	private void setParameter(List<Object> args) {
-		log.checkParameter(this, args);
-		Object parameter = args.get(0);
-		this.parameter = parameter;
-		log.parameterSet(this, parameter);
+	/**
+	 * Returns the parameter bean object.
+	 * 
+	 * @return the parameter bean {@link Object}.
+	 */
+	public Object getTheParameter() {
+		return parameter;
 	}
-
 }
