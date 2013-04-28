@@ -18,7 +18,7 @@
  */
 package com.anrisoftware.mongoose.buildins.echobuildin;
 
-import static java.lang.Boolean.TRUE;
+import static java.lang.Boolean.FALSE;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -47,6 +47,7 @@ class EchoBuildin extends AbstractCommand {
 
 	EchoBuildin() {
 		this.output = createOutputNewLine();
+		this.text = "";
 	}
 
 	@Override
@@ -70,7 +71,7 @@ class EchoBuildin extends AbstractCommand {
 
 	private void setupNamed(Map<String, Object> args) {
 		if (args.containsKey(NEWLINE)) {
-			if (((Boolean) args.get(NEWLINE)).equals(TRUE)) {
+			if (((Boolean) args.get(NEWLINE)).equals(FALSE)) {
 				output = createOutputNoNewLine();
 			} else {
 				output = createOutputNewLine();

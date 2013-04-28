@@ -27,7 +27,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * Installs the {@code echo} build-in command factory.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
 class EchoModule extends AbstractModule {
 

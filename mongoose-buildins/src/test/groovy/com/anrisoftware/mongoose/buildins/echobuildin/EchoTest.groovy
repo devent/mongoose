@@ -18,83 +18,91 @@
  */
 package com.anrisoftware.mongoose.buildins.echobuildin
 
+import static com.anrisoftware.globalpom.utils.TestUtils.*
+
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.groovybash.buildins.BuildinTestUtils
-import com.anrisoftware.groovybash.core.Buildin
-import com.anrisoftware.mongoose.buildins.echobuildin.EchoBuildin;
-import com.anrisoftware.mongoose.buildins.echobuildin.EchoModule;
+import com.anrisoftware.globalpom.utils.TestUtils
+import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.command.StandardStreams
+import com.anrisoftware.mongoose.environment.EnvironmentModule
+import com.anrisoftware.mongoose.resources.ResourcesModule
+import com.anrisoftware.mongoose.threads.ThreadsModule
+import com.google.inject.Guice
+import com.google.inject.Injector
 
 /**
- * Test the build-in command {@code echo}.
+ * @see EchoBuildin
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
-class EchoTest extends BuildinTestUtils {
+class EchoTest  {
 
-	@Before
-	void beforeTest() {
-		super.beforeTest()
-		injector = injector.createChildInjector new EchoModule()
+	@Test
+	void "no text"() {
+		command()
+		assertStringContent output(byteOutput), "\n"
 	}
 
 	@Test
-	void "echo no text"() {
-		createBuildin(EchoBuildin)()
-		assertStringContent output, "\n"
-	}
-
-	@Test
-	void "echo with text"() {
+	void "with text"() {
 		def text = "Text"
-		createBuildin(EchoBuildin, [text])()
-		assertStringContent output, "$text\n"
+		command text
+		assertStringContent output(byteOutput), "$text\n"
 	}
 
 	@Test
-	void "echo with multiple texts"() {
+	void "with multiple texts"() {
 		def textA = "TextA"
 		def textB = "TextB"
-		createBuildin(EchoBuildin, [textA, textB])()
-		assertStringContent output, "$textA $textB\n"
+		command textA, textB
+		assertStringContent output(byteOutput), "$textA $textB\n"
 	}
 
 	@Test
-	void "echo no text no noewline"() {
-		createBuildin(EchoBuildin, [[noNewline: true]])()
-		assertStringContent output, ""
+	void "no text no newline"() {
+		command newline: false
+		assertStringContent output(byteOutput), ""
 	}
 
 	@Test
-	void "echo with text no newline"() {
+	void "with text no newline"() {
 		def text = "Text"
-		createBuildin(EchoBuildin, [[noNewline: true], text])()
-		assertStringContent output, "$text"
+		command newline: false, text
+		assertStringContent output(byteOutput), "$text"
 	}
 
-	@Test
-	void "echo from input"() {
-		def text = "Text"
-		inputBuffer = text.bytes
-		createBuildin(EchoBuildin, [[in: inputStream]])()
-		assertStringContent output, "$text\n"
+	EchoBuildin command
+
+	Environment environment
+
+	ByteArrayOutputStream byteOutput
+
+	StandardStreams streams
+
+	@Before
+	void setupCommand() {
+		command = injector.getInstance(EchoBuildin)
+		environment = injector.getInstance(Environment)
+		command.setEnvironment environment
+		byteOutput = new ByteArrayOutputStream()
+		command.setOutput(byteOutput)
 	}
 
-	@Test
-	void "echo from input no newline"() {
-		def text = "Text"
-		inputBuffer = text.bytes
-		createBuildin(EchoBuildin, [[in: inputStream, noNewline: true]])()
-		assertStringContent output, "$text"
+	static Injector injector
+
+	@BeforeClass
+	static void setupInjector() {
+		TestUtils.toStringStyle
+		injector = Guice.createInjector(
+				new EchoModule(), new EnvironmentModule(), new ThreadsModule(),
+				new ResourcesModule())
 	}
 
-	@Test
-	void "echo line read from input"() {
-		inputBuffer = "TextA\nTextB".bytes
-		createBuildin(EchoBuildin, [[in: inputStream, fromIn: true]])()
-		assertStringContent output, "TextA\n"
+	static String output(ByteArrayOutputStream stream) {
+		stream.toString()
 	}
-
 }
