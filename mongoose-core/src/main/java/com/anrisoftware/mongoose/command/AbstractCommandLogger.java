@@ -2,6 +2,10 @@ package com.anrisoftware.mongoose.command;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
+import java.io.ByteArrayOutputStream;
+
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.anrisoftware.globalpom.log.AbstractLogger;
 
 /**
@@ -40,6 +44,9 @@ class AbstractCommandLogger extends AbstractLogger {
 	}
 
 	void outputTargetSet(AbstractCommand command, Object target) {
+		if (target instanceof ByteArrayOutputStream) {
+			target = ObjectUtils.identityToString(target);
+		}
 		log.debug("Set output target {} for {}.", target, command);
 	}
 

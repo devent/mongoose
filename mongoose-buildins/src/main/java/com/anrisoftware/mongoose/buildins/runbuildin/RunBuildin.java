@@ -99,9 +99,8 @@ class RunBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public RunBuildin call() throws Exception {
+	protected void doCall() throws Exception {
 		startProcess();
-		return this;
 	}
 
 	private void startProcess() throws IOException {

@@ -57,10 +57,9 @@ class LogBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public LogBuildin call() throws Exception {
+	protected void doCall() throws Exception {
 		proxy = new Proxy();
 		proxy.setAdaptee(LoggerFactory.getLogger(name));
-		return this;
 	}
 
 	@Override

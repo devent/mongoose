@@ -52,10 +52,9 @@ class CdBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public CdBuildin call() throws ExecutionException {
+	protected void doCall() throws ExecutionException {
 		getEnvironment().setWorkingDirectory(directory);
 		log.changedDirectory(directory);
-		return this;
 	}
 
 	@Override

@@ -43,15 +43,11 @@ class PwdBuildin extends AbstractCommand {
 		this.log = logger;
 	}
 
-	/**
-	 * Returns the current working directory.
-	 */
 	@Override
-	public PwdBuildin call() throws ExecutionException {
+	protected void doCall() throws ExecutionException {
 		PrintStream stream = new PrintStream(getOutput());
 		stream.println(getEnvironment().getWorkingDirectory());
 		stream.flush();
-		return this;
 	}
 
 	@Override

@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 
 /**
@@ -51,11 +50,10 @@ class EchoBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public EchoBuildin call() throws ExecutionException {
+	protected void doCall() {
 		PrintStream stream = new PrintStream(getOutput());
 		output.output(stream, text);
 		stream.flush();
-		return this;
 	}
 
 	@Override

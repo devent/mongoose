@@ -53,10 +53,9 @@ abstract class AbstractLogBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public AbstractLogBuildin call() throws Exception {
+	protected void doCall() {
 		Logger logger = getEnvironment().getScriptLogger();
 		logMessage(logger);
-		return this;
 	}
 
 	/**

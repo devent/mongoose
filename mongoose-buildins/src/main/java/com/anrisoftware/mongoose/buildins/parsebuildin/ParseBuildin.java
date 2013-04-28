@@ -77,7 +77,7 @@ class ParseBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public ParseBuildin call() throws Exception {
+	protected void doCall() throws Exception {
 		try {
 			CmdLineParser parser = new CmdLineParser(parameter);
 			parser.parseArgument(arguments);
@@ -86,7 +86,6 @@ class ParseBuildin extends AbstractCommand {
 			notValid.call();
 			throw log.errorParseArguments(e, arguments);
 		}
-		return this;
 	}
 
 	@SuppressWarnings("unchecked")

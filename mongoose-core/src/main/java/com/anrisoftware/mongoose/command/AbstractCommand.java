@@ -1,5 +1,7 @@
 package com.anrisoftware.mongoose.command;
 
+import static com.anrisoftware.mongoose.command.StandardStreams.STANDRD_OUTPUT_DESCRIPTOR;
+
 import java.beans.VetoableChangeListener;
 import java.beans.VetoableChangeSupport;
 import java.io.File;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.Environment;
@@ -52,6 +56,7 @@ public abstract class AbstractCommand implements Command {
 		this.log = logger;
 	}
 
+	@Inject
 	public void setStreams(StandardStreams streams) {
 		this.streams = streams;
 	}
@@ -71,16 +76,33 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	@Override
+	public Command call() throws Exception {
+		args();
+		doCall();
+		return this;
+	}
+
+	/**
+	 * Execute the command after the parent are set.
+	 * 
+	 * @throws Exception
+	 *             if there was an error executing the command.
+	 */
+	protected abstract void doCall() throws Exception;
+
+	@Override
 	public Command call(Object... args) throws Exception {
 		args(args);
-		return call();
+		doCall();
+		return this;
 	}
 
 	@Override
 	public Command call(Map<String, Object> named, Object... args)
 			throws Exception {
 		args(named, args);
-		return call();
+		doCall();
+		return this;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -234,12 +256,12 @@ public abstract class AbstractCommand implements Command {
 
 	@Override
 	public void setOutput(Object target) throws Exception {
-		setOutput(target);
+		setOutput(target, false);
 	}
 
 	@Override
 	public void setOutput(Object target, boolean append) throws Exception {
-		setOutput(target, append);
+		setOutput(STANDRD_OUTPUT_DESCRIPTOR, target, append);
 	}
 
 	@Override
@@ -248,7 +270,7 @@ public abstract class AbstractCommand implements Command {
 		log.checkTarget(this, target);
 		Object newValue;
 		OutputStream stream;
-		if (target instanceof InputStream) {
+		if (target instanceof OutputStream) {
 			newValue = target;
 			stream = (OutputStream) target;
 		} else if (target instanceof File) {
@@ -258,8 +280,7 @@ public abstract class AbstractCommand implements Command {
 			newValue = new File(target.toString());
 			stream = createOutputStream((File) newValue, append);
 		}
-		vetoable.fireVetoableChange(Command.OUTPUT_TARGET_PROPERTY, null,
-				newValue);
+		vetoable.fireVetoableChange(OUTPUT_TARGET_PROPERTY, null, newValue);
 		streams.setOutputTarget(descriptor, stream);
 		log.outputTargetSet(this, target);
 	}
@@ -276,7 +297,7 @@ public abstract class AbstractCommand implements Command {
 
 	@Override
 	public Command output(Object target) throws Exception {
-		setOutput(target);
+		setOutput(target, false);
 		return this;
 	}
 
@@ -292,7 +313,7 @@ public abstract class AbstractCommand implements Command {
 
 	@Override
 	public void setError(Object target) throws Exception {
-		setError(target);
+		setError(target, false);
 	}
 
 	@Override
@@ -352,6 +373,12 @@ public abstract class AbstractCommand implements Command {
 
 	public Command rightShift(Object rhs) {
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("name", getTheName())
+				.toString();
 	}
 
 	@Override
