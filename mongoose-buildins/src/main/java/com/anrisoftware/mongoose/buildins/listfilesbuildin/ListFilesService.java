@@ -20,15 +20,12 @@ package com.anrisoftware.mongoose.buildins.listfilesbuildin;
 
 import org.mangosdk.spi.ProviderFor;
 
-import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.CommandFactory;
 import com.anrisoftware.mongoose.api.commans.CommandInfo;
 import com.anrisoftware.mongoose.api.commans.CommandService;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * Makes the build-in command {@code listFiles} available as a service.
@@ -55,13 +52,7 @@ public class ListFilesService implements CommandService {
 		}
 	};
 
-	private static final Module[] MODULES = new Module[] { new AbstractModule() {
-		@Override
-		protected void configure() {
-			install(new FactoryModuleBuilder().implement(Command.class,
-					ListFilesBuildin.class).build(CommandFactory.class));
-		}
-	} };
+	private static final Module[] MODULES = new Module[] { new ListFilesModule() };
 
 	@Override
 	public CommandInfo getInfo() {

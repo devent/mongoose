@@ -3,7 +3,7 @@ package com.anrisoftware.mongoose.buildins.listfilesbuildin;
 import static org.apache.commons.lang3.Validate.inclusiveBetween;
 import static org.apache.commons.lang3.Validate.notNull;
 
-import java.io.FileFilter;
+import java.io.File;
 import java.lang.reflect.Constructor;
 
 import javax.inject.Singleton;
@@ -19,6 +19,10 @@ import com.anrisoftware.globalpom.log.AbstractLogger;
 @Singleton
 class ListFilesBuildinLogger extends AbstractLogger {
 
+	private static final String ADD_SEARCH_PATTERN_INFO = "Add search pattern '{}'.";
+	private static final String ADD_SEARCH_PATTERN = "Add search pattern '{}' to {}.";
+	private static final String ADD_SEARCH_DIRECTORY_INFO = "Add search directory '{}'.";
+	private static final String ADD_SEARCH_DIRECTORY = "Add search directory '{}' to {}.";
 	private static final String NO_CONSTRUCTOR = "No default constructor or constructor with string argument found for type %s.";
 	private static final String SET_INCLUDE_SUB_DIRECTORIES = "Set include sub directories {} for {}.";
 	private static final String SET_RECURSIVE = "Set recursive {} for {}.";
@@ -42,7 +46,7 @@ class ListFilesBuildinLogger extends AbstractLogger {
 		notNull(filter, FILTER_NULL);
 	}
 
-	void filterSet(ListFilesBuildin buildin, FileFilter filter) {
+	void filterSet(ListFilesBuildin buildin, Object filter) {
 		log.debug(SET_FILTER, filter, buildin);
 	}
 
@@ -60,5 +64,21 @@ class ListFilesBuildinLogger extends AbstractLogger {
 
 	void checkCtor(ListFilesBuildin buildin, Constructor<?> ctor, Class<?> type) {
 		notNull(ctor, NO_CONSTRUCTOR, type);
+	}
+
+	void addDirectory(ListFilesBuildin buildin, File dir) {
+		if (log.isDebugEnabled()) {
+			log.debug(ADD_SEARCH_DIRECTORY, dir, buildin);
+		} else {
+			log.info(ADD_SEARCH_DIRECTORY_INFO, dir);
+		}
+	}
+
+	void addFilterPattern(ListFilesBuildin buildin, String pattern) {
+		if (log.isDebugEnabled()) {
+			log.debug(ADD_SEARCH_PATTERN, pattern, buildin);
+		} else {
+			log.info(ADD_SEARCH_PATTERN_INFO, pattern);
+		}
 	}
 }

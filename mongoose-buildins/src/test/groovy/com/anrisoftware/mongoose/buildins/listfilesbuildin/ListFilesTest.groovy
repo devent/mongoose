@@ -18,118 +18,181 @@
  */
 package com.anrisoftware.mongoose.buildins.listfilesbuildin
 
+import static com.anrisoftware.globalpom.utils.TestUtils.*
+
+import org.apache.commons.io.FileUtils
+import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.globalpom.utils.TestUtils
-import com.anrisoftware.groovybash.buildins.BuildinTestUtils
-import com.anrisoftware.mongoose.buildins.listfilesbuildin.ListFilesBuildin;
-import com.anrisoftware.mongoose.buildins.listfilesbuildin.ListFilesModule;
-import com.google.common.io.Files
+import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.environment.EnvironmentModule
+import com.anrisoftware.mongoose.resources.ResourcesModule
+import com.anrisoftware.mongoose.threads.ThreadsModule
+import com.google.inject.Guice
+import com.google.inject.Injector
+
 
 /**
- * Test the build-in command {@code listFiles}.
+ * @see ListFilesBuildin
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
-class ListFilesTest extends BuildinTestUtils {
-
-	static File directory
-
-	@BeforeClass
-	static void beforeClass() {
-		directory = new TestUtils().createTempDirectory { d ->
-			Files.touch new File(d, "foo.txt")
-			Files.touch new File(d, "bar.txt")
-			Files.touch new File(d, "baz.txt")
-			Files.touch new File(d, "foo.jpg")
-			Files.touch new File(d, "bar.jpg")
-			Files.touch new File(d, "baz.jpg")
-			Files.touch new File(d, "foo.x")
-			Files.touch new File(d, "bar.x")
-			Files.touch new File(d, "baz.x")
-		}
-	}
-
-	static file(def name) {
-		new File(directory, name)
-	}
-
-	@Before
-	void beforeTest() {
-		super.beforeTest()
-		injector = injector.createChildInjector new ListFilesModule()
-	}
+class ListFilesTest {
 
 	@Test
 	void "list file name"() {
 		environment.workingDirectory = directory
-		def result = createBuildin(ListFilesBuildin, ["foo.txt"])()
-		assert result.files == [file("foo.txt")]
-		assertStringContent result.toString(), "[$directory/foo.txt]"
+		def result = command("foo.txt").theFiles
+		assert result.size() == 1
+		assert result.contains(file("foo.txt"))
 	}
 
 	@Test
-	void "listFiles buildin with file names from list"() {
+	void "list file name +2"() {
 		environment.workingDirectory = directory
-		def list = ["foo.txt", "bar.txt"]
-		def result = createBuildin(ListFilesBuildin, [list])()
-		assert result.files == [file("foo.txt"), file("bar.txt")]
-		assertStringContent result.toString(), "[$directory/foo.txt, $directory/bar.txt]"
-	}
-	
-	@Test
-	void "listFiles buildin iterate over files"() {
-		environment.workingDirectory = directory
-		def list = ["foo.txt", "bar.txt"]
-		def result = createBuildin(ListFilesBuildin, [list])()
-		def files = []
-		result.each {
-			files << it
-		}
-		assert files == [file("foo.txt"), file("bar.txt")]
-	}
-	
-	@Test
-	void "listFiles buildin with no arguments"() {
-		environment.workingDirectory = directory
-		def result = createBuildin(ListFilesBuildin)()
-		assert result.files == [file("baz.x"), file("bar.x"), file("foo.x"), file("baz.jpg"), file("bar.jpg"), file("foo.jpg"), file("baz.txt"), file("bar.txt"), file("foo.txt")]
-		assertStringContent result.toString(), "[$directory/baz.x, $directory/bar.x, $directory/foo.x, $directory/baz.jpg, $directory/bar.jpg, $directory/foo.jpg, $directory/baz.txt, $directory/bar.txt, $directory/foo.txt]"
+		def result = command("foo.txt", "bar.txt").theFiles
+		assert result.size() == 2
+		assert result.contains(file("foo.txt"))
+		assert result.contains(file("bar.txt"))
 	}
 
 	@Test
-	void "listFiles buildin with wildcat"() {
-		environment.workingDirectory = directory
-		def result = createBuildin(ListFilesBuildin, ["*.txt"])()
-		assert result.files == [file("baz.txt"), file("bar.txt"), file("foo.txt")]
-		assertStringContent result.toString(), "[$directory/baz.txt, $directory/bar.txt, $directory/foo.txt]"
+	void "list file name +directory"() {
+		def result = command("$directory/foo.txt").theFiles
+		assert result.size() == 1
+		assert result.contains(file("foo.txt"))
 	}
 
 	@Test
-	void "listFiles buildin with wildcat and test against a list"() {
+	void "no arguments"() {
 		environment.workingDirectory = directory
-		def result = createBuildin(ListFilesBuildin, ["*.txt"])()
-		assert result == [file("baz.txt"), file("bar.txt"), file("foo.txt")]
+		def result = command().theFiles
+		assert result.size() == 9
 	}
 
 	@Test
-	void "listFiles buildin with multiple wildcats"() {
+	void "no arguments [+include sub]"() {
 		environment.workingDirectory = directory
-		def result = createBuildin(ListFilesBuildin, ["*.jpg", "*.txt"])()
-		assert result.files == [file("baz.jpg"), file("bar.jpg"), file("foo.jpg"), file("baz.txt"), file("bar.txt"), file("foo.txt")]
-		assertStringContent result.toString(), "[$directory/baz.jpg, $directory/bar.jpg, $directory/foo.jpg, $directory/baz.txt, $directory/bar.txt, $directory/foo.txt]"
+		def result = command(includeSubDirectories: true).theFiles
+		assert result.size() == 10
+		assert result.contains(file("sub_a"))
 	}
 
 	@Test
-	void "listFiles buildin with multiple wildcats from list"() {
+	void "no arguments [+recursive]"() {
 		environment.workingDirectory = directory
-		def list = ["*.jpg", "*.txt"]
-		def result = createBuildin(ListFilesBuildin, [list])()
-		assert result.files == [file("baz.jpg"), file("bar.jpg"), file("foo.jpg"), file("baz.txt"), file("bar.txt"), file("foo.txt")]
-		assertStringContent result.toString(), "[$directory/baz.jpg, $directory/bar.jpg, $directory/foo.jpg, $directory/baz.txt, $directory/bar.txt, $directory/foo.txt]"
+		def result = command(recursive: true).theFiles
+		assert result.size() == 15
+		assert !result.contains(file("sub_a"))
+		assert !result.contains(file("sub_a/sub_a"))
 	}
 
+	@Test
+	void "no arguments [+recursive] [+include sub]"() {
+		environment.workingDirectory = directory
+		def result = command(recursive: true, includeSubDirectories: true).theFiles
+		assert result.size() == 17
+		assert result.contains(file("sub_a"))
+		assert result.contains(file("sub_a/sub_a"))
+	}
+
+	@Test
+	void "only txt [+recursive] [+include sub]"() {
+		environment.workingDirectory = directory
+		def result = command(recursive: true, includeSubDirectories: true, "*.txt").theFiles
+		assert result.size() == 9
+		assert result.contains(file("foo.txt"))
+		assert result.contains(file("bar.txt"))
+		assert result.contains(file("baz.txt"))
+		assert result.contains(file("sub_a"))
+		assert result.contains(file("sub_a/foo.txt"))
+		assert result.contains(file("sub_a/bar.txt"))
+		assert result.contains(file("sub_a/sub_a"))
+		assert result.contains(file("sub_a/sub_a/foo.txt"))
+		assert result.contains(file("sub_a/sub_a/bar.txt"))
+	}
+
+	@Test
+	void "only txt [+1 recursive] [+include sub]"() {
+		environment.workingDirectory = directory
+		def result = command(recursive: true, depth: 1, includeSubDirectories: true, "*.txt").theFiles
+		assert result.size() == 7
+		assert result.contains(file("foo.txt"))
+		assert result.contains(file("bar.txt"))
+		assert result.contains(file("baz.txt"))
+		assert result.contains(file("sub_a"))
+		assert result.contains(file("sub_a/foo.txt"))
+		assert result.contains(file("sub_a/bar.txt"))
+		assert result.contains(file("sub_a/sub_a"))
+	}
+
+	@Test
+	void "custom filter"() {
+		environment.workingDirectory = directory
+		def filter = { File pathname -> pathname.name.endsWith("jpg") } as FileFilter
+		def result = command(filter: filter).theFiles
+		assert result.size() == 3
+		assert result.contains(file("foo.jpg"))
+		assert result.contains(file("bar.jpg"))
+		assert result.contains(file("baz.jpg"))
+	}
+
+	ListFilesBuildin command
+
+	Environment environment
+
+	@Before
+	void setupCommand() {
+		command = injector.getInstance(ListFilesBuildin)
+		environment = injector.getInstance(Environment)
+		command.setEnvironment environment
+	}
+
+	static File directory
+
+	@BeforeClass
+	static void setupFiles() {
+		directory = File.createTempDir()
+		FileUtils.touch new File(directory, "foo.txt")
+		FileUtils.touch new File(directory, "bar.txt")
+		FileUtils.touch new File(directory, "baz.txt")
+		FileUtils.touch new File(directory, "foo.jpg")
+		FileUtils.touch new File(directory, "bar.jpg")
+		FileUtils.touch new File(directory, "baz.jpg")
+		FileUtils.touch new File(directory, "foo.x")
+		FileUtils.touch new File(directory, "bar.x")
+		FileUtils.touch new File(directory, "baz.x")
+		def sub = new File(directory, "sub_a")
+		sub.mkdir()
+		FileUtils.touch new File(sub, "foo.txt")
+		FileUtils.touch new File(sub, "bar.txt")
+		FileUtils.touch new File(sub, "baz.jpg")
+		def subsub = new File(directory, "sub_a/sub_a")
+		sub.mkdir()
+		FileUtils.touch new File(subsub, "foo.txt")
+		FileUtils.touch new File(subsub, "bar.txt")
+		FileUtils.touch new File(subsub, "baz.jpg")
+	}
+
+	@AfterClass
+	static void removeFiles() {
+		FileUtils.deleteDirectory directory
+	}
+
+	static file(String name) {
+		new File(directory, name)
+	}
+
+	static Injector injector
+
+	@BeforeClass
+	static void setupInjector() {
+		toStringStyle
+		injector = Guice.createInjector(
+				new ListFilesModule(), new EnvironmentModule(), new ThreadsModule(),
+				new ResourcesModule())
+	}
 }

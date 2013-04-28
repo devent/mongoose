@@ -20,7 +20,6 @@ package com.anrisoftware.mongoose.buildins.listfilesbuildin;
 
 import static org.apache.commons.io.filefilter.FalseFileFilter.FALSE;
 import static org.apache.commons.io.filefilter.TrueFileFilter.TRUE;
-import static org.apache.commons.lang3.StringUtils.split;
 import static org.apache.commons.lang3.reflect.ConstructorUtils.getAccessibleConstructor;
 import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeConstructor;
 import groovy.lang.Closure;
@@ -31,14 +30,11 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import javax.inject.Inject;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 
 /**
@@ -71,12 +67,15 @@ class ListFilesBuildin extends AbstractCommand {
 
 	private Class<? extends FileFilter> filterType;
 
+	private FileFilter filter;
+
 	@Inject
 	ListFilesBuildin(ListFilesBuildinLogger logger) {
 		this.log = logger;
 		this.listFiles = new ListFiles();
 		this.directories = new ArrayList<File>();
 		this.patterns = new ArrayList<String>();
+		this.filter = null;
 		setFilterType(WildcardFileFilter.class);
 		listFiles.setDirFilter(FALSE);
 	}
@@ -87,9 +86,8 @@ class ListFilesBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public ListFilesBuildin call() throws ExecutionException {
+	protected void doCall() {
 		files = listFiles.build();
-		return this;
 	}
 
 	/**
@@ -128,56 +126,53 @@ class ListFilesBuildin extends AbstractCommand {
 	}
 
 	private void setupDirectories() {
+		if (directories.isEmpty()) {
+			directories.add(getEnvironment().getWorkingDirectory());
+		}
 		for (File dir : directories) {
 			listFiles.addDirectory(dir);
+			log.addDirectory(this, dir);
 		}
 	}
 
 	private void setupFiltersFromPatterns() throws Exception {
+		if (filter != null) {
+			return;
+		}
+		if (patterns.isEmpty()) {
+			patterns.add("*");
+		}
 		for (String pattern : patterns) {
 			FileFilter filter = invokeConstructor(filterType, pattern);
 			listFiles.addFilter(filter);
+			log.addFilterPattern(this, pattern);
 		}
 	}
 
 	private void splitDirectories(List<Object> list) {
 		for (Object object : list) {
-			String path = object.toString();
-			String[] paths = split(path, File.separator);
-			File file = null;
-			int i = 0;
-			for (; i < paths.length; i++) {
-				String string = paths[i];
-				if (!isPattern(string)) {
-					file = recursiveDir(file, string);
+			File path = asFile(object);
+			File parent = path.getParentFile();
+			String pattern = path.getName();
+			while (parent != null) {
+				String name = parent.getName();
+				if (!parent.isDirectory()) {
+					pattern += File.separator + name;
 				} else {
+					directories.add(parent);
 					break;
 				}
+				parent = parent.getParentFile();
 			}
-			if (file != null) {
-				directories.add(file);
-			}
-			if (i < paths.length) {
-				patterns.add(paths[i]);
-			}
+			patterns.add(pattern);
 		}
 	}
 
-	private File recursiveDir(File file, String string) {
-		if (file == null) {
-			return new File(string);
+	private File asFile(Object object) {
+		if (object instanceof File) {
+			return (File) object;
 		} else {
-			File dir = new File(file, string);
-			return dir.isDirectory() ? dir : file;
-		}
-	}
-
-	private boolean isPattern(String string) {
-		try {
-			Pattern.compile(string);
-			return true;
-		} catch (PatternSyntaxException e) {
-			return false;
+			return new File(object.toString());
 		}
 	}
 
@@ -188,22 +183,15 @@ class ListFilesBuildin extends AbstractCommand {
 	}
 
 	private void setFilter(Object filter) {
+		log.checkFilter(this, filter);
 		if (filter instanceof FileFilter) {
-			setFilter((FileFilter) filter);
+			this.filter = (FileFilter) filter;
+			listFiles.setFilter(this.filter);
 		}
 		if (filter instanceof Closure<?>) {
-			setFilter((Closure<?>) filter);
+			this.filter = new ClosureFileFilter((Closure<?>) filter);
+			listFiles.setFilter(this.filter);
 		}
-	}
-
-	public void setFilter(Closure<?> filter) {
-		log.checkFilter(this, filter);
-		setFilter(new ClosureFileFilter(filter));
-	}
-
-	public void setFilter(FileFilter filter) {
-		log.checkFilter(this, filter);
-		listFiles.setFilter(filter);
 		log.filterSet(this, filter);
 	}
 
@@ -218,12 +206,20 @@ class ListFilesBuildin extends AbstractCommand {
 	}
 
 	public void setRecursive(boolean recursive) {
+		if (listFiles.getDepth() == 0) {
+			listFiles.setDepth(Integer.MAX_VALUE);
+		}
 		listFiles.setDirFilter(TRUE);
 		log.recursiveSet(this, recursive);
 	}
 
 	public void setIncludeSubDirectories(boolean include) {
-		listFiles.setIncludeSubDirectories(include);
+		if (include) {
+			listFiles.setDirFilter(TRUE);
+			listFiles.setIncludeSubDirectories(true);
+		} else {
+			listFiles.setIncludeSubDirectories(false);
+		}
 		log.includeSubDirectoriesSet(this, include);
 	}
 }

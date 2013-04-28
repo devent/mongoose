@@ -48,15 +48,19 @@ class ListFiles implements Builder<List<File>> {
 
 	private boolean includeSubDirectories;
 
-	public ListFiles() {
+	ListFiles() {
 		this.includeSubDirectories = false;
-		this.depth = Integer.MAX_VALUE;
+		this.depth = 0;
 		this.directories = new ArrayList<File>();
 		this.fileFilter = new OrFileFilter();
 	}
 
 	public void setDepth(int depth) {
 		this.depth = depth;
+	}
+
+	public int getDepth() {
+		return depth;
 	}
 
 	public void setIncludeSubDirectories(boolean include) {
