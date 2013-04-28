@@ -19,60 +19,65 @@
 package com.anrisoftware.mongoose.buildins.cdbuildin
 
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.groovybash.buildins.BuildinTestUtils
-import com.anrisoftware.groovybash.core.Buildin
-import com.anrisoftware.mongoose.buildins.cdbuildin.CdBuildin;
-import com.anrisoftware.mongoose.buildins.cdbuildin.CdModule;
+import com.anrisoftware.globalpom.utils.TestUtils
+import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.environment.EnvironmentModule
+import com.anrisoftware.mongoose.resources.ResourcesModule
+import com.anrisoftware.mongoose.threads.ThreadsModule
+import com.google.inject.Guice
+import com.google.inject.Injector
 
 /**
- * Test the build-in command {@code cd}.
+ * @see CdBuildin
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
-class CdTest extends BuildinTestUtils {
-
-	@Before
-	void beforeTest() {
-		super.beforeTest()
-		injector = injector.createChildInjector new CdModule()
-	}
+class CdTest {
 
 	@Test
-	void "cd to user home"() {
-		createBuildin(CdBuildin)()
+	void "to user home"() {
+		command()
 		assert environment.workingDirectory == environment.userHome
 	}
 
 	@Test
-	void "cd to directory name"() {
-		def dir = createTempDirectory()
-		createBuildin(CdBuildin, ["$dir"])()
+	void "to directory path"() {
+		def dir = File.createTempDir()
+		command dir.absolutePath
 		assert environment.workingDirectory == dir
+		dir.delete()
 	}
 
 	@Test
-	void "cd to directory file"() {
-		def dir = createTempDirectory()
-		createBuildin(CdBuildin, [dir])()
+	void "to directory file"() {
+		def dir = File.createTempDir()
+		command dir
 		assert environment.workingDirectory == dir
-	}
-	
-	@Test
-	void "cd to directory read from input"() {
-		def dir = createTempDirectory()
-		inputBuffer = "$dir".toString().bytes
-		createBuildin(CdBuildin, [[in: inputStream, fromIn: true]])()
-		assert environment.workingDirectory == dir
+		dir.delete()
 	}
 
-	@Test
-	void "cd to directory read from input terminated with newline"() {
-		def dir = createTempDirectory()
-		inputBuffer = "$dir\n".toString().bytes
-		createBuildin(CdBuildin, [[in: inputStream, fromIn: true]])()
-		assert environment.workingDirectory == dir
+	CdBuildin command
+
+	Environment environment
+
+	@Before
+	void setupCommand() {
+		command = injector.getInstance(CdBuildin)
+		environment = injector.getInstance(Environment)
+		command.setEnvironment environment
+	}
+
+	static Injector injector
+
+	@BeforeClass
+	static void setupInjector() {
+		TestUtils.toStringStyle
+		injector = Guice.createInjector(
+				new CdModule(), new EnvironmentModule(), new ThreadsModule(),
+				new ResourcesModule())
 	}
 }
