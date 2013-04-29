@@ -24,11 +24,13 @@ import groovy.lang.Closure;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.inject.Inject;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.ExampleMode;
 
 import com.anrisoftware.mongoose.api.commans.Environment;
 import com.anrisoftware.mongoose.command.AbstractCommand;
@@ -56,6 +58,12 @@ class ParseBuildin extends AbstractCommand {
 	private Closure<?> valid;
 
 	private Closure<?> notValid;
+
+	private CmdLineParser parser;
+
+	private ExampleMode exampleMode;
+
+	private ResourceBundle resourceBundle;
 
 	@SuppressWarnings("serial")
 	@Inject
@@ -94,7 +102,6 @@ class ParseBuildin extends AbstractCommand {
 	@Override
 	protected void doCall() throws Exception {
 		try {
-			CmdLineParser parser = new CmdLineParser(parameter);
 			parser.parseArgument(arguments);
 			valid.call(parameter);
 		} catch (CmdLineException e) {
@@ -107,7 +114,7 @@ class ParseBuildin extends AbstractCommand {
 	@Override
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
-		setParameter(unnamedArgs);
+		setupParameter(unnamedArgs);
 		if (args.containsKey(ARGUMENTS_KEY)) {
 			setArguments((List<String>) args.get(ARGUMENTS_KEY));
 		}
@@ -119,7 +126,7 @@ class ParseBuildin extends AbstractCommand {
 		}
 	}
 
-	private void setParameter(List<Object> args) {
+	private void setupParameter(List<Object> args) {
 		log.checkParameter(this, args);
 		Object parameter = args.get(0);
 		this.parameter = parameter;
@@ -138,6 +145,7 @@ class ParseBuildin extends AbstractCommand {
 	public void setArguments(List<String> arguments) {
 		log.checkArguments(this, arguments);
 		this.arguments = copyArgs(arguments);
+		this.parser = new CmdLineParser(parameter);
 		log.argumentsSet(this, arguments);
 	}
 
@@ -218,5 +226,10 @@ class ParseBuildin extends AbstractCommand {
 	 */
 	public Object getTheParameter() {
 		return parameter;
+	}
+
+	public String getTheExample() {
+		return resourceBundle == null ? parser.printExample(exampleMode)
+				: parser.printExample(exampleMode, resourceBundle);
 	}
 }
