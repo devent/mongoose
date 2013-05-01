@@ -71,7 +71,7 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	@Override
-	public Environment getEnvironment() {
+	public Environment getTheEnvironment() {
 		return environment;
 	}
 

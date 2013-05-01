@@ -46,7 +46,7 @@ class PwdBuildin extends AbstractCommand {
 	@Override
 	protected void doCall() throws ExecutionException {
 		PrintStream stream = new PrintStream(getOutput());
-		stream.println(getEnvironment().getWorkingDirectory());
+		stream.println(getTheEnvironment().getWorkingDirectory());
 		stream.flush();
 	}
 

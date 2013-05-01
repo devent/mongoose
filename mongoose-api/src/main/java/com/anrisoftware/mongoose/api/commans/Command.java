@@ -69,7 +69,7 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @return the {@link Environment}.
 	 */
-	Environment getEnvironment();
+	Environment getTheEnvironment();
 
 	/**
 	 * Returns the name of the command.

@@ -127,7 +127,7 @@ class ListFilesBuildin extends AbstractCommand {
 
 	private void setupDirectories() {
 		if (directories.isEmpty()) {
-			directories.add(getEnvironment().getWorkingDirectory());
+			directories.add(getTheEnvironment().getWorkingDirectory());
 		}
 		for (File dir : directories) {
 			listFiles.addDirectory(dir);
