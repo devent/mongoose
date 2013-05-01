@@ -21,8 +21,6 @@ package com.anrisoftware.mongoose.command;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.exec.PumpStreamHandler;
-
 import com.anrisoftware.mongoose.api.commans.Command;
 
 /**
@@ -33,21 +31,22 @@ import com.anrisoftware.mongoose.api.commans.Command;
  */
 public class StandardStreams {
 
+	/**
+	 * The file descriptor for the standard input.
+	 */
 	public static final int STANDRD_INPUT_DESCRIPTOR = 0;
 
+	/**
+	 * The file descriptor for the standard output.
+	 */
 	public static final int STANDRD_OUTPUT_DESCRIPTOR = 1;
 
+	/**
+	 * The file descriptor for the standard error.
+	 */
 	public static final int STANDRD_ERROR_DESCRIPTOR = 2;
 
 	private final StandardStreamsLogger log;
-
-	private OutputStream inputStream;
-
-	private InputStream outputStream;
-
-	private InputStream errorStream;
-
-	private PumpStreamHandler streams;
 
 	private InputStream inputSource;
 
@@ -56,8 +55,12 @@ public class StandardStreams {
 	private OutputStream errorTarget;
 
 	/**
-	 * Sets the standard input stream, standard output stream and standard error
-	 * stream.
+	 * Sets the default standard input stream, standard output stream and
+	 * standard error stream.
+	 * 
+	 * @see System#in
+	 * @see System#out
+	 * @see System#err
 	 */
 	public StandardStreams() {
 		this(System.in, System.out, System.err);
@@ -78,68 +81,10 @@ public class StandardStreams {
 	 */
 	public StandardStreams(InputStream inputSource, OutputStream outputTarget,
 			OutputStream errorTarget) {
-		this(inputSource, outputTarget, errorTarget, null, null, null);
-	}
-
-	/**
-	 * @see StandardStreams#StandardStreams(InputStream, OutputStream,
-	 *      OutputStream)
-	 * 
-	 * @param inputStream
-	 *            the {@link OutputStream} to write to the standard input.
-	 * 
-	 * @param outputStream
-	 *            the {@link InputStream} to read from the standard output.
-	 * 
-	 * @param errorStream
-	 *            the {@link InputStream} to read from the standard error.
-	 */
-	public StandardStreams(InputStream inputSource, OutputStream outputTarget,
-			OutputStream errorTarget, OutputStream inputStream,
-			InputStream outputStream, InputStream errorStream) {
 		this.log = new StandardStreamsLogger();
 		this.inputSource = inputSource;
 		this.outputTarget = outputTarget;
 		this.errorTarget = errorTarget;
-		this.inputStream = inputStream;
-		this.outputStream = outputStream;
-		this.errorStream = errorStream;
-		this.streams = new PumpStreamHandler(outputTarget, errorTarget,
-				inputSource);
-		if (inputStream != null) {
-			setInputStream(inputStream);
-		}
-		if (outputStream != null) {
-			setOutputStream(outputStream);
-		}
-		if (errorStream != null) {
-			setErrorStream(errorStream);
-		}
-	}
-
-	/**
-	 * Returns the stream handler.
-	 * 
-	 * @return the {@link PumpStreamHandler}.
-	 */
-	public PumpStreamHandler getStreamHandler() {
-		return streams;
-	}
-
-	/**
-	 * @see Command#setInputStream(OutputStream)
-	 */
-	public void setInputStream(OutputStream stream) {
-		log.checkInputStream(stream);
-		this.inputStream = stream;
-		streams.setProcessInputStream(stream);
-	}
-
-	/**
-	 * @see Command#getInputStream()
-	 */
-	public OutputStream getInputStream() {
-		return inputStream;
 	}
 
 	/**
@@ -148,9 +93,6 @@ public class StandardStreams {
 	public void setInputSource(InputStream stream) {
 		log.checkSource(stream);
 		this.inputSource = stream;
-		streams = new PumpStreamHandler(System.out, System.err, stream);
-		streams.setProcessOutputStream(outputStream);
-		streams.setProcessErrorStream(errorStream);
 	}
 
 	/**
@@ -161,22 +103,6 @@ public class StandardStreams {
 	}
 
 	/**
-	 * @see Command#setOutputStream(InputStream)
-	 */
-	public void setOutputStream(InputStream stream) {
-		log.checkOutputStream(stream);
-		this.outputStream = stream;
-		streams.setProcessOutputStream(stream);
-	}
-
-	/**
-	 * @see Command#getOutputStream()
-	 */
-	public InputStream getOutputStream() {
-		return outputStream;
-	}
-
-	/**
 	 * @see Command#setOutput(int, OutputStream)
 	 */
 	public void setOutputTarget(int descriptor, OutputStream stream) {
@@ -184,14 +110,8 @@ public class StandardStreams {
 		switch (descriptor) {
 		case STANDRD_OUTPUT_DESCRIPTOR:
 			this.outputTarget = stream;
-			streams = new PumpStreamHandler(stream, System.err, System.in);
-			streams.setProcessInputStream(inputStream);
-			streams.setProcessErrorStream(errorStream);
 			break;
 		case STANDRD_ERROR_DESCRIPTOR:
-			streams = new PumpStreamHandler(System.out, stream, System.in);
-			streams.setProcessInputStream(inputStream);
-			streams.setProcessOutputStream(outputStream);
 			break;
 		default:
 			throw log.unknownFileDescriptor(descriptor);
@@ -206,9 +126,6 @@ public class StandardStreams {
 		switch (descriptor) {
 		case STANDRD_INPUT_DESCRIPTOR:
 			this.inputSource = stream;
-			streams = new PumpStreamHandler(System.out, System.err, stream);
-			streams.setProcessOutputStream(outputStream);
-			streams.setProcessErrorStream(errorStream);
 			break;
 		default:
 			throw log.unknownFileDescriptor(descriptor);
@@ -223,30 +140,11 @@ public class StandardStreams {
 	}
 
 	/**
-	 * @see Command#setErrorStream(InputStream)
-	 */
-	public void setErrorStream(InputStream stream) {
-		log.checkErrorStream(stream);
-		this.errorStream = stream;
-		streams.setProcessErrorStream(stream);
-	}
-
-	/**
-	 * @see Command#getErrorStream()
-	 */
-	public InputStream getErrorStream() {
-		return errorStream;
-	}
-
-	/**
 	 * @see Command#setError(OutputStream)
 	 */
 	public void setErrorTarget(OutputStream stream) {
 		log.checkTarget(stream);
 		this.errorTarget = stream;
-		streams = new PumpStreamHandler(System.out, stream, System.in);
-		streams.setProcessInputStream(inputStream);
-		streams.setProcessOutputStream(outputStream);
 	}
 
 	/**
@@ -255,4 +153,5 @@ public class StandardStreams {
 	public OutputStream getErrorTarget() {
 		return errorTarget;
 	}
+
 }

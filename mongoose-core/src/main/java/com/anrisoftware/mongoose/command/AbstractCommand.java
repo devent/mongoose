@@ -22,6 +22,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.Environment;
+import com.gc.iotools.stream.os.OutputStreamToInputStream;
 
 /**
  * Sets the standard streams of the command and implements the stream
@@ -198,11 +199,6 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	@Override
-	public void setInputStream(OutputStream stream) {
-		streams.setInputStream(stream);
-	}
-
-	@Override
 	public void setInput(Object source) throws Exception {
 		log.checkSource(this, source);
 		Object newValue;
@@ -217,8 +213,7 @@ public abstract class AbstractCommand implements Command {
 			newValue = new File(source.toString());
 			stream = createInputStream((File) newValue);
 		}
-		vetoable.fireVetoableChange(Command.INPUT_SOURCE_PROPERTY, null,
-				newValue);
+		vetoable.fireVetoableChange(INPUT_SOURCE_PROPERTY, null, newValue);
 		streams.setInputSource(stream);
 		log.sourceSet(this, source);
 	}
@@ -237,21 +232,6 @@ public abstract class AbstractCommand implements Command {
 	public Command input(Object source) throws Exception {
 		setInput(source);
 		return this;
-	}
-
-	@Override
-	public OutputStream getInputStream() {
-		return streams.getInputStream();
-	}
-
-	@Override
-	public void setOutputStream(InputStream stream) {
-		streams.setOutputStream(stream);
-	}
-
-	@Override
-	public InputStream getOutputStream() {
-		return streams.getOutputStream();
 	}
 
 	@Override
@@ -302,16 +282,6 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	@Override
-	public void setErrorStream(InputStream stream) {
-		streams.setErrorStream(stream);
-	}
-
-	@Override
-	public InputStream getErrorStream() {
-		return streams.getErrorStream();
-	}
-
-	@Override
 	public void setError(Object target) throws Exception {
 		setError(target, false);
 	}
@@ -331,8 +301,7 @@ public abstract class AbstractCommand implements Command {
 			newValue = new File(target.toString());
 			stream = createOutputStream((File) newValue, append);
 		}
-		vetoable.fireVetoableChange(Command.ERROR_TARGET_PROPERTY, null,
-				newValue);
+		vetoable.fireVetoableChange(ERROR_TARGET_PROPERTY, null, newValue);
 		streams.setErrorTarget(stream);
 		log.errorTargetSet(this, target);
 	}
@@ -361,14 +330,21 @@ public abstract class AbstractCommand implements Command {
 	 *             if there was an error set the input of the command; if the
 	 *             left command returns with an error.
 	 */
-	public Command or(Command rhs) throws Exception {
-		rhs.setInput(getOutputStream());
+	public Command or(final Command rhs) throws Exception {
+		setOutput(new OutputStreamToInputStream<Void>() {
+			@Override
+			protected Void doRead(InputStream istream) throws Exception {
+				rhs.setInput(istream);
+				return null;
+			}
+		});
 		environment.executeCommandAndWait(this);
 		return rhs;
 	}
 
-	public Command leftShift(Object rhs) {
-		return this;
+	public Command leftShift(Object rhs) throws Exception {
+		setInput(rhs);
+		return call();
 	}
 
 	public Command rightShift(Object rhs) {
