@@ -301,6 +301,21 @@ public interface Command extends Callable<Command> {
 	Command error(Object target) throws Exception;
 
 	/**
+	 * Creates a pipe between the left command and the right command. The result
+	 * value will be the finished right hand side command.
+	 * 
+	 * @param rhs
+	 *            the right hand size {@link Command}.
+	 * 
+	 * @return the right hand size {@link Command}
+	 * 
+	 * @throws Exception
+	 *             if there was some error set the streams or executing the
+	 *             commands.
+	 */
+	Command pipe(Command rhs) throws Exception;
+
+	/**
 	 * Sets the buffer size for pipes.
 	 * 
 	 * @param size

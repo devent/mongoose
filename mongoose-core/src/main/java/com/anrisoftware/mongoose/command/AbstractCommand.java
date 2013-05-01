@@ -349,20 +349,8 @@ public abstract class AbstractCommand implements Command {
 		return pipeBufferSize;
 	}
 
-	/**
-	 * Operator {@code |}. The \Operator{|} creates a pipe between the left
-	 * command and the right command.
-	 * 
-	 * @param rhs
-	 *            the right hand side {@link Command}.
-	 * 
-	 * @return the right hand side {@link Command}.
-	 * 
-	 * @throws Exception
-	 *             if there was an error set the input of the command; if the
-	 *             left command returns with an error.
-	 */
-	public Command or(final Command rhs) throws Exception {
+	@Override
+	public Command pipe(Command rhs) throws Exception {
 		int pipeSize = getPipeBufferSize();
 		PipedInputStream sink = new PipedInputStream(pipeSize);
 		PipedOutputStream target = new PipedOutputStream(sink);
@@ -373,6 +361,13 @@ public abstract class AbstractCommand implements Command {
 		task.get();
 		taskRhs.get();
 		return rhs;
+	}
+
+	/**
+	 * @see #pipe(Command)
+	 */
+	public Command or(final Command rhs) throws Exception {
+		return pipe(rhs);
 	}
 
 	/**

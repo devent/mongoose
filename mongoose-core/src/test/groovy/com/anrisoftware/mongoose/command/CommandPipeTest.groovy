@@ -2,7 +2,6 @@ package com.anrisoftware.mongoose.command
 
 import static com.anrisoftware.globalpom.utils.TestUtils.*
 
-import org.apache.commons.io.FileUtils
 import org.junit.Before
 import org.junit.Test
 
@@ -44,16 +43,6 @@ class CommandPipeTest {
 		commandWriter.setAbstractCommandLogger new AbstractCommandLogger()
 		commandWriter.setEnvironment environment
 		commandWriter.setStreams new StandardStreams()
-	}
-
-	static fileSource(String string, def test) {
-		File tmpfile = File.createTempFile("inputfile", string)
-		try {
-			FileUtils.write tmpfile, string
-			test(tmpfile)
-		} finally {
-			tmpfile.delete()
-		}
 	}
 
 	static {
