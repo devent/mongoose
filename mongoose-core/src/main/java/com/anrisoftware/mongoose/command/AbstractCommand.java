@@ -50,8 +50,11 @@ public abstract class AbstractCommand implements Command {
 
 	private Environment environment;
 
+	private int pipeBufferSize;
+
 	protected AbstractCommand() {
 		this.vetoable = new VetoableChangeSupport(this);
+		this.pipeBufferSize = 1024;
 	}
 
 	@Inject
@@ -334,6 +337,18 @@ public abstract class AbstractCommand implements Command {
 		return this;
 	}
 
+	@Override
+	public void setPipeBufferSize(int size) {
+		log.checkPipeBuffer(this, size);
+		this.pipeBufferSize = size;
+		log.pipeBufferSizeSet(this, size);
+	}
+
+	@Override
+	public int getPipeBufferSize() {
+		return pipeBufferSize;
+	}
+
 	/**
 	 * Operator {@code |}. The \Operator{|} creates a pipe between the left
 	 * command and the right command.
@@ -348,7 +363,8 @@ public abstract class AbstractCommand implements Command {
 	 *             left command returns with an error.
 	 */
 	public Command or(final Command rhs) throws Exception {
-		PipedInputStream sink = new PipedInputStream();
+		int pipeSize = getPipeBufferSize();
+		PipedInputStream sink = new PipedInputStream(pipeSize);
 		PipedOutputStream target = new PipedOutputStream(sink);
 		setOutput(target);
 		rhs.setInput(sink);
@@ -359,11 +375,26 @@ public abstract class AbstractCommand implements Command {
 		return rhs;
 	}
 
+	/**
+	 * Operator {@code <<}.
+	 * 
+	 * @return this {@link Command}.
+	 * 
+	 * @see #setInput(Object)
+	 */
 	public Command leftShift(Object rhs) throws Exception {
 		setInput(rhs);
-		return call();
+		environment.executeCommandAndWait(this);
+		return this;
 	}
 
+	/**
+	 * Operator {@code >>}.
+	 * 
+	 * @return this {@link Command}.
+	 * 
+	 * @see #setOutput(Object)
+	 */
 	public Command rightShift(Object rhs) {
 		return this;
 	}

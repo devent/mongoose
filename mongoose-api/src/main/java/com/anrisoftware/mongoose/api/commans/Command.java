@@ -301,6 +301,24 @@ public interface Command extends Callable<Command> {
 	Command error(Object target) throws Exception;
 
 	/**
+	 * Sets the buffer size for pipes.
+	 * 
+	 * @param size
+	 *            the size in bytes.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the size is zero or negative.
+	 */
+	void setPipeBufferSize(int size);
+
+	/**
+	 * Returns the buffer size for pipes.
+	 * 
+	 * @return the size in bytes.
+	 */
+	int getPipeBufferSize();
+
+	/**
 	 * @see VetoableChangeSupport#addVetoableChangeListener(VetoableChangeListener)
 	 * @see #OUTPUT_TARGET_PROPERTY
 	 * @see #ERROR_TARGET_PROPERTY
