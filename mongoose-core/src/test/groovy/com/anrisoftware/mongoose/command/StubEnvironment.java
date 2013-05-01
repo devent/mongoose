@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.joda.time.Duration;
@@ -21,6 +23,12 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
  * @since 1.0
  */
 class StubEnvironment implements Environment {
+
+	private final ExecutorService executor;
+
+	public StubEnvironment() {
+		this.executor = Executors.newCachedThreadPool();
+	}
 
 	@Override
 	public void setEnv(Map<String, String> env) {
@@ -126,19 +134,21 @@ class StubEnvironment implements Environment {
 
 	@Override
 	public Future<Command> executeCommand(Command command) {
-		// TODO Auto-generated method stub
-		return null;
+		return executor.submit(command);
 	}
 
 	@Override
 	public void executeCommandAndWait(Command command) throws CommandException {
-		// TODO Auto-generated method stub
-
+		try {
+			command.call();
+		} catch (Exception e) {
+			throw new CommandException("Error execute command.", e);
+		}
 	}
 
 	@Override
 	public List<Future<?>> shutdown() throws InterruptedException {
-		// TODO Auto-generated method stub
+		executor.shutdown();
 		return null;
 	}
 }

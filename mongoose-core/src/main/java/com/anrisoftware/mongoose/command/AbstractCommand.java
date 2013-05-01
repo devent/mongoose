@@ -10,11 +10,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -22,7 +25,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.Environment;
-import com.gc.iotools.stream.os.OutputStreamToInputStream;
 
 /**
  * Sets the standard streams of the command and implements the stream
@@ -79,8 +81,11 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public Command call() throws Exception {
 		args();
-		doCall();
-		return this;
+		synchronized (streams) {
+			doCall();
+			streams.close();
+			return this;
+		}
 	}
 
 	/**
@@ -94,16 +99,22 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public Command call(Object... args) throws Exception {
 		args(args);
-		doCall();
-		return this;
+		synchronized (streams) {
+			doCall();
+			streams.close();
+			return this;
+		}
 	}
 
 	@Override
-	public Command call(Map<String, Object> named, Object... args)
+	public synchronized Command call(Map<String, Object> named, Object... args)
 			throws Exception {
 		args(named, args);
-		doCall();
-		return this;
+		synchronized (streams) {
+			doCall();
+			streams.close();
+			return this;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -214,7 +225,9 @@ public abstract class AbstractCommand implements Command {
 			stream = createInputStream((File) newValue);
 		}
 		vetoable.fireVetoableChange(INPUT_SOURCE_PROPERTY, null, newValue);
-		streams.setInputSource(stream);
+		synchronized (streams) {
+			streams.setInputSource(stream);
+		}
 		log.sourceSet(this, source);
 	}
 
@@ -261,7 +274,9 @@ public abstract class AbstractCommand implements Command {
 			stream = createOutputStream((File) newValue, append);
 		}
 		vetoable.fireVetoableChange(OUTPUT_TARGET_PROPERTY, null, newValue);
-		streams.setOutputTarget(descriptor, stream);
+		synchronized (streams) {
+			streams.setOutputTarget(descriptor, stream);
+		}
 		log.outputTargetSet(this, target);
 	}
 
@@ -302,7 +317,9 @@ public abstract class AbstractCommand implements Command {
 			stream = createOutputStream((File) newValue, append);
 		}
 		vetoable.fireVetoableChange(ERROR_TARGET_PROPERTY, null, newValue);
-		streams.setErrorTarget(stream);
+		synchronized (streams) {
+			streams.setErrorTarget(stream);
+		}
 		log.errorTargetSet(this, target);
 	}
 
@@ -331,14 +348,14 @@ public abstract class AbstractCommand implements Command {
 	 *             left command returns with an error.
 	 */
 	public Command or(final Command rhs) throws Exception {
-		setOutput(new OutputStreamToInputStream<Void>() {
-			@Override
-			protected Void doRead(InputStream istream) throws Exception {
-				rhs.setInput(istream);
-				return null;
-			}
-		});
-		environment.executeCommandAndWait(this);
+		PipedInputStream sink = new PipedInputStream();
+		PipedOutputStream target = new PipedOutputStream(sink);
+		setOutput(target);
+		rhs.setInput(sink);
+		Future<Command> task = environment.executeCommand(this);
+		Future<Command> taskRhs = environment.executeCommand(rhs);
+		task.get();
+		taskRhs.get();
 		return rhs;
 	}
 

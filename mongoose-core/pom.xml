@@ -81,11 +81,6 @@
 			<artifactId>groovy-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.jsignature.io-tools</groupId>
-			<artifactId>easystream</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 
 </project>

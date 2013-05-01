@@ -18,6 +18,7 @@
  */
 package com.anrisoftware.mongoose.command;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -152,6 +153,12 @@ public class StandardStreams {
 	 */
 	public OutputStream getErrorTarget() {
 		return errorTarget;
+	}
+
+	public void close() throws IOException {
+		inputSource.close();
+		outputTarget.close();
+		errorTarget.close();
 	}
 
 }
