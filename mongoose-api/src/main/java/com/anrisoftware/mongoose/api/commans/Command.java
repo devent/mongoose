@@ -147,25 +147,6 @@ public interface Command extends Callable<Command> {
 	Map<String, Object> getArgs();
 
 	/**
-	 * Sets the stream that is connected with the standard input of the command.
-	 * 
-	 * @param stream
-	 *            the {@link OutputStream} for standard input.
-	 * 
-	 * @throws NullPointerException
-	 *             if the specified stream is {@code null}.
-	 */
-	void setInputStream(OutputStream stream);
-
-	/**
-	 * Returns the stream that is connected with the standard input of the
-	 * command.
-	 * 
-	 * @return the {@link OutputStream} for standard input.
-	 */
-	OutputStream getInputStream();
-
-	/**
 	 * Sets the specified object as the data source for the input of the
 	 * command.
 	 * <dl>
@@ -207,26 +188,6 @@ public interface Command extends Callable<Command> {
 	 * @return this command.
 	 */
 	Command input(Object source) throws Exception;
-
-	/**
-	 * Sets the stream that is connected with the standard output of the
-	 * command.
-	 * 
-	 * @param stream
-	 *            the {@link InputStream} for standard output.
-	 * 
-	 * @throws NullPointerException
-	 *             if the specified stream is {@code null}.
-	 */
-	void setOutputStream(InputStream stream);
-
-	/**
-	 * Returns the stream that is connected with the standard output of the
-	 * command.
-	 * 
-	 * @return the {@link InputStream} for standard output.
-	 */
-	InputStream getOutputStream();
 
 	/**
 	 * Sets the specified target as the data target for the output of the
@@ -287,26 +248,6 @@ public interface Command extends Callable<Command> {
 	 * @return this command.
 	 */
 	Command output(Object target) throws Exception;
-
-	/**
-	 * Sets the stream that is connected with the standard error output of the
-	 * command.
-	 * 
-	 * @param stream
-	 *            the {@link InputStream} for the standard errors.
-	 * 
-	 * @throws NullPointerException
-	 *             if the specified stream is {@code null}.
-	 */
-	void setErrorStream(InputStream stream);
-
-	/**
-	 * Returns the stream that is connected with the standard error output of
-	 * the command.
-	 * 
-	 * @return the {@link InputStream} for standard errors.
-	 */
-	InputStream getErrorStream();
 
 	/**
 	 * Sets the specified target as the data target for the error output of the
