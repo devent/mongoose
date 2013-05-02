@@ -10,7 +10,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 
 import com.anrisoftware.mongoose.api.exceptions.DirectoryNotFoundException
-import com.anrisoftware.mongoose.parser.BashParserFactory
+import com.anrisoftware.mongoose.parser.ScriptParserFactory
 import com.google.inject.Injector
 
 /**
@@ -63,11 +63,11 @@ println Executors.class
 
 	static Injector injector
 
-	static BashParserFactory factory
+	static ScriptParserFactory factory
 
 	@BeforeClass
 	static void setupFactory() {
 		injector = createInjector()
-		factory = injector.getInstance BashParserFactory
+		factory = injector.getInstance ScriptParserFactory
 	}
 }

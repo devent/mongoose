@@ -18,14 +18,13 @@
  */
 package com.anrisoftware.mongoose.parser;
 
-
 /**
  * Factory to create a new parser of Groovy Bash scripts.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 0.1
  */
-public interface BashParserFactory {
+public interface ScriptParserFactory {
 
 	/**
 	 * Creates a new parser of Groovy Bash scripts that will parse the specified
@@ -34,7 +33,7 @@ public interface BashParserFactory {
 	 * @param script
 	 *            the script to parse.
 	 * 
-	 * @return the {@link BashParser}.
+	 * @return the {@link ScriptParser}.
 	 */
-	BashParser create(String script);
+	ScriptParser create(String script);
 }

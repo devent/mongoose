@@ -3,25 +3,25 @@ package com.anrisoftware.mongoose.parser;
 import com.anrisoftware.globalpom.log.AbstractLogger;
 
 /**
- * Logging messages for {@link BashParser}.
+ * Logging messages for {@link ScriptParser}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 0.3
  */
-class BashParserLogger extends AbstractLogger {
+class ScriptParserLogger extends AbstractLogger {
 
 	private static final String START_SCRIPT = "Start script {}.";
 
 	private static final String SHUTDOWN_SCRIPT = "Shutdown script {}, canceled commands: {}.";
 
 	/**
-	 * Creates logger for {@link BashParser}.
+	 * Creates logger for {@link ScriptParser}.
 	 */
-	BashParserLogger() {
-		super(BashParser.class);
+	ScriptParserLogger() {
+		super(ScriptParser.class);
 	}
 
-	void startScript(BashParser parser) {
+	void startScript(ScriptParser parser) {
 		if (log.isDebugEnabled()) {
 			log.debug(START_SCRIPT, parser);
 		} else {
@@ -29,7 +29,7 @@ class BashParserLogger extends AbstractLogger {
 		}
 	}
 
-	void shutdownScript(BashParser parser) {
+	void shutdownScript(ScriptParser parser) {
 		if (log.isDebugEnabled()) {
 			log.debug(SHUTDOWN_SCRIPT, parser, parser.getCanceledCommands());
 		} else {

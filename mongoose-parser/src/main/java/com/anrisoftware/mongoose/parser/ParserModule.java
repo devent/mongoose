@@ -43,8 +43,8 @@ public class ParserModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		install(new FactoryModuleBuilder().implement(BashParser.class,
-				BashParser.class).build(BashParserFactory.class));
+		install(new FactoryModuleBuilder().implement(ScriptParser.class,
+				ScriptParser.class).build(ScriptParserFactory.class));
 	}
 
 	/**

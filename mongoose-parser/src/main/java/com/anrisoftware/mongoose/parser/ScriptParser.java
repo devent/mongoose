@@ -45,13 +45,13 @@ import com.google.inject.assistedinject.Assisted;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public class BashParser implements Callable<BashParser> {
+public class ScriptParser implements Callable<ScriptParser> {
 
 	private static final String USER_DIR_PROPERTY = "user.dir";
 
 	private static final String SCRIPT_HOME_PROPERTY = "script_home";
 
-	private final BashParserLogger log;
+	private final ScriptParserLogger log;
 
 	private final Script script;
 
@@ -83,7 +83,7 @@ public class BashParser implements Callable<BashParser> {
 	 *            the {@link Environment} of the script.
 	 */
 	@Inject
-	BashParser(BashParserLogger logger,
+	ScriptParser(ScriptParserLogger logger,
 			ImportCustomizerProvider importCustomizerProvider,
 			ScriptPackageToClasspath scriptPackageToClasspath,
 			ParserMetaClass parserMetaClass,
@@ -143,7 +143,7 @@ public class BashParser implements Callable<BashParser> {
 	 * Runs the script.
 	 */
 	@Override
-	public BashParser call() throws Exception {
+	public ScriptParser call() throws Exception {
 		try {
 			log.startScript(this);
 			script.run();
