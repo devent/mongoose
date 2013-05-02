@@ -25,6 +25,10 @@ class PwdBuildinLogger extends AbstractLogger {
 	}
 
 	void checkArguments(PwdBuildin buildin, int size) {
+		inclusiveBetween(1, 1, size, ARGUMENTS);
+	}
+
+	void checkUnnamedArguments(PwdBuildin buildin, int size) {
 		inclusiveBetween(0, 0, size, ARGUMENTS);
 	}
 }

@@ -54,7 +54,7 @@ class PwdBuildin extends AbstractCommand {
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
 		log.checkArguments(this, args.size());
-		log.checkArguments(this, unnamedArgs.size());
+		log.checkUnnamedArguments(this, unnamedArgs.size());
 	}
 
 	/**

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.buildins.echobuildin
+package com.anrisoftware.mongoose.buildins.pwdbuildin
 
 import static com.anrisoftware.globalpom.utils.TestUtils.*
 
@@ -33,48 +33,21 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
- * @see EchoBuildin
+ * @see PwdBuildin
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class EchoTest  {
+class PwdTest {
 
 	@Test
-	void "no text"() {
+	void "pwd"() {
+		def dir = environment.getWorkingDirectory()
 		command()
-		assertStringContent output(byteOutput), "\n"
+		assertStringContent output(byteOutput), "$dir\n"
 	}
 
-	@Test
-	void "with text"() {
-		def text = "Text"
-		command text
-		assertStringContent output(byteOutput), "$text\n"
-	}
-
-	@Test
-	void "with multiple texts"() {
-		def textA = "TextA"
-		def textB = "TextB"
-		command textA, textB
-		assertStringContent output(byteOutput), "$textA $textB\n"
-	}
-
-	@Test
-	void "no text no newline"() {
-		command newline: false
-		assertStringContent output(byteOutput), ""
-	}
-
-	@Test
-	void "with text no newline"() {
-		def text = "Text"
-		command newline: false, text
-		assertStringContent output(byteOutput), "$text"
-	}
-
-	EchoBuildin command
+	PwdBuildin command
 
 	Environment environment
 
@@ -82,7 +55,7 @@ class EchoTest  {
 
 	@Before
 	void setupCommand() {
-		command = injector.getInstance(EchoBuildin)
+		command = injector.getInstance(PwdBuildin)
 		environment = injector.getInstance(Environment)
 		command.setEnvironment environment
 		byteOutput = new ByteArrayOutputStream()
@@ -95,7 +68,7 @@ class EchoTest  {
 	static void setupInjector() {
 		TestUtils.toStringStyle
 		injector = Guice.createInjector(
-				new EchoModule(), new EnvironmentModule(), new ThreadsModule(),
+				new PwdModule(), new EnvironmentModule(), new ThreadsModule(),
 				new ResourcesModule())
 	}
 
