@@ -21,6 +21,7 @@ package com.anrisoftware.mongoose.buildins.parsebuildin;
 import static java.util.Collections.unmodifiableList;
 import groovy.lang.Closure;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +61,6 @@ class ParseBuildin extends AbstractCommand {
 	private Closure<?> notValid;
 
 	private CmdLineParser parser;
-
-	private ExampleMode exampleMode;
-
-	private ResourceBundle resourceBundle;
 
 	@SuppressWarnings("serial")
 	@Inject
@@ -130,6 +127,7 @@ class ParseBuildin extends AbstractCommand {
 		log.checkParameter(this, args);
 		Object parameter = args.get(0);
 		this.parameter = parameter;
+		this.parser = new CmdLineParser(parameter);
 		log.parameterSet(this, parameter);
 	}
 
@@ -145,7 +143,6 @@ class ParseBuildin extends AbstractCommand {
 	public void setArguments(List<String> arguments) {
 		log.checkArguments(this, arguments);
 		this.arguments = copyArgs(arguments);
-		this.parser = new CmdLineParser(parameter);
 		log.argumentsSet(this, arguments);
 	}
 
@@ -228,8 +225,81 @@ class ParseBuildin extends AbstractCommand {
 		return parameter;
 	}
 
-	public String getTheExample() {
+	/**
+	 * Returns an example of the command line arguments.
+	 * 
+	 * @param exampleMode
+	 *            the {@link ExampleMode}.
+	 * 
+	 * @return the example {@link String}.
+	 */
+	public String printExample(ExampleMode exampleMode) {
+		return parser.printExample(exampleMode);
+	}
+
+	/**
+	 * Returns an example of the command line arguments.
+	 * 
+	 * @param exampleMode
+	 *            the {@link ExampleMode}.
+	 * 
+	 * @param resourceBundle
+	 *            the {@link ResourceBundle} for the text descriptions or
+	 *            {@code null}.
+	 * 
+	 * @return the example {@link String}.
+	 */
+	public String printExample(ExampleMode exampleMode,
+			ResourceBundle resourceBundle) {
 		return resourceBundle == null ? parser.printExample(exampleMode)
 				: parser.printExample(exampleMode, resourceBundle);
+	}
+
+	/**
+	 * Returns an example of the usage in a single line.
+	 * 
+	 * @return the example {@link String}.
+	 */
+	public String printSingleLineUsage() {
+		return printSingleLineUsage(null);
+	}
+
+	/**
+	 * Returns an example of the usage in a single line.
+	 * 
+	 * @param resourceBundle
+	 *            the {@link ResourceBundle} for the text descriptions or
+	 *            {@code null}.
+	 * 
+	 * @return the example {@link String}.
+	 */
+	public String printSingleLineUsage(ResourceBundle resourceBundle) {
+		StringWriter writer = new StringWriter();
+		parser.printSingleLineUsage(writer, resourceBundle);
+		return writer.toString();
+	}
+
+	/**
+	 * Returns an example of the usage.
+	 * 
+	 * @return the example {@link String}.
+	 */
+	public String printUsage() {
+		return printUsage(null);
+	}
+
+	/**
+	 * Returns an example of the usage.
+	 * 
+	 * @param resourceBundle
+	 *            the {@link ResourceBundle} for the text descriptions or
+	 *            {@code null}.
+	 * 
+	 * @return the example {@link String}.
+	 */
+	public String printUsage(ResourceBundle resourceBundle) {
+		StringWriter writer = new StringWriter();
+		parser.printUsage(writer, resourceBundle);
+		return writer.toString();
 	}
 }

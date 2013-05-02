@@ -24,6 +24,7 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 import org.kohsuke.args4j.Argument
+import org.kohsuke.args4j.ExampleMode
 import org.kohsuke.args4j.Option
 
 import com.anrisoftware.mongoose.api.commans.Environment
@@ -95,14 +96,26 @@ class ParseTest {
 		}
 	}
 
-	static example = " -a VAL -b N -c"
+	@Test
+	void "print example"() {
+		command.args new Parameter()
+		assert command.printExample(ExampleMode.ALL) == " -a VAL -b N -c"
+	}
 
-	static singleLineUsage = " [VAL ...] -a VAL -b N [-c]"
+	@Test
+	void "print single line usage"() {
+		command.args new Parameter()
+		assert command.printSingleLineUsage() == " [VAL ...] -a VAL -b N [-c]"
+	}
 
-	static usage = """ -a VAL : Parameter A
+	@Test
+	void "print usage"() {
+		command.args new Parameter()
+		assert command.printUsage() == """ -a VAL : Parameter A
  -b N   : Parameter B
  -c     : Parameter C
 """
+	}
 
 	static class Parameter {
 
