@@ -18,6 +18,7 @@
  */
 package com.anrisoftware.mongoose.parser;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
@@ -117,7 +118,7 @@ public class BashParser implements Callable<BashParser> {
 	 *            the command line arguments.
 	 */
 	public void setArgs(String[] args) {
-		environment.setArgs(args);
+		environment.setArgs(asList(args));
 	}
 
 	/**

@@ -41,11 +41,12 @@ class ParserMetaClass {
 	 * @return the {@link Script} with the set delegate.
 	 */
 	Script setDelegate(Script script, Environment environment) {
+		def proxy = new groovy.util.Proxy().wrap(environment)
 		script.metaClass.methodMissing = { name, args ->
-			environment.invokeMethod(name, args)
+			proxy.invokeMethod(name, args)
 		}
 		script.metaClass.propertyMissing = { name ->
-			environment.getProperty(name)
+			proxy.getProperty(name)
 		}
 		return script
 	}

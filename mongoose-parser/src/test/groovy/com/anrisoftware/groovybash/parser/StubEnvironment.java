@@ -1,6 +1,7 @@
 package com.anrisoftware.groovybash.parser;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -138,7 +139,6 @@ class StubEnvironment implements Environment {
 
 	@Override
 	public List<Future<?>> shutdown() throws InterruptedException {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<Future<?>>();
 	}
 }
