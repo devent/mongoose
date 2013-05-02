@@ -20,6 +20,8 @@ package com.anrisoftware.mongoose.buildins.runbuildin;
 
 import java.util.Map;
 
+import org.apache.commons.exec.ExecuteException;
+
 import com.anrisoftware.globalpom.log.AbstractLogger;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
@@ -31,16 +33,19 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
  */
 class RunBuildinLogger extends AbstractLogger {
 
-	private static final String SET_ENVIRONMENT = "Set environment %s.";
-	private static final String SET_COMMAND = "Set command '%s'.";
-	private static final String SET_WATCHDOG = "Set process watchdog %s.";
+	private static final String SET_EXIT_VALUES = "Set success exit values to {} for {}.";
+	private static final String SET_EXIT_VALUE = "Set success exit value to {} for {}.";
+	private static final String SET_WORKING_DIRECTORY = "Set working directory to '{}' for {}.";
+	private static final String SET_ENVIRONMENT = "Set environment {}.";
+	private static final String SET_COMMAND = "Set command '{}'.";
+	private static final String SET_WATCHDOG = "Set process watchdog {}.";
 	private static final String SPECIFIED_WATCHDOG_TYPE_MESSAGE = "Specified watchdog %s is not of type ExecuteWatchdog";
 	private static final String SPECIFIED_WATCHDOG_TYPE = "Specified watchdog is not of type ExecuteWatchdog";
 	private static final String SET_DESTROYER = "Set process destroyer %s.";
 	private static final String OBJECT = "object";
 	private static final String SPECIFIED_DESTROYER_TYPE_MESSAGE = "Specified destroyer %s is not of type ProcessDestroyer";
 	private static final String SPECIFIED_DESTROYER_TYPE = "Specified destroyer is not of type ProcessDestroyer";
-	private static final String SET_HANDLER = "Set process handler %s.";
+	private static final String SET_HANDLER = "Set process handler {}.";
 	private static final String SPECIFIED_HANDER_TYPE_MESSAGE = "Specified hander %s is not of type ExecuteResultHandler";
 	private static final String SPECIFIED_HANDER_TYPE = "Specified hander is not of type ExecuteResultHandler";
 	private static final String ERROR_INSTANTIATE_MESSAGE = "Error instantiate %s.";
@@ -109,4 +114,40 @@ class RunBuildinLogger extends AbstractLogger {
 		log.debug(SET_ENVIRONMENT, env);
 	}
 
+	void directorySet(RunBuildin buildin, Object dir) {
+		if (log.isDebugEnabled()) {
+			log.debug(SET_WORKING_DIRECTORY, dir, buildin);
+		} else {
+			log.info(SET_WORKING_DIRECTORY, dir, buildin.getTheName());
+		}
+	}
+
+	IllegalStateException notExitValueAvailable(RunBuildin buildin) {
+		return logException(
+				new IllegalStateException(
+						"No exit value is available, try ask your execute result handler."),
+				"No exit value is available, try ask your execute result handler.");
+	}
+
+	CommandException errorCommand(RunBuildin buildin, ExecuteException e) {
+		return logException(new CommandException("Command returns with error",
+				e).addContext(BUILDIN, buildin),
+				"Command returns with error: '%s'", buildin.getTheName());
+	}
+
+	void exitValueSet(RunBuildin buildin, int value) {
+		if (log.isDebugEnabled()) {
+			log.debug(SET_EXIT_VALUE, value, buildin);
+		} else {
+			log.info(SET_EXIT_VALUE, value, buildin.getTheName());
+		}
+	}
+
+	void exitValuesSet(RunBuildin buildin, int[] values) {
+		if (log.isDebugEnabled()) {
+			log.debug(SET_EXIT_VALUES, values, buildin);
+		} else {
+			log.info(SET_EXIT_VALUES, values, buildin.getTheName());
+		}
+	}
 }

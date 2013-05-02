@@ -30,10 +30,14 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecuteResultHandler;
+import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteResultHandler;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.ProcessDestroyer;
+import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.joda.time.Duration;
 
@@ -49,6 +53,10 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
  * @since 1.0
  */
 class RunBuildin extends AbstractCommand {
+
+	private static final String SUCCESS_EXIT_VALUES_KEY = "successExitValues";
+
+	private static final String SUCCESS_EXIT_VALUE_KEY = "successExitValue";
 
 	private static final String TIMEOUT_KEY = "timeout";
 
@@ -66,8 +74,6 @@ class RunBuildin extends AbstractCommand {
 
 	private Map<String, String> env;
 
-	private File workingDirectory;
-
 	private ExecuteResultHandler handler;
 
 	private ProcessDestroyer destroyer;
@@ -78,9 +84,10 @@ class RunBuildin extends AbstractCommand {
 	RunBuildin(RunBuildinLogger logger, Executor executor) {
 		this.log = logger;
 		this.executor = executor;
+		this.command = null;
 		this.env = null;
-		this.handler = null;
-		this.destroyer = null;
+		this.handler = new DefaultExecuteResultHandler();
+		this.destroyer = new ShutdownHookProcessDestroyer();
 		this.watchdog = null;
 	}
 
@@ -91,11 +98,11 @@ class RunBuildin extends AbstractCommand {
 	}
 
 	/**
-	 * Returns the name {@code run}.
+	 * Returns the name {@code run} or the command's executable.
 	 */
 	@Override
 	public String getTheName() {
-		return "run";
+		return command == null ? "run" : command.getExecutable();
 	}
 
 	@Override
@@ -103,12 +110,24 @@ class RunBuildin extends AbstractCommand {
 		startProcess();
 	}
 
-	private void startProcess() throws IOException {
+	private void startProcess() throws IOException, InterruptedException {
 		executor.setProcessDestroyer(destroyer);
 		executor.setWatchdog(watchdog);
-		executor.setWorkingDirectory(workingDirectory);
-		executor.setStreamHandler(getStreams().getStreamHandler());
+		executor.setStreamHandler(new PumpStreamHandler(getOutput(),
+				getError(), getInput()));
 		executor.execute(command, env, handler);
+		waitForCommand();
+	}
+
+	private void waitForCommand() throws InterruptedException, CommandException {
+		if (handler instanceof DefaultExecuteResultHandler) {
+			DefaultExecuteResultHandler h = (DefaultExecuteResultHandler) handler;
+			h.waitFor();
+			ExecuteException ex = h.getException();
+			if (ex != null) {
+				throw log.errorCommand(this, ex);
+			}
+		}
 	}
 
 	@Override
@@ -127,9 +146,30 @@ class RunBuildin extends AbstractCommand {
 		if (args.containsKey(TIMEOUT_KEY)) {
 			setTimeout(args.get(TIMEOUT_KEY));
 		}
+		if (args.containsKey(SUCCESS_EXIT_VALUE_KEY)) {
+			setSuccessExitValue(((Number) args.get(SUCCESS_EXIT_VALUE_KEY))
+					.intValue());
+		}
+		if (args.containsKey(SUCCESS_EXIT_VALUES_KEY)) {
+			setSuccessExitValues((List<?>) args.get(SUCCESS_EXIT_VALUES_KEY));
+		}
 		unnamedArgsSet(unnamedArgs);
 	}
 
+	/**
+	 * Sets the timeout for the process.
+	 * 
+	 * @param object
+	 *            the {@link Duration} of the timeout; or the {@link Number}
+	 *            timeout in milliseconds; or an {@link Object} that is parsed
+	 *            as the duration.
+	 * 
+	 * @throws CommandException
+	 *             if any errors set the timeout watchdog.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the parsed duration is not valid.
+	 */
 	public void setTimeout(Object object) throws CommandException {
 		if (object instanceof Duration) {
 			Duration timeout = (Duration) object;
@@ -143,6 +183,19 @@ class RunBuildin extends AbstractCommand {
 		}
 	}
 
+	/**
+	 * Sets the callback that is called when the process completes.
+	 * 
+	 * @param object
+	 *            either the {@link ExecuteResultHandler} or a {@link Class};
+	 *            the class type is instantiated with the default constructor
+	 *            and set as the handler.
+	 * 
+	 * @throws CommandException
+	 *             if the specified object is not an
+	 *             {@link ExecuteResultHandler}; if there were errors
+	 *             instantiate the class type.
+	 */
 	public void setHandler(Object object) throws CommandException {
 		if (object instanceof Class) {
 			@SuppressWarnings("unchecked")
@@ -156,6 +209,18 @@ class RunBuildin extends AbstractCommand {
 		log.handlerSet(this, object);
 	}
 
+	/**
+	 * Destroys the process under certain conditions.
+	 * 
+	 * @param object
+	 *            either the {@link ProcessDestroyer} or a {@link Class}; the
+	 *            class type is instantiated with the default constructor and
+	 *            set as the handler.
+	 * 
+	 * @throws CommandException
+	 *             if the specified object is not an {@link ProcessDestroyer};
+	 *             if there were errors instantiate the class type.
+	 */
 	public void setDestroyer(Object object) throws CommandException {
 		if (object instanceof Class) {
 			@SuppressWarnings("unchecked")
@@ -169,12 +234,24 @@ class RunBuildin extends AbstractCommand {
 		log.destroyerSet(this, object);
 	}
 
+	/**
+	 * Destroys the process after a specified timeout.
+	 * 
+	 * @param object
+	 *            either the {@link ExecuteWatchdog} or a {@link Class}; the
+	 *            class type is instantiated with the default constructor and
+	 *            set as the handler.
+	 * 
+	 * @throws CommandException
+	 *             if the specified object is not an {@link ExecuteWatchdog}; if
+	 *             there were errors instantiate the class type.
+	 */
 	public void setWatchdog(Object object) throws CommandException {
 		if (object instanceof Class) {
 			@SuppressWarnings("unchecked")
 			Class<ExecuteWatchdog> type = (Class<ExecuteWatchdog>) object;
 			this.watchdog = createType(type);
-		} else if (object instanceof ExecuteResultHandler) {
+		} else if (object instanceof ExecuteWatchdog) {
 			this.watchdog = (ExecuteWatchdog) object;
 		} else {
 			throw log.errorWatchdogType(this, object);
@@ -206,6 +283,18 @@ class RunBuildin extends AbstractCommand {
 		}
 	}
 
+	/**
+	 * Sets the command string.
+	 * 
+	 * @param object
+	 *            the command string.
+	 * 
+	 * @throws NullPointerException
+	 *             if the command string is {@code null}.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the command string is empty.
+	 */
 	public void setCommand(Object object) {
 		this.command = CommandLine.parse(object.toString());
 		log.commandSet(this, this.command);
@@ -238,6 +327,7 @@ class RunBuildin extends AbstractCommand {
 
 	public void setDirectory(Object object) {
 		executor.setWorkingDirectory(asFile(object));
+		log.directorySet(this, object);
 	}
 
 	private File asFile(Object object) {
@@ -248,4 +338,40 @@ class RunBuildin extends AbstractCommand {
 		}
 	}
 
+	/**
+	 * @see Executor#setExitValue(int)
+	 */
+	public void setSuccessExitValue(int value) {
+		executor.setExitValue(value);
+		log.exitValueSet(this, value);
+	}
+
+	/**
+	 * @see Executor#setExitValues(int[])
+	 */
+	public void setSuccessExitValues(List<?> list) {
+		int[] values = new int[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			Object item = list.get(i);
+			values[i] = ((Number) item).intValue();
+		}
+		executor.setExitValues(values);
+		log.exitValuesSet(this, values);
+	}
+
+	/**
+	 * @see DefaultExecuteResultHandler#getExitValue()
+	 * 
+	 * @throws IllegalStateException
+	 *             if the handler is not of type
+	 *             {@link DefaultExecuteResultHandler}.
+	 */
+	public int getTheExitValue() {
+		if (handler instanceof DefaultExecuteResultHandler) {
+			DefaultExecuteResultHandler h = (DefaultExecuteResultHandler) handler;
+			return h.getExitValue();
+		} else {
+			throw log.notExitValueAvailable(this);
+		}
+	}
 }

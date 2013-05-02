@@ -17,103 +17,124 @@
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.anrisoftware.mongoose.buildins.runbuildin
+import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static org.apache.commons.io.FileUtils.*
 
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.groovybash.buildins.BuildinTestUtils
-import com.anrisoftware.groovybash.core.Buildin
-import com.anrisoftware.mongoose.buildins.runbuildin.RunBuildin;
-import com.anrisoftware.mongoose.buildins.runbuildin.RunModule;
+import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.api.exceptions.CommandException
+import com.anrisoftware.mongoose.environment.EnvironmentModule
+import com.anrisoftware.mongoose.resources.ResourcesModule
+import com.anrisoftware.mongoose.threads.ThreadsModule
+import com.google.inject.Guice
+import com.google.inject.Injector
 
 /**
- * Test the build-in command {@code run}.
+ * @see RunBuildin
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
-class RunTest extends BuildinTestUtils {
+class RunTest {
+
+	@Test
+	void "cat file"() {
+		def string = "Test"
+		def tmp = File.createTempFile("file", "")
+		try {
+			write tmp, string
+			command "cat $tmp"
+			assertStringContent output(byteOutput), string
+		} finally {
+			tmp.delete()
+		}
+	}
+
+	@Test
+	void "cat file [+ working directory]"() {
+		def string = "Test"
+		def dir = File.createTempDir()
+		def tmp = new File(dir, "file")
+		try {
+			write tmp, string
+			command "cat ${tmp.name}", [:], dir
+			assertStringContent output(byteOutput), string
+		} finally {
+			dir.deleteDir()
+		}
+	}
+
+	@Test
+	void "bash [+env variable]"() {
+		def scriptFile = File.createTempFile("bash", null)
+		def string = "Test"
+		try {
+			write scriptFile, 'echo -n $VAR'
+			command "bash $scriptFile", [VAR: string]
+			assertStringContent output(byteOutput), string
+		} finally {
+			scriptFile.delete()
+		}
+	}
+
+	@Test(expected = CommandException)
+	void "sleep [+timeout]"() {
+		command timeout: 1000, "sleep 2"
+	}
+
+	@Test
+	void "exit value"() {
+		def value = 99
+		def scriptFile = File.createTempFile("bash", null)
+		try {
+			write scriptFile, "exit $value"
+			command successExitValue: value, "bash $scriptFile"
+		} finally {
+			scriptFile.delete()
+		}
+	}
+
+	@Test
+	void "exit values"() {
+		def value = 99
+		def scriptFile = File.createTempFile("bash", null)
+		try {
+			write scriptFile, "exit $value"
+			command successExitValues: [value], "bash $scriptFile"
+		} finally {
+			scriptFile.delete()
+		}
+	}
+
+	RunBuildin command
+
+	Environment environment
+
+	ByteArrayOutputStream byteOutput
 
 	@Before
-	void beforeTest() {
-		super.beforeTest()
-		injector = injector.createChildInjector new RunModule()
+	void setupCommand() {
+		command = injector.getInstance(RunBuildin)
+		environment = injector.getInstance(Environment)
+		command.setEnvironment environment
+		byteOutput = new ByteArrayOutputStream()
+		command.setOutput(byteOutput)
 	}
 
-	@Test
-	void "run build-in with cat command with file"() {
-		def tmp = createTempFile "Hello World"
-		createBuildin(RunBuildin, ["cat $tmp"])()
-		assertStringContent output, "Hello World"
+	static Injector injector
+
+	@BeforeClass
+	static void setupInjector() {
+		toStringStyle
+		injector = Guice.createInjector(
+				new RunModule(), new EnvironmentModule(), new ThreadsModule(),
+				new ResourcesModule())
 	}
 
-	@Test
-	void "run build-in return code from command"() {
-		def result = createBuildin(RunBuildin, ['bash -c "exit 1"'])()
-		assert result == 1
+	static String output(ByteArrayOutputStream stream) {
+		stream.toString()
 	}
-
-	@Test
-	void "run build-in with custom environment passed as string"() {
-		def tmp = createTempFile 'echo $ENV_1'
-		createBuildin(RunBuildin, ["bash $tmp", "ENV_1=foo"])()
-		assertStringContent output, "foo\n"
-	}
-
-	@Test
-	void "run build-in with custom environment passed as map"() {
-		def tmp = createTempFile 'echo $ENV_1'
-		def environment = [ENV_1: "foo"]
-		createBuildin(RunBuildin, ["bash $tmp", environment])()
-		assertStringContent output, "foo\n"
-	}
-
-	@Test
-	void "run build-in with custom working directory passed as string"() {
-		def pwdScript = createTempFile 'pwd'
-		def tmp = createTempDirectory()
-		def environment = [:]
-		createBuildin(RunBuildin, ["bash $pwdScript", environment, "$tmp"])()
-		assertStringContent output, "$tmp\n"
-	}
-
-	@Test
-	void "run build-in with custom working directory passed as string using pwd"() {
-		def tmp = createTempDirectory()
-		def environment = [:]
-		createBuildin(RunBuildin, ['bash -c "pwd"', environment, "$tmp"])()
-		assertStringContent output, "$tmp\n"
-	}
-
-	@Test
-	void "run build-in with custom working directory passed as file"() {
-		def pwdScript = createTempFile 'pwd'
-		def tmp = createTempDirectory()
-		def environment = [:]
-		createBuildin(RunBuildin, ["bash $pwdScript", environment, tmp])()
-		assertStringContent output, "$tmp\n"
-	}
-
-	@Test
-	void "run build-in redirect error stream to output stream"() {
-		createBuildin(RunBuildin, [[redirectErrorStream: true], 'bash -xc "echo Text"'])()
-		assertStringContent output, """+ echo Text
-Text
-"""
-	}
-	
-	@Test
-	void "run build-in output and error stream"() {
-		createBuildin(RunBuildin, ['bash -xc "echo Text"'])()
-		assertStringContent output, "Text\n"
-		assertStringContent error, "+ echo Text\n"
-	}
-	
-	@Test
-	void "read command from input"() {
-		inputBuffer = 'bash -c "echo Text"'.toString().bytes
-		createBuildin(RunBuildin, [[in: inputStream, fromIn: true]])()
-		assertStringContent output, "Text\n"
-	}
-
 }

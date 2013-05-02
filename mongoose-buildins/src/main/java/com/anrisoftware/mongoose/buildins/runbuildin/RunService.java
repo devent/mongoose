@@ -20,15 +20,12 @@ package com.anrisoftware.mongoose.buildins.runbuildin;
 
 import org.mangosdk.spi.ProviderFor;
 
-import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.CommandFactory;
 import com.anrisoftware.mongoose.api.commans.CommandInfo;
 import com.anrisoftware.mongoose.api.commans.CommandService;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * Makes the build-in command {@code run} available as a service.
@@ -55,13 +52,7 @@ public class RunService implements CommandService {
 		}
 	};
 
-	private static final Module[] MODULES = new Module[] { new AbstractModule() {
-		@Override
-		protected void configure() {
-			install(new FactoryModuleBuilder().implement(Command.class,
-					RunBuildin.class).build(CommandFactory.class));
-		}
-	} };
+	private static final Module[] MODULES = new Module[] { new RunModule() };
 
 	@Override
 	public CommandInfo getInfo() {
