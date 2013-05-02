@@ -18,12 +18,12 @@
  */
 package com.anrisoftware.mongoose.parser;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
 import java.io.File;
+import java.io.Reader;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -55,8 +55,6 @@ public class ScriptParser implements Callable<ScriptParser> {
 
 	private final Script script;
 
-	private final Environment environment;
-
 	private final ParserMetaClass parserMetaClass;
 
 	private final String scriptHome;
@@ -65,9 +63,13 @@ public class ScriptParser implements Callable<ScriptParser> {
 
 	private final ScriptPackageToClasspath scriptPackageToClasspath;
 
+	private Environment environment;
+
 	private List<Future<?>> canceledCommands;
 
 	/**
+	 * @see ScriptParserFactory#create(Reader, String)
+	 * 
 	 * @param p
 	 *            the parser {@link ContextProperties} properties:
 	 *            <p>
@@ -78,9 +80,6 @@ public class ScriptParser implements Callable<ScriptParser> {
 	 *            current working directory.</dd>
 	 * 
 	 *            </dl>
-	 * 
-	 * @param environment
-	 *            the {@link Environment} of the script.
 	 */
 	@Inject
 	ScriptParser(ScriptParserLogger logger,
@@ -88,41 +87,40 @@ public class ScriptParser implements Callable<ScriptParser> {
 			ScriptPackageToClasspath scriptPackageToClasspath,
 			ParserMetaClass parserMetaClass,
 			@Named("parser-properties") ContextProperties p,
-			Environment environment, @Assisted String scriptText) {
+			@Assisted Reader source, @Assisted String fileName) {
 		this.log = logger;
 		this.importCustomizer = importCustomizerProvider.get();
 		this.scriptPackageToClasspath = scriptPackageToClasspath;
-		this.environment = environment;
 		this.parserMetaClass = parserMetaClass;
 		this.scriptHome = p.getProperty(SCRIPT_HOME_PROPERTY,
 				System.getProperty(USER_DIR_PROPERTY));
-		this.script = createScript(scriptText);
+		this.script = createScript(source, fileName);
 	}
 
-	private Script createScript(String scriptText) {
+	private Script createScript(Reader source, String fileName) {
 		CompilerConfiguration config = new CompilerConfiguration();
 		config.addCompilationCustomizers(importCustomizer);
-		Script script = new GroovyShell(config).parse(scriptText);
+		Script script = new GroovyShell(config).parse(source, fileName);
 		scriptPackageToClasspath.addPackageNameToClassPath(script, scriptHome);
-		parserMetaClass.setDelegate(script, environment);
-		environment.setScriptClassLoader(script.getClass().getClassLoader());
-		environment.setScriptLoggerContext(script.getClass());
-		environment.setScriptHome(new File(scriptHome));
 		return script;
 	}
 
 	/**
-	 * Sets the command line arguments for the script.
+	 * Sets the environment of the script.
 	 * 
-	 * @param args
-	 *            the command line arguments.
+	 * @param environment
+	 *            the {@link Environment}.
 	 */
-	public void setArgs(String[] args) {
-		environment.setArgs(asList(args));
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+		parserMetaClass.setDelegate(script, environment);
+		environment.setScriptHome(new File(scriptHome));
+		environment.setScriptClassLoader(script.getClass().getClassLoader());
+		environment.setScriptLoggerContext(script.getClass());
 	}
 
 	/**
-	 * Returns the script environment.
+	 * Returns the environment of the script.
 	 * 
 	 * @return the {@link Environment}.
 	 */

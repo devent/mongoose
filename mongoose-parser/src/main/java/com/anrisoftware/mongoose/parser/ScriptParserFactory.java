@@ -18,22 +18,27 @@
  */
 package com.anrisoftware.mongoose.parser;
 
+import java.io.Reader;
+
 /**
- * Factory to create a new parser of Groovy Bash scripts.
+ * Factory to create a new parser of Groovy scripts.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
 public interface ScriptParserFactory {
 
 	/**
-	 * Creates a new parser of Groovy Bash scripts that will parse the specified
-	 * script.
+	 * Creates a new parser for the specified script.
 	 * 
-	 * @param script
-	 *            the script to parse.
+	 * @param source
+	 *            the {@link Reader} source of the script.
+	 * 
+	 * @param fileName
+	 *            the file name of the script, which is used to create the class
+	 *            name of the script.
 	 * 
 	 * @return the {@link ScriptParser}.
 	 */
-	ScriptParser create(String script);
+	ScriptParser create(Reader source, String fileName);
 }
