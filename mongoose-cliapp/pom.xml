@@ -1,18 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.anrisoftware.globalpom</groupId>
-		<artifactId>globalpom-groovyizpacksinglejar</artifactId>
-		<version>1.6-SNAPSHOT</version>
-		<relativePath />
+		<groupId>com.anrisoftware.mongoose</groupId>
+		<artifactId>mongoose-parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../mongoose-parent</relativePath>
 	</parent>
 
 	<artifactId>mongoose-cliapp</artifactId>
-	<groupId>com.anrisoftware.mongoose</groupId>
-	<version>0.2-SNAPSHOT</version>
-	<name>Groovybash CLI Application</name>
+	<name>Mongoose :: CLI</name>
 
 	<properties>
 		<project.custom.mainclass>com.anrisoftware.mongoose.application.Start</project.custom.mainclass>
@@ -58,41 +57,6 @@
 		</snapshotRepository>
 	</distributionManagement>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.anrisoftware.globalpom</groupId>
-				<artifactId>globalpom-groovytestutils</artifactId>
-				<version>${project.custom.globalpom.groovytestutils.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.anrisoftware.globalpom</groupId>
-				<artifactId>globalpom-log</artifactId>
-				<version>${project.custom.globalpom.log.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.anrisoftware.propertiesutils</groupId>
-				<artifactId>propertiesutils</artifactId>
-				<version>1.1.2</version>
-			</dependency>
-			<dependency>
-				<groupId>com.anrisoftware.mongoose</groupId>
-				<artifactId>mongoose-core</artifactId>
-				<version>0.3-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>com.anrisoftware.mongoose</groupId>
-				<artifactId>mongoose-buildins</artifactId>
-				<version>0.2-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.ivy</groupId>
-				<artifactId>ivy</artifactId>
-				<version>2.2.0</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
 	<dependencies>
 
 		<!-- test -->
@@ -120,36 +84,21 @@
 			<artifactId>globalpom-log</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.googlecode.sli4j</groupId>
-			<artifactId>sli4j-slf4j-log4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.ivy</groupId>
-			<artifactId>ivy</artifactId>
+			<artifactId>groovy</artifactId>
 		</dependency>
 
 		<!-- groovybsah -->
 		<dependency>
 			<groupId>com.anrisoftware.mongoose</groupId>
 			<artifactId>mongoose-core</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.anrisoftware.mongoose</groupId>
 			<artifactId>mongoose-buildins</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
-
 	</dependencies>
 
 </project>

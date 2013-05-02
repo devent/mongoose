@@ -1,11 +1,11 @@
-package com.anrisoftware.groovybash.application;
+package com.anrisoftware.mongoose.application;
 
-import com.anrisoftware.groovybash.buildins.BuildinsModule;
-import com.anrisoftware.groovybash.environment.EnvironmentModule;
-import com.anrisoftware.groovybash.executor.ExecutorModule;
-import com.anrisoftware.groovybash.parameter.ParameterModule;
-import com.anrisoftware.groovybash.parser.ParserModule;
-import com.anrisoftware.groovybash.resources.ResourcesModule;
+import com.anrisoftware.mongoose.buildins.BuildinsModule;
+import com.anrisoftware.mongoose.environment.EnvironmentModule;
+import com.anrisoftware.mongoose.executor.ExecutorModule;
+import com.anrisoftware.mongoose.parameter.ParameterModule;
+import com.anrisoftware.mongoose.parser.ParserModule;
+import com.anrisoftware.mongoose.resources.ResourcesModule;
 import com.google.inject.AbstractModule;
 
 /**

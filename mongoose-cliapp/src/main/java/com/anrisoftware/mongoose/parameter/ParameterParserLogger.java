@@ -1,4 +1,4 @@
-package com.anrisoftware.groovybash.parameter;
+package com.anrisoftware.mongoose.parameter;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -12,6 +12,8 @@ import com.anrisoftware.globalpom.log.AbstractLogger;
  */
 class ParameterParserLogger extends AbstractLogger {
 
+	private static final String PARSE_COMMAND_LINE_ARGUMENTS = "Parse the command line arguments {}.";
+
 	/**
 	 * Create a logger for {@link ParameterParser}.
 	 */
@@ -20,7 +22,6 @@ class ParameterParserLogger extends AbstractLogger {
 	}
 
 	void parseArguments(String[] arguments) {
-		log.debug("Parse the command line arguments {}.",
-				ArrayUtils.toString(arguments));
+		log.debug(PARSE_COMMAND_LINE_ARGUMENTS, ArrayUtils.toString(arguments));
 	}
 }

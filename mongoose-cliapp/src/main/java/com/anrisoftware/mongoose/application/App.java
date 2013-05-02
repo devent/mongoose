@@ -1,8 +1,8 @@
-package com.anrisoftware.groovybash.application;
+package com.anrisoftware.mongoose.application;
 
 import javax.inject.Inject;
 
-import com.anrisoftware.groovybash.parameter.ParameterParser;
+import com.anrisoftware.mongoose.parameter.ParameterParser;
 import com.google.inject.Injector;
 
 /**
@@ -11,12 +11,12 @@ import com.google.inject.Injector;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public class Application {
+public class App {
 
 	private final ParameterParser parser;
 
 	@Inject
-	Application(ParameterParser parser) {
+	App(ParameterParser parser) {
 		this.parser = parser;
 	}
 
@@ -29,8 +29,8 @@ public class Application {
 	 * @param injector
 	 *            the {@link Injector}.
 	 */
-	public void start(String[] args, Injector injector) {
-		parser.parseParameter(args, injector);
+	public void start(String[] args) {
+		parser.parseParameter(args);
 		parser.getBashParser().run();
 	}
 }
