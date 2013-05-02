@@ -60,6 +60,7 @@ public class ParameterParser {
 		CmdLineParser parser = new CmdLineParser(parameter);
 		log.parseArguments(args);
 		parser.parseArgument(args);
+		log.checkParameter(parameter, parser);
 	}
 
 	/**

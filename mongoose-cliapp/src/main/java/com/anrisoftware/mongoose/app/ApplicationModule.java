@@ -1,28 +1,24 @@
-package com.anrisoftware.mongoose.application;
+package com.anrisoftware.mongoose.app;
 
-import com.anrisoftware.mongoose.buildins.BuildinsModule;
 import com.anrisoftware.mongoose.environment.EnvironmentModule;
-import com.anrisoftware.mongoose.executor.ExecutorModule;
-import com.anrisoftware.mongoose.parameter.ParameterModule;
 import com.anrisoftware.mongoose.parser.ParserModule;
 import com.anrisoftware.mongoose.resources.ResourcesModule;
+import com.anrisoftware.mongoose.threads.ThreadsModule;
 import com.google.inject.AbstractModule;
 
 /**
- * Install all needed modules for the application.
+ * Install needed modules for the application.
  * 
  * @author Erwin Müller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
 class ApplicationModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		install(new ParameterModule());
 		install(new ParserModule());
 		install(new EnvironmentModule());
-		install(new BuildinsModule());
-		install(new ExecutorModule());
 		install(new ResourcesModule());
+		install(new ThreadsModule());
 	}
 }
