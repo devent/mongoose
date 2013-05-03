@@ -23,6 +23,7 @@ import java.beans.VetoableChangeSupport;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -126,6 +127,14 @@ public interface Command extends Callable<Command> {
 	void setArgs(Object args) throws Exception;
 
 	/**
+	 * @param arg
+	 *            additional argument.
+	 * 
+	 * @see #setArgs(Object)
+	 */
+	void setArgs(Object arg, Object args) throws Exception;
+
+	/**
 	 * @see #setArgs(Object...)
 	 * 
 	 * @return this {@link Command}.
@@ -145,6 +154,13 @@ public interface Command extends Callable<Command> {
 	 * @return the arguments.
 	 */
 	Map<String, Object> getArgs();
+
+	/**
+	 * Returns the unnamed arguments.
+	 * 
+	 * @return the unnamed arguments.
+	 */
+	List<Object> getUnnamedArgs();
 
 	/**
 	 * Sets the specified object as the data source for the input of the
@@ -372,4 +388,5 @@ public interface Command extends Callable<Command> {
 	 */
 	void removeVetoableChangeListener(String propertyName,
 			VetoableChangeListener listener);
+
 }

@@ -256,8 +256,13 @@ class EnvironmentImpl implements Environment {
 	 */
 	public Object methodMissing(String name, Object args) throws Exception {
 		Command command = loadCommand(name);
+		if (command == null) {
+			command = loadCommand("run");
+			command.setArgs(name, args);
+		} else {
+			command.setArgs(args);
+		}
 		command.setEnvironment(this);
-		command.setArgs(args);
 		executeCommandAndWait(command);
 		return command;
 	}
@@ -282,10 +287,7 @@ class EnvironmentImpl implements Environment {
 
 	private Command loadCommand(String name) {
 		CommandService service = loadCommandService(name);
-		if (service == null) {
-			service = loadCommandService("run");
-		}
-		return service.getCommandFactory().create();
+		return service == null ? null : service.getCommandFactory().create();
 	}
 
 	private CommandService loadCommandService(String name) {

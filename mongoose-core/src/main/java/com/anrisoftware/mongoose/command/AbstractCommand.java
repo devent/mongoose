@@ -1,7 +1,9 @@
 package com.anrisoftware.mongoose.command;
 
 import static com.anrisoftware.mongoose.command.StandardStreams.STANDRD_OUTPUT_DESCRIPTOR;
+import static java.lang.String.format;
 
+import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.beans.VetoableChangeSupport;
 import java.io.File;
@@ -14,6 +16,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,21 +124,31 @@ public abstract class AbstractCommand implements Command {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void setArgs(Object args) throws Exception {
+		setArgs(null, args);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setArgs(Object arg, Object args) throws Exception {
 		log.checkArgs(this, args);
+		Object[] commandArgs = parseArgs(asList(args));
+		insertAdditional(arg, (List<Object>) commandArgs[1]);
 		Map<String, Object> oldValue = this.args;
 		Map<String, Object> newValue = createMap(10);
-		if (args instanceof Map) {
-			newValue.putAll((Map<String, Object>) args);
-		} else {
-			newValue.put(UNNAMED_KEY, asList(args));
-		}
+		newValue.putAll((Map<String, Object>) commandArgs[0]);
+		newValue.put(UNNAMED_KEY, commandArgs[1]);
 		vetoable.fireVetoableChange(ARGUMENTS_PROPERTY, oldValue, newValue);
 		this.args = newValue;
 		argumentsSet(getArgs(), getUnnamedArgs());
 		log.argumentsSet(this, args);
+	}
+
+	private void insertAdditional(Object arg, List<Object> unnamed) {
+		if (arg != null && unnamed.size() > 0) {
+			unnamed.set(0, format("%s %s", arg, unnamed.get(0)));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -148,6 +161,28 @@ public abstract class AbstractCommand implements Command {
 			List<Object> list = new ArrayList<Object>();
 			list.add(obj);
 			return list;
+		}
+	}
+
+	private Object[] parseArgs(List<Object> list) {
+		Map<String, Object> named = new HashMap<String, Object>();
+		List<Object> unnamed = new ArrayList<Object>(list.size());
+		int index = 0;
+		if (list.size() > 0) {
+			if (list.get(0) instanceof Map) {
+				putNamed(named, (Map<?, ?>) list.get(0));
+				index++;
+			}
+			for (int i = index; i < list.size(); i++) {
+				unnamed.add(list.get(i));
+			}
+		}
+		return new Object[] { named, unnamed };
+	}
+
+	private void putNamed(Map<String, Object> named, Map<?, ?> map) {
+		for (Map.Entry<?, ?> entry : map.entrySet()) {
+			named.put(entry.getKey().toString(), entry.getValue());
 		}
 	}
 
@@ -166,6 +201,11 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public Command args(Map<String, Object> named, Object... args)
 			throws Exception {
+		return setupArgs(named, args);
+	}
+
+	private Command setupArgs(Map<String, Object> named, Object[] args)
+			throws PropertyVetoException, Exception {
 		log.checkArgs(this, named);
 		Map<String, Object> oldValue = this.args;
 		Map<String, Object> newValue = createMap(10);
@@ -203,11 +243,7 @@ public abstract class AbstractCommand implements Command {
 		return args;
 	}
 
-	/**
-	 * Returns the unnamed arguments.
-	 * 
-	 * @return the unnamed arguments.
-	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Object> getUnnamedArgs() {
 		return (List<Object>) args.get(UNNAMED_KEY);
