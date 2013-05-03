@@ -249,10 +249,24 @@ class EnvironmentImpl implements Environment {
 	}
 
 	/**
+	 * Returns the command if it is not a method of the environment.
+	 * 
+	 * @throws Exception
+	 *             if some errors are encountered from the command.
+	 */
+	public Object methodMissing(String name, Object args) throws Exception {
+		Command command = loadCommand(name);
+		command.setEnvironment(this);
+		command.setArgs(args);
+		return command;
+	}
+
+	/**
 	 * Returns the script variable or command if it is not a property of the
 	 * environment.
 	 * 
 	 * @throws Exception
+	 *             if some errors are encountered from the command.
 	 */
 	public Object propertyMissing(String name) throws Exception {
 		if (variables.containsKey(name)) {
