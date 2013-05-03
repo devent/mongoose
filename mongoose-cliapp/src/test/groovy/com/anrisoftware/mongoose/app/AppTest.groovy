@@ -27,6 +27,13 @@ class AppTest {
 	}
 
 	@Test
+	void "scipt file [no args]"() {
+		def file = folder.newFile("script.groovy");
+		write file, """echo"""
+		app.start(["-file", file] as String[])
+	}
+
+	@Test
 	void "scipt file [echo]"() {
 		def file = folder.newFile("script.groovy");
 		write file, """echo \"Hello\""""

@@ -18,6 +18,8 @@
  */
 package com.anrisoftware.mongoose.parser
 
+import org.codehaus.groovy.runtime.InvokerHelper
+
 import com.anrisoftware.mongoose.api.commans.Environment
 
 /**
@@ -41,12 +43,11 @@ class ParserMetaClass {
 	 * @return the {@link Script} with the set delegate.
 	 */
 	Script setDelegate(Script script, Environment environment) {
-		def proxy = new groovy.util.Proxy().wrap(environment)
 		script.metaClass.methodMissing = { name, args ->
-			proxy.invokeMethod(name, args)
+			InvokerHelper.invokeMethod(environment, name, args);
 		}
 		script.metaClass.propertyMissing = { name ->
-			proxy.getProperty(name)
+			InvokerHelper.getProperty(environment, name);
 		}
 		return script
 	}
