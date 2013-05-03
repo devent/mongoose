@@ -65,6 +65,13 @@ class AppTest {
 		app.start(["-file", file] as String[])
 	}
 
+	@Test
+	void "scipt file [log context]"() {
+		def file = folder.newFile("Script.groovy");
+		write file, """echo debug.theContext"""
+		app.start(["-file", file] as String[])
+	}
+
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
 
