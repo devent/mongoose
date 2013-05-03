@@ -280,7 +280,6 @@ class EnvironmentImpl implements Environment {
 		} else {
 			Command command = loadCommand(name);
 			command.setEnvironment(this);
-			command.setArgs(commandName(name));
 			return command;
 		}
 	}
@@ -298,12 +297,6 @@ class EnvironmentImpl implements Environment {
 			}
 		}
 		return null;
-	}
-
-	private Map<String, Object> commandName(String name) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("commandName", name);
-		return map;
 	}
 
 	@Override
