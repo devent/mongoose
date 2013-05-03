@@ -258,6 +258,7 @@ class EnvironmentImpl implements Environment {
 		Command command = loadCommand(name);
 		command.setEnvironment(this);
 		command.setArgs(args);
+		executeCommandAndWait(command);
 		return command;
 	}
 

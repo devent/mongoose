@@ -55,6 +55,8 @@ public abstract class AbstractCommand implements Command {
 	protected AbstractCommand() {
 		this.vetoable = new VetoableChangeSupport(this);
 		this.pipeBufferSize = 1024;
+		this.args = createMap(1);
+		args.put(UNNAMED_KEY, new ArrayList<Object>(0));
 	}
 
 	@Inject
@@ -83,7 +85,6 @@ public abstract class AbstractCommand implements Command {
 
 	@Override
 	public Command call() throws Exception {
-		args();
 		synchronized (streams) {
 			doCall();
 			streams.close();
@@ -150,10 +151,6 @@ public abstract class AbstractCommand implements Command {
 		}
 	}
 
-	private Map<String, Object> createMap(int size) {
-		return new LinkedHashMap<String, Object>(size);
-	}
-
 	@Override
 	public Command args(Object... args) throws Exception {
 		Map<String, Object> oldValue = this.args;
@@ -179,6 +176,10 @@ public abstract class AbstractCommand implements Command {
 		log.argumentsSet(this, args);
 		argumentsSet(getArgs(), getUnnamedArgs());
 		return this;
+	}
+
+	private Map<String, Object> createMap(int size) {
+		return new LinkedHashMap<String, Object>(size);
 	}
 
 	/**
