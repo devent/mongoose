@@ -12,7 +12,7 @@
 
 	<artifactId>mongoose-api</artifactId>
 	<name>Mongoose :: API</name>
-	<description>Groovy bash script API.</description>
+	<description>Interface for the script and for the commands.</description>
 	<inceptionYear>2013</inceptionYear>
 
 	<properties>
