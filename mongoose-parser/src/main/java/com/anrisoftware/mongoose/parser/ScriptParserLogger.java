@@ -25,7 +25,7 @@ class ScriptParserLogger extends AbstractLogger {
 		if (log.isDebugEnabled()) {
 			log.debug(START_SCRIPT, parser);
 		} else {
-			log.debug(START_SCRIPT, parser.getEnvironment().getScriptHome());
+			log.info(START_SCRIPT, parser.getEnvironment().getScriptHome());
 		}
 	}
 
@@ -33,7 +33,7 @@ class ScriptParserLogger extends AbstractLogger {
 		if (log.isDebugEnabled()) {
 			log.debug(SHUTDOWN_SCRIPT, parser, parser.getCanceledCommands());
 		} else {
-			log.debug(SHUTDOWN_SCRIPT, parser.getEnvironment().getScriptHome(),
+			log.info(SHUTDOWN_SCRIPT, parser.getEnvironment().getScriptHome(),
 					parser.getCanceledCommands());
 		}
 	}
