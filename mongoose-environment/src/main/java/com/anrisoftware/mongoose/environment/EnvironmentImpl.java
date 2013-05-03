@@ -288,6 +288,7 @@ class EnvironmentImpl implements Environment {
 	}
 
 	private CommandService loadCommandService(String name) {
+		log.loadCommand(this, name);
 		for (CommandService service : ServiceLoader.load(CommandService.class)) {
 			if (service.getInfo().getId().equals(name)) {
 				return service;
@@ -368,7 +369,7 @@ class EnvironmentImpl implements Environment {
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("variables", variables)
-				.toString();
+		return new ToStringBuilder(this).append("background tasks",
+				backgroundTasks.size()).toString();
 	}
 }

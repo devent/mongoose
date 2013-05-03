@@ -37,6 +37,7 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
  */
 class EnvironmentImplLogger extends AbstractLogger {
 
+	private static final String LOAD_COMMAND = "Load command '{}' for {}.";
 	private static final String LOCALE_NULL = "The script locale cannot be null.";
 	private static final String SET_LOCALE = "Set script locale {}.";
 	private static final String CANCELED_COMMAND_MESSAGE = "Canceled command %s.";
@@ -95,5 +96,9 @@ class EnvironmentImplLogger extends AbstractLogger {
 
 	void checkLocale(EnvironmentImpl env, Locale locale) {
 		notNull(locale, LOCALE_NULL);
+	}
+
+	void loadCommand(EnvironmentImpl environment, String name) {
+		log.trace(LOAD_COMMAND, name, environment);
 	}
 }
