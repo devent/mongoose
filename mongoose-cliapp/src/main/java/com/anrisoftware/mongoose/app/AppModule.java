@@ -12,7 +12,7 @@ import com.google.inject.AbstractModule;
  * @author Erwin Müller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class ApplicationModule extends AbstractModule {
+class AppModule extends AbstractModule {
 
 	@Override
 	protected void configure() {

@@ -12,7 +12,7 @@ import com.google.inject.Injector;
 public class Start {
 
 	public static void main(String[] args) throws AppException {
-		Injector injector = Guice.createInjector(new ApplicationModule());
+		Injector injector = Guice.createInjector(new AppModule());
 		App app = injector.getInstance(App.class);
 		app.start(args);
 	}

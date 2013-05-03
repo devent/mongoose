@@ -30,21 +30,22 @@ public class App {
 
 	private final OpenReader openReader;
 
+	private final FileName fileName;
+
 	private Parameter parameter;
 
 	private ScriptParser script;
 
-	private FileName fileName;
-
 	@Inject
 	App(AppLogger logger, ParameterParser parser,
 			ScriptParserFactory scriptFactory, Environment environment,
-			OpenReader openReader) {
+			OpenReader openReader, FileName fileName) {
 		this.log = logger;
 		this.parser = parser;
 		this.scriptFactory = scriptFactory;
 		this.environment = environment;
 		this.openReader = openReader;
+		this.fileName = fileName;
 	}
 
 	/**
