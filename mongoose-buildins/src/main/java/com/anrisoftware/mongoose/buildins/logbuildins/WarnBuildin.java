@@ -41,4 +41,9 @@ class WarnBuildin extends AbstractLogBuildin {
 		logger.warn(getMessage(), getArguments());
 	}
 
+	@Override
+	public boolean getIsEnabled() {
+		return getTheEnvironment().getScriptLogger().isWarnEnabled();
+	}
+
 }

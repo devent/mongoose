@@ -48,7 +48,7 @@ abstract class AbstractLogBuildin extends AbstractCommand {
 	 *            the {@link AbstractLogBuildinLogger}.
 	 */
 	@Inject
-	public void setLogBuildinLogger(AbstractLogBuildinLogger logger) {
+	void setLogBuildinLogger(AbstractLogBuildinLogger logger) {
 		this.log = logger;
 	}
 
@@ -112,4 +112,20 @@ abstract class AbstractLogBuildin extends AbstractCommand {
 		return arguments;
 	}
 
+	/**
+	 * Returns the name of the logger that is used.
+	 * 
+	 * @return the {@link String} name of the logger
+	 */
+	public String getTheContext() {
+		return getTheEnvironment().getScriptLogger().getName();
+	}
+
+	/**
+	 * Tests if the logging level is enabled.
+	 * 
+	 * @return {@code true} if the logging level is enabled or {@code false} if
+	 *         not.
+	 */
+	public abstract boolean getIsEnabled();
 }

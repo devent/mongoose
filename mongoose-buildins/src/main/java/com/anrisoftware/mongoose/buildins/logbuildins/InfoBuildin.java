@@ -41,4 +41,8 @@ class InfoBuildin extends AbstractLogBuildin {
 		logger.info(getMessage(), getArguments());
 	}
 
+	@Override
+	public boolean getIsEnabled() {
+		return getTheEnvironment().getScriptLogger().isInfoEnabled();
+	}
 }

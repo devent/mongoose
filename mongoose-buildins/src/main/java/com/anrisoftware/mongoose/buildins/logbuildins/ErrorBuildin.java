@@ -45,4 +45,9 @@ class ErrorBuildin extends AbstractLogBuildin {
 			logger.error(getMessage(), arguments);
 		}
 	}
+
+	@Override
+	public boolean getIsEnabled() {
+		return getTheEnvironment().getScriptLogger().isErrorEnabled();
+	}
 }

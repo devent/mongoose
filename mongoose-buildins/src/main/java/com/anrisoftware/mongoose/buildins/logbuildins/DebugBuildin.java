@@ -40,4 +40,9 @@ class DebugBuildin extends AbstractLogBuildin {
 	protected void logMessage(Logger logger) {
 		logger.debug(getMessage(), getArguments());
 	}
+
+	@Override
+	public boolean getIsEnabled() {
+		return getTheEnvironment().getScriptLogger().isDebugEnabled();
+	}
 }

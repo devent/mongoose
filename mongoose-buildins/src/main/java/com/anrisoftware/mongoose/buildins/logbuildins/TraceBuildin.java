@@ -41,4 +41,9 @@ class TraceBuildin extends AbstractLogBuildin {
 		logger.trace(getMessage(), getArguments());
 	}
 
+	@Override
+	public boolean getIsEnabled() {
+		return getTheEnvironment().getScriptLogger().isTraceEnabled();
+	}
+
 }
