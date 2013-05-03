@@ -1,7 +1,6 @@
 package com.anrisoftware.mongoose.buildins.logbuildins;
 
-import static java.lang.Integer.MAX_VALUE;
-import static org.apache.commons.lang3.Validate.inclusiveBetween;
+import static org.apache.commons.lang3.Validate.isTrue;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.util.List;
@@ -35,7 +34,7 @@ class AbstractLogBuildinLogger extends AbstractLogger {
 	}
 
 	void checkArgs(AbstractLogBuildin buildin, List<Object> args) {
-		inclusiveBetween(1, MAX_VALUE, args.size(), NEED_LOGGING_MESSAGE);
+		isTrue(args.size() > 0, NEED_LOGGING_MESSAGE);
 	}
 
 	void checkMessage(AbstractLogBuildin buildin, Object object) {
