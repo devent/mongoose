@@ -13,6 +13,7 @@
 	<artifactId>mongoose-core</artifactId>
 	<name>Mongoose :: Core</name>
 	<inceptionYear>2012</inceptionYear>
+	<description>Shared implementation for commands.</description>
 
 	<dependencies>
 
@@ -20,11 +21,6 @@
 		<dependency>
 			<groupId>com.anrisoftware.globalpom</groupId>
 			<artifactId>globalpom-groovytestutils</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.perfidix</groupId>
-			<artifactId>perfidix</artifactId>
 			<scope>test</scope>
 		</dependency>
 
@@ -37,49 +33,12 @@
 
 		<!-- compile dependencies -->
 		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject.extensions</groupId>
-			<artifactId>guice-assistedinject</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.anrisoftware.propertiesutils</groupId>
-			<artifactId>propertiesutils-contextproperties</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.anrisoftware.globalpom</groupId>
 			<artifactId>globalpom-log</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>args4j</groupId>
-			<artifactId>args4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.anrisoftware.resources</groupId>
-			<artifactId>resources-texts</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.anrisoftware.resources</groupId>
-			<artifactId>resources-st</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-test</artifactId>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
