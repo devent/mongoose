@@ -82,8 +82,8 @@ class ThreadingProperties extends Properties {
 	 * @return the {@link ThreadingPolicy} or the default value.
 	 */
 	public ThreadingPolicy getPolicy(ThreadingPolicy defaultValue) {
-		String value = properties.getProperty(format(KEY_TEMPLATE, name,
-				POLICY_KEY));
+		String property = format(KEY_TEMPLATE, name, POLICY_KEY);
+		String value = properties.getProperty(property);
 		return StringUtils.isEmpty(value) ? defaultValue : parsePolicy(value);
 	}
 

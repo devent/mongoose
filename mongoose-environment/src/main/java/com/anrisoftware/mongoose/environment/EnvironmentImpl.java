@@ -18,6 +18,7 @@
  */
 package com.anrisoftware.mongoose.environment;
 
+import static com.anrisoftware.mongoose.api.commans.BackgroundCommandsPolicy.POLICY_FORMAT;
 import static com.anrisoftware.mongoose.resources.LocaleHooks.DISPLAY_LOCALE_PROPERTY;
 import static java.util.Collections.synchronizedList;
 import static java.util.Collections.unmodifiableList;
@@ -25,6 +26,7 @@ import static java.util.Collections.unmodifiableList;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,6 +58,8 @@ import com.anrisoftware.mongoose.threads.PropertiesThreads;
 import com.anrisoftware.mongoose.threads.PropertiesThreadsFactory;
 import com.anrisoftware.mongoose.threads.PropertyListenerFuture;
 import com.anrisoftware.mongoose.threads.PropertyListenerFuture.Status;
+import com.anrisoftware.mongoose.threads.ThreadsException;
+import com.anrisoftware.propertiesutils.ContextProperties;
 
 /**
  * Provides the environment variables and loads commands as Java service.
@@ -64,6 +68,10 @@ import com.anrisoftware.mongoose.threads.PropertyListenerFuture.Status;
  * @since 1.0
  */
 class EnvironmentImpl implements Environment {
+
+	private static final String BACKGROUND_COMMANDS_TIMEOUT_PROPERTY = "background_commands_timeout";
+
+	private static final String BACKGROUND_COMMANDS_POLICY_PROPERTY = "background_commands_policy";
 
 	private final EnvironmentImplLogger log;
 
@@ -75,9 +83,9 @@ class EnvironmentImpl implements Environment {
 
 	private final TemplatesResources templatesResources;
 
-	private Logger scriptLogger;
-
 	private final List<Future<Command>> backgroundTasks;
+
+	private Logger scriptLogger;
 
 	private BackgroundCommandsPolicy backgroundCommandsPolicy;
 
@@ -85,16 +93,22 @@ class EnvironmentImpl implements Environment {
 
 	@Inject
 	EnvironmentImpl(EnvironmentImplLogger logger,
-			@Named("threads-properties") Properties properties,
+			@Named("threads-properties") Properties threadsProperties,
+			@Named("environment-properties") ContextProperties properties,
 			PropertiesThreadsFactory threadsFactory,
 			TextsResources textsResources,
-			TemplatesResources templatesResources, LocaleHooks localeHooks) {
+			TemplatesResources templatesResources, LocaleHooks localeHooks)
+			throws ParseException, ThreadsException {
 		this.log = logger;
-		this.threads = threadsFactory.create(properties, "script");
+		this.threads = threadsFactory.create(threadsProperties, "script");
 		this.variables = new HashMap<String, Object>();
 		this.textsResources = textsResources;
 		this.templatesResources = templatesResources;
 		this.backgroundTasks = synchronizedList(new ArrayList<Future<Command>>());
+		this.backgroundCommandsPolicy = properties.getTypedProperty(
+				BACKGROUND_COMMANDS_POLICY_PROPERTY, POLICY_FORMAT);
+		this.backgroundCommandsTimeout = Duration.parse(properties
+				.getProperty(BACKGROUND_COMMANDS_TIMEOUT_PROPERTY));
 		setupLocaleHooks(localeHooks);
 		setupVariables();
 	}

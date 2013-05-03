@@ -26,6 +26,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.propertiesutils.ContextProperties;
 import com.anrisoftware.propertiesutils.ContextPropertiesFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -34,12 +35,15 @@ import com.google.inject.Provides;
  * Provides the environment properties.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
- * @since 0.1
+ * @since 1.0
  */
 public class EnvironmentModule extends AbstractModule {
 
 	private static final URL THREADS_PROPERTIES = EnvironmentModule.class
 			.getResource("/threads.properties");
+
+	private static final URL ENVIRONMENT_PROPERTIES = EnvironmentModule.class
+			.getResource("/environment.properties");
 
 	@Override
 	protected void configure() {
@@ -49,8 +53,16 @@ public class EnvironmentModule extends AbstractModule {
 	@Provides
 	@Singleton
 	@Named("threads-properties")
-	Properties getEnvironmentProperties() throws IOException {
-		return new ContextPropertiesFactory(this)
+	Properties getThreadsProperties() throws IOException {
+		return new ContextPropertiesFactory("com.anrisoftware.mongoose.threads")
 				.fromResource(THREADS_PROPERTIES);
+	}
+
+	@Provides
+	@Singleton
+	@Named("environment-properties")
+	ContextProperties getEnvironmentProperties() throws IOException {
+		return new ContextPropertiesFactory(this)
+				.fromResource(ENVIRONMENT_PROPERTIES);
 	}
 }

@@ -56,11 +56,14 @@ public class PropertiesThreads implements Threads {
 			CachedThreadingPropertiesFactory cachedThreadingPropertiesFactory,
 			FixedThreadingPropertiesFactory fixedThreadingPropertiesFactory,
 			SingleThreadingPropertiesFactory singleThreadingPropertiesFactory,
-			@Assisted Properties properties, @Assisted String name) {
+			@Assisted Properties properties, @Assisted String name)
+			throws ThreadsException {
 		this(logger, propertiesFactory, threadsWatchdog,
 				cachedThreadingPropertiesFactory,
 				fixedThreadingPropertiesFactory,
 				singleThreadingPropertiesFactory);
+		setProperties(properties);
+		setName(name);
 	}
 
 	/**

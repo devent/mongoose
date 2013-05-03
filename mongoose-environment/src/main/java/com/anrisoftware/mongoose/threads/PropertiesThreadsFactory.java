@@ -27,6 +27,10 @@ public interface PropertiesThreadsFactory {
 	 *            the threads pool {@link String} name.
 	 * 
 	 * @return the {@link PropertiesThreads}.
+	 * 
+	 * @throws ThreadsException
+	 *             if there was any error load the property of the thread pool.
 	 */
-	PropertiesThreads create(Properties properties, String name);
+	PropertiesThreads create(Properties properties, String name)
+			throws ThreadsException;
 }
