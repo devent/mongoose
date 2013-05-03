@@ -19,6 +19,10 @@ class CommandStub extends AbstractCommand {
 		this.commandCalled = false;
 	}
 
+	public String getName() {
+		return "stub";
+	}
+
 	@Override
 	public String getTheName() {
 		return "stub";
