@@ -56,6 +56,7 @@ class CreateBuildin extends AbstractCommand {
 	protected void doCall() throws ExecutionException {
 		command = loadCommand(name);
 		log.checkCommand(this, command);
+		command.setEnvironment(getTheEnvironment());
 		log.loadCommand(this, name);
 	}
 
