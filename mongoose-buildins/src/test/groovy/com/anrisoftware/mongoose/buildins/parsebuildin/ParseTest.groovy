@@ -27,7 +27,7 @@ import org.kohsuke.args4j.Argument
 import org.kohsuke.args4j.ExampleMode
 import org.kohsuke.args4j.Option
 
-import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.environment.Environment
 import com.anrisoftware.mongoose.api.exceptions.CommandException
 import com.anrisoftware.mongoose.environment.EnvironmentModule
 import com.anrisoftware.mongoose.resources.ResourcesModule
@@ -45,6 +45,7 @@ class ParseTest {
 
 	@Test(expected = IllegalArgumentException)
 	void "no args"() {
+		command.args()
 		command()
 	}
 

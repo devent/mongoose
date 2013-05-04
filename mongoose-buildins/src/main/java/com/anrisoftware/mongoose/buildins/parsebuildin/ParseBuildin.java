@@ -99,7 +99,6 @@ class ParseBuildin extends AbstractCommand {
 	@Override
 	protected void doCall() throws Exception {
 		try {
-			log.checkParser(this, parser);
 			parser.parseArgument(arguments);
 			valid.call(parameter);
 		} catch (CmdLineException e) {
