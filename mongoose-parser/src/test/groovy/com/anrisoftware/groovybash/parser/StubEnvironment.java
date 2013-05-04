@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy;
 import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.environment.ExecutionMode;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
@@ -140,5 +141,17 @@ class StubEnvironment implements Environment {
 	@Override
 	public List<Future<?>> shutdown() throws InterruptedException {
 		return new ArrayList<Future<?>>();
+	}
+
+	@Override
+	public void setExecutionMode(ExecutionMode mode) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ExecutionMode getExecutionMode() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
