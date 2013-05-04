@@ -155,10 +155,29 @@ public class StandardStreams {
 		return errorTarget;
 	}
 
+	/**
+	 * Close the input source and output targets if they are not the standard
+	 * input or output streams. The standard output streams are just flushed,
+	 * not closed.
+	 * 
+	 * @throws IOException
+	 *             if there was an error closing source or targets; if there was
+	 *             an error flush the targets.
+	 */
 	public void close() throws IOException {
-		inputSource.close();
-		outputTarget.close();
-		errorTarget.close();
+		if (inputSource != System.in) {
+			inputSource.close();
+		}
+		if (outputTarget != System.out) {
+			outputTarget.close();
+		} else {
+			outputTarget.flush();
+		}
+		if (errorTarget != System.err) {
+			errorTarget.close();
+		} else {
+			errorTarget.flush();
+		}
 	}
 
 }
