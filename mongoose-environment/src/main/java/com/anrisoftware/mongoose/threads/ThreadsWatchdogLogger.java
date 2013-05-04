@@ -22,8 +22,8 @@ class ThreadsWatchdogLogger extends AbstractLogger {
 		super(ThreadsWatchdog.class);
 	}
 
-	void taskSubmitted(PropertyListenerFuture<?> task, Future<?> future) {
-		log.debug("Task {}:={} submitted.", task, future);
+	void taskSubmitted(PropertyListenerFuture<?> task) {
+		log.debug("Task {} submitted.", task);
 	}
 
 	void taskDone(Future<?> future) {

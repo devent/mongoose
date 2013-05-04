@@ -82,9 +82,9 @@ class ThreadsWatchdog {
 			}
 
 		});
-		Future<?> future = executor.submit(task);
+		executor.submit(task);
 		tasks.add(task);
-		log.taskSubmitted(task, future);
+		log.taskSubmitted(task);
 		return task;
 	}
 

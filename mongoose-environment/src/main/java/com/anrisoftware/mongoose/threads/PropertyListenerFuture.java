@@ -5,6 +5,8 @@ import java.beans.PropertyChangeSupport;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  * Informs property change listener when the task is finish.
  * 
@@ -41,11 +43,18 @@ public class PropertyListenerFuture<V> extends FutureTask<V> {
 
 	private Status status;
 
+	private Callable<V> callable;
+
+	private Runnable runnable;
+
+	private V result;
+
 	/**
 	 * @see FutureTask#FutureTask(Callable)
 	 */
 	public PropertyListenerFuture(Callable<V> callable) {
 		super(callable);
+		this.callable = callable;
 		this.propertySupport = new PropertyChangeSupport(this);
 		this.status = Status.RUNNING;
 	}
@@ -55,6 +64,8 @@ public class PropertyListenerFuture<V> extends FutureTask<V> {
 	 */
 	public PropertyListenerFuture(Runnable runnable, V result) {
 		super(runnable, result);
+		this.runnable = runnable;
+		this.result = result;
 		this.propertySupport = new PropertyChangeSupport(this);
 	}
 
@@ -63,6 +74,17 @@ public class PropertyListenerFuture<V> extends FutureTask<V> {
 		Status oldValue = this.status;
 		status = Status.DONE;
 		propertySupport.firePropertyChange(STATUS_PROPERTY, oldValue, status);
+	}
+
+	@Override
+	public String toString() {
+		ToStringBuilder b = new ToStringBuilder(this);
+		if (callable != null) {
+			b.append(callable);
+		} else {
+			b.append(runnable).append(result);
+		}
+		return b.toString();
 	}
 
 	/**
