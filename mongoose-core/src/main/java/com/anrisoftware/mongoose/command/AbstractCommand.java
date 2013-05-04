@@ -95,14 +95,6 @@ public abstract class AbstractCommand implements Command {
 		}
 	}
 
-	/**
-	 * Execute the command after the parent are set.
-	 * 
-	 * @throws Exception
-	 *             if there was an error executing the command.
-	 */
-	protected abstract void doCall() throws Exception;
-
 	@Override
 	public Command call(Object... args) throws Exception {
 		args(args);
@@ -123,6 +115,14 @@ public abstract class AbstractCommand implements Command {
 			return this;
 		}
 	}
+
+	/**
+	 * Execute the command after the parent are set.
+	 * 
+	 * @throws Exception
+	 *             if there was an error executing the command.
+	 */
+	protected abstract void doCall() throws Exception;
 
 	@Override
 	public void setArgs(Object args) throws Exception {
