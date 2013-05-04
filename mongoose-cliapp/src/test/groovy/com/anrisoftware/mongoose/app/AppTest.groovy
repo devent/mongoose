@@ -41,6 +41,16 @@ class AppTest {
 	}
 
 	@Test(timeout = 1000l)
+	void "scipt file [create]"() {
+		def file = folder.newFile("script.groovy");
+		write file, '''
+def cmd = create "pwd" theCommand
+cmd()
+'''
+		app.start(["-file", file] as String[])
+	}
+
+	@Test(timeout = 1000l)
 	void "scipt file [echo]"() {
 		def file = folder.newFile("script.groovy");
 		write file, """echo \"Hello\""""
