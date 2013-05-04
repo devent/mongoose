@@ -38,6 +38,7 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
  */
 class EnvironmentImplLogger extends AbstractLogger {
 
+	private static final String NO_COMMAND = "No command '%s' found.";
 	private static final String EXECUTION_MODE_SET_INFO = "Set execution mode {}.";
 	private static final String EXECUTION_MODE_SET = "Set execution mode {} for {}.";
 	private static final String LOAD_COMMAND = "Load command '{}' for {}.";
@@ -111,5 +112,9 @@ class EnvironmentImplLogger extends AbstractLogger {
 		} else {
 			log.info(EXECUTION_MODE_SET_INFO, mode);
 		}
+	}
+
+	void checkCommand(EnvironmentImpl environment, Command command, String name) {
+		notNull(command, NO_COMMAND, name);
 	}
 }

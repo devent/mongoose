@@ -26,6 +26,7 @@ import static java.util.Collections.unmodifiableList;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.PrintStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +53,7 @@ import com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.environment.ExecutionMode;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
+import com.anrisoftware.mongoose.command.StandardStreams;
 import com.anrisoftware.mongoose.resources.LocaleHooks;
 import com.anrisoftware.mongoose.resources.TemplatesResources;
 import com.anrisoftware.mongoose.resources.TextsResources;
@@ -91,6 +93,8 @@ class EnvironmentImpl implements Environment {
 
 	private final List<Future<Command>> backgroundTasks;
 
+	private final StandardStreams streams;
+
 	private Logger scriptLogger;
 
 	private BackgroundCommandsPolicy backgroundCommandsPolicy;
@@ -103,11 +107,12 @@ class EnvironmentImpl implements Environment {
 			@Named("environment-properties") ContextProperties properties,
 			PropertiesThreadsFactory threadsFactory,
 			TextsResources textsResources,
-			TemplatesResources templatesResources, LocaleHooks localeHooks)
-			throws ParseException, ThreadsException {
+			TemplatesResources templatesResources, LocaleHooks localeHooks,
+			StandardStreams streams) throws ParseException, ThreadsException {
 		this.log = logger;
 		this.threads = threadsFactory.create(threadsProperties, "script");
 		this.variables = new HashMap<String, Object>();
+		this.streams = streams;
 		this.textsResources = textsResources;
 		this.templatesResources = templatesResources;
 		this.backgroundTasks = synchronizedList(new ArrayList<Future<Command>>());
@@ -266,6 +271,11 @@ class EnvironmentImpl implements Environment {
 		return (ExecutionMode) variables.get(EXECUTION_MODE);
 	}
 
+	public PrintStream getOut() {
+		System.out.println("getOut()"); // TODO println
+		return System.out;
+	}
+
 	/**
 	 * Returns the command if it is not a method of the environment.
 	 * 
@@ -297,6 +307,7 @@ class EnvironmentImpl implements Environment {
 			return variables.get(name);
 		} else {
 			Command command = loadCommand(name);
+			log.checkCommand(this, command, name);
 			command.setEnvironment(this);
 			switch (getExecutionMode()) {
 			case IMPLICIT:

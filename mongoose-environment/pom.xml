@@ -68,5 +68,10 @@
 			<groupId>com.anrisoftware.resources</groupId>
 			<artifactId>resources-st</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.anrisoftware.mongoose</groupId>
+			<artifactId>mongoose-core</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -24,6 +24,8 @@ import com.anrisoftware.mongoose.threads.PropertyListenerFuture.Status;
  */
 class ThreadsWatchdog {
 
+	private final ThreadsWatchdogLogger log;
+
 	private final List<Future<?>> tasks;
 
 	private ExecutorService executor;
@@ -31,7 +33,8 @@ class ThreadsWatchdog {
 	private boolean notified;
 
 	@Inject
-	ThreadsWatchdog() {
+	ThreadsWatchdog(ThreadsWatchdogLogger logger) {
+		this.log = logger;
 		this.tasks = synchronizedList(new ArrayList<Future<?>>());
 		this.notified = false;
 	}
@@ -65,22 +68,24 @@ class ThreadsWatchdog {
 	}
 
 	private <V> PropertyListenerFuture<V> submit(
-			PropertyListenerFuture<V> futureTask) {
-		final Future<?> future = executor.submit(futureTask);
-		tasks.add(future);
-		futureTask.addPropertyChangeListener(new PropertyChangeListener() {
+			final PropertyListenerFuture<V> task) {
+		task.addPropertyChangeListener(new PropertyChangeListener() {
 
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				Status status = (Status) evt.getNewValue();
 				if (status == Status.DONE) {
-					tasks.remove(future);
+					tasks.remove(task);
+					log.taskDone(task);
 					unlockWait();
 				}
 			}
 
 		});
-		return futureTask;
+		Future<?> future = executor.submit(task);
+		tasks.add(task);
+		log.taskSubmitted(task, future);
+		return task;
 	}
 
 	private void unlockWait() {
