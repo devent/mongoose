@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.anrisoftware.mongoose.api.commans.Command;
-import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.mongoose.api.environment.Environment;
 
 /**
  * Sets the standard streams of the command and implements the stream

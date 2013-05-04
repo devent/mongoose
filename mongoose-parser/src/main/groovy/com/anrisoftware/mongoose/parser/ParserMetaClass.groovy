@@ -20,7 +20,7 @@ package com.anrisoftware.mongoose.parser
 
 import org.codehaus.groovy.runtime.InvokerHelper
 
-import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.api.environment.Environment;
 
 /**
  * Sets the delegate for the script.

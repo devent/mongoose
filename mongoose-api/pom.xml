@@ -23,7 +23,6 @@
 		<dependency>
 			<groupId>com.anrisoftware.globalpom</groupId>
 			<artifactId>globalpom-utils</artifactId>
-			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>

@@ -27,6 +27,7 @@ import java.util.List;
 import javax.inject.Singleton;
 
 import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
@@ -97,5 +98,9 @@ class ParseBuildinLogger extends AbstractLogger {
 
 	void notValidSet(ParseBuildin buildin, Closure<?> closure) {
 		log.debug(NOT_VALID_CLOSURE_SET, closure, buildin);
+	}
+
+	void checkParser(ParseBuildin buildin, CmdLineParser parser) {
+		isTrue(parser != null, EXPECTING_PARAMETER_TO_PARSE);
 	}
 }

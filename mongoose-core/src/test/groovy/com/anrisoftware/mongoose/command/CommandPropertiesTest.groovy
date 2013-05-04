@@ -5,7 +5,7 @@ import static com.anrisoftware.globalpom.utils.TestUtils.*
 import org.junit.Before
 import org.junit.Test
 
-import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.api.environment.Environment;
 
 /**
  * @see AbstractCommand

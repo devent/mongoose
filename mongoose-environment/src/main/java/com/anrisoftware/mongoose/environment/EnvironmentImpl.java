@@ -18,7 +18,7 @@
  */
 package com.anrisoftware.mongoose.environment;
 
-import static com.anrisoftware.mongoose.api.commans.BackgroundCommandsPolicy.POLICY_FORMAT;
+import static com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy.POLICY_FORMAT;
 import static com.anrisoftware.mongoose.resources.LocaleHooks.DISPLAY_LOCALE_PROPERTY;
 import static java.util.Collections.synchronizedList;
 import static java.util.Collections.unmodifiableList;
@@ -46,10 +46,11 @@ import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.anrisoftware.mongoose.api.commans.BackgroundCommandsPolicy;
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.CommandService;
-import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy;
+import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.environment.ExecutionMode;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.resources.LocaleHooks;
 import com.anrisoftware.mongoose.resources.TemplatesResources;
@@ -68,6 +69,11 @@ import com.anrisoftware.propertiesutils.ContextProperties;
  * @since 1.0
  */
 class EnvironmentImpl implements Environment {
+
+	private static final String USER_HOME_PROPERTY = System
+			.getProperty("user.home");
+
+	private static final String EXECUTION_MODE_PROPERTY = "execution_mode";
 
 	private static final String BACKGROUND_COMMANDS_TIMEOUT_PROPERTY = "background_commands_timeout";
 
@@ -109,6 +115,8 @@ class EnvironmentImpl implements Environment {
 				BACKGROUND_COMMANDS_POLICY_PROPERTY, POLICY_FORMAT);
 		this.backgroundCommandsTimeout = Duration.parse(properties
 				.getProperty(BACKGROUND_COMMANDS_TIMEOUT_PROPERTY));
+		setExecutionMode(properties.<ExecutionMode> getTypedProperty(
+				EXECUTION_MODE_PROPERTY, ExecutionMode.FORMAT));
 		setupLocaleHooks(localeHooks);
 		setupVariables();
 	}
@@ -136,9 +144,8 @@ class EnvironmentImpl implements Environment {
 	}
 
 	private void setHomeDirectory() {
-		variables.put(USER_HOME_VARIABLE,
-				new File(System.getProperty("user.home")));
-		variables.put(HOME_VARIABLE, new File(System.getProperty("user.home")));
+		variables.put(USER_HOME_VARIABLE, new File(USER_HOME_PROPERTY));
+		variables.put(HOME_VARIABLE, new File(USER_HOME_PROPERTY));
 	}
 
 	private void setResources() {
@@ -248,6 +255,17 @@ class EnvironmentImpl implements Environment {
 		return backgroundCommandsTimeout;
 	}
 
+	@Override
+	public void setExecutionMode(ExecutionMode mode) {
+		variables.put(EXECUTION_MODE, mode);
+		log.executionModeSet(this, mode);
+	}
+
+	@Override
+	public ExecutionMode getExecutionMode() {
+		return (ExecutionMode) variables.get(EXECUTION_MODE);
+	}
+
 	/**
 	 * Returns the command if it is not a method of the environment.
 	 * 
@@ -280,6 +298,11 @@ class EnvironmentImpl implements Environment {
 		} else {
 			Command command = loadCommand(name);
 			command.setEnvironment(this);
+			// EXECUTION_MODE
+			// IMPLICIT EXPLICIT
+			// add option to execute properties with no args
+			// add build-in command: create
+			// to create a build-in command without running it
 			return command;
 		}
 	}

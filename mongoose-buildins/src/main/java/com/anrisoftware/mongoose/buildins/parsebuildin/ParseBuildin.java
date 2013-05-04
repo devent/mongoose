@@ -33,7 +33,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ExampleMode;
 
-import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 
 /**
@@ -99,6 +99,7 @@ class ParseBuildin extends AbstractCommand {
 	@Override
 	protected void doCall() throws Exception {
 		try {
+			log.checkParser(this, parser);
 			parser.parseArgument(arguments);
 			valid.call(parameter);
 		} catch (CmdLineException e) {

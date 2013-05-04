@@ -24,7 +24,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 

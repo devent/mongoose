@@ -23,7 +23,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 
 import com.anrisoftware.globalpom.utils.TestUtils
-import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.environment.EnvironmentModule
 import com.anrisoftware.mongoose.resources.ResourcesModule
 import com.anrisoftware.mongoose.threads.ThreadsModule

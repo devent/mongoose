@@ -25,7 +25,7 @@ import java.util.Properties;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.anrisoftware.propertiesutils.ContextPropertiesFactory;
 import com.google.inject.AbstractModule;

@@ -20,34 +20,41 @@ import com.google.inject.Injector
  */
 class AppTest {
 
-	@Test
+	@Test(timeout = 1000l)
 	void "scipt file [empty]"() {
 		def file = folder.newFile("script.groovy");
 		app.start(["-file", file] as String[])
 	}
 
-	@Test
+	@Test(timeout = 1000l)
 	void "scipt file [no args]"() {
 		def file = folder.newFile("script.groovy");
-		write file, """echo"""
+		write file, """pwd()"""
 		app.start(["-file", file] as String[])
 	}
 
-	@Test
+	@Test(timeout = 1000l)
+	void "scipt file [no args, property]"() {
+		def file = folder.newFile("script.groovy");
+		write file, '''pwd'''
+		app.start(["-file", file] as String[])
+	}
+
+	@Test(timeout = 1000l)
 	void "scipt file [echo]"() {
 		def file = folder.newFile("script.groovy");
 		write file, """echo \"Hello\""""
 		app.start(["-file", file] as String[])
 	}
 
-	@Test
+	@Test(timeout = 1000l)
 	void "scipt file [map args]"() {
 		def file = folder.newFile("script.groovy");
 		write file, """echo newline: false, \"Hello\""""
 		app.start(["-file", file] as String[])
 	}
 
-	@Test
+	@Test(timeout = 1000l)
 	void "scipt file [external]"() {
 		def txt = folder.newFile("file.txt");
 		write txt, """Hello"""
@@ -56,7 +63,7 @@ class AppTest {
 		app.start(["-file", file] as String[])
 	}
 
-	@Test
+	@Test(timeout = 1000l)
 	void "scipt file [external, map]"() {
 		def txt = folder.newFile("file.txt");
 		write txt, """Hello"""
@@ -65,7 +72,7 @@ class AppTest {
 		app.start(["-file", file] as String[])
 	}
 
-	@Test
+	@Test(timeout = 1000l)
 	void "scipt file [log context]"() {
 		def file = folder.newFile("Script.groovy");
 		write file, """echo debug.theContext"""

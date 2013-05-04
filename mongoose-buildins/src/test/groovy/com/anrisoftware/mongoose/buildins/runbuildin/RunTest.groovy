@@ -24,7 +24,7 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.exceptions.CommandException
 import com.anrisoftware.mongoose.environment.EnvironmentModule
 import com.anrisoftware.mongoose.resources.ResourcesModule

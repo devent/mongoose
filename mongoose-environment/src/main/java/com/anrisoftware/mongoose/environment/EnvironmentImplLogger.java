@@ -27,6 +27,7 @@ import java.util.concurrent.CancellationException;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
 import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.environment.ExecutionMode;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
@@ -37,6 +38,8 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
  */
 class EnvironmentImplLogger extends AbstractLogger {
 
+	private static final String EXECUTION_MODE_SET_INFO = "Execution mode set.";
+	private static final String EXECUTION_MODE_SET = "Execution mode set {} for {}.";
 	private static final String LOAD_COMMAND = "Load command '{}' for {}.";
 	private static final String LOCALE_NULL = "The script locale cannot be null.";
 	private static final String SET_LOCALE = "Set script locale {}.";
@@ -100,5 +103,13 @@ class EnvironmentImplLogger extends AbstractLogger {
 
 	void loadCommand(EnvironmentImpl environment, String name) {
 		log.trace(LOAD_COMMAND, name, environment);
+	}
+
+	void executionModeSet(EnvironmentImpl environment, ExecutionMode mode) {
+		if (log.isDebugEnabled()) {
+			log.debug(EXECUTION_MODE_SET, mode, environment);
+		} else {
+			log.info(EXECUTION_MODE_SET_INFO, mode);
+		}
 	}
 }

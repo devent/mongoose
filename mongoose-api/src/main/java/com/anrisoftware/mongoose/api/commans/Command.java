@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import com.anrisoftware.mongoose.api.environment.Environment;
+
 /**
  * Command that can be executed.
  * 

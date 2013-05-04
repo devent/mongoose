@@ -41,7 +41,7 @@ import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.joda.time.Duration;
 
-import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 

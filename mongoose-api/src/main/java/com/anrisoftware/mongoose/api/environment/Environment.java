@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.api.commans;
+package com.anrisoftware.mongoose.api.environment;
 
 import java.io.File;
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.concurrent.Future;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
 
+import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
@@ -76,6 +77,11 @@ public interface Environment {
 	 * Templates resources.
 	 */
 	static final String TEMPLATES_VARIABLE = "TEMPLATES";
+
+	/**
+	 * Commands execution mode {@link ExecutionMode}.
+	 */
+	static final String EXECUTION_MODE = "EXECUTION_MODE";
 
 	/**
 	 * Sets the environment variables of the script.
@@ -213,6 +219,21 @@ public interface Environment {
 	 * @return the {@link Duration}.
 	 */
 	Duration getBackgroundCommandsTimeout();
+
+	/**
+	 * Sets the commands execution mode.
+	 * 
+	 * @param mode
+	 *            the {@link ExecutionMode}.
+	 */
+	void setExecutionMode(ExecutionMode mode);
+
+	/**
+	 * Returns the commands execution mode.
+	 * 
+	 * @return the {@link ExecutionMode}.
+	 */
+	ExecutionMode getExecutionMode();
 
 	/**
 	 * Execute the command in the environment.

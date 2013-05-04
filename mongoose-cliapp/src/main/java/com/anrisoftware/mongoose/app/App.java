@@ -6,7 +6,7 @@ import javax.inject.Inject;
 
 import org.kohsuke.args4j.CmdLineException;
 
-import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.parameter.Parameter;
 import com.anrisoftware.mongoose.parameter.ParameterParser;
 import com.anrisoftware.mongoose.parser.ScriptParser;

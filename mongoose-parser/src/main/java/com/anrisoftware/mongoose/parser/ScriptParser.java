@@ -35,7 +35,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
-import com.anrisoftware.mongoose.api.commans.Environment;
+import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.assistedinject.Assisted;
 

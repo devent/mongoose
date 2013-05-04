@@ -1,4 +1,4 @@
-package com.anrisoftware.mongoose.api.commans;
+package com.anrisoftware.mongoose.api.environment;
 
 import java.text.FieldPosition;
 import java.text.Format;

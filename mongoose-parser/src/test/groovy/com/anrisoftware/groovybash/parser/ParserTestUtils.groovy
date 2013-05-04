@@ -1,7 +1,7 @@
 package com.anrisoftware.groovybash.parser
 
 import com.anrisoftware.globalpom.utils.TestUtils
-import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.parser.ParserModule
 import com.google.inject.AbstractModule
 import com.google.inject.Guice

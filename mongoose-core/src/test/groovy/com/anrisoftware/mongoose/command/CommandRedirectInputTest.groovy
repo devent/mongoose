@@ -7,7 +7,7 @@ import org.apache.commons.io.IOUtils
 import org.junit.Before
 import org.junit.Test
 
-import com.anrisoftware.mongoose.api.commans.Environment
+import com.anrisoftware.mongoose.api.environment.Environment;
 
 /**
  * @see AbstractCommand
