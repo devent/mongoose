@@ -298,12 +298,16 @@ class EnvironmentImpl implements Environment {
 		} else {
 			Command command = loadCommand(name);
 			command.setEnvironment(this);
-			// EXECUTION_MODE
-			// IMPLICIT EXPLICIT
-			// add option to execute properties with no args
-			// add build-in command: create
-			// to create a build-in command without running it
-			return command;
+			switch (getExecutionMode()) {
+			case IMPLICIT:
+				command.args();
+				executeCommandAndWait(command);
+				return command;
+			case EXPLICIT:
+				return command;
+			default:
+				return command;
+			}
 		}
 	}
 
