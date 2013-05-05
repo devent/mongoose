@@ -18,7 +18,6 @@
  */
 package com.anrisoftware.mongoose.buildins.exportbuildin;
 
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,13 +36,15 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
  */
 class ExportBuildin extends AbstractCommand {
 
+	private static final String FLAG_VALUE = "1";
+
 	private final ExportBuildinLogger log;
 
-	private final ExportWorker worker;
+	private ExportWorker worker;
 
 	private Map<String, String> currentEnv;
 
-	private HashMap<String, String> env;
+	private Map<String, String> env;
 
 	/**
 	 * @param logger
@@ -63,17 +64,64 @@ class ExportBuildin extends AbstractCommand {
 
 	@Override
 	protected void doCall() throws ExecutionException {
-		PrintStream out = new PrintStream(getOutput());
-		worker.doEnv(currentEnv, env, out);
-		out.flush();
+		worker.doEnv(currentEnv, env, getOutput());
+		getTheEnvironment().setEnv(currentEnv);
 	}
 
 	@Override
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
 		env = new HashMap<String, String>();
-		if (unnamedArgs.size() == 1) {
+		setupUnnamed(unnamedArgs);
+		setupNamed(args);
+	}
+
+	private void setupNamed(Map<String, Object> args) {
+		if (args.size() > 1) {
+			worker = new SetEnv();
 		}
+		if (args.containsKey("remove")) {
+			setRemove((Boolean) args.get("remove"));
+		}
+		parseEnv(env, args);
+	}
+
+	private void setupUnnamed(List<Object> unnamedArgs) {
+		if (unnamedArgs.size() > 0) {
+			parseEnv(env, unnamedArgs);
+			worker = new SetEnv();
+		}
+	}
+
+	private void parseEnv(Map<String, String> env, Map<String, Object> args) {
+		for (Map.Entry<String, Object> values : args.entrySet()) {
+			if (values.getKey().equals("remove")) {
+				continue;
+			}
+			if (values.getKey().equals("unnamed")) {
+				continue;
+			}
+			env.put(values.getKey(), values.getValue().toString());
+		}
+	}
+
+	private void parseEnv(Map<String, String> env, List<Object> list) {
+		for (Object object : list) {
+			env.put(object.toString(), FLAG_VALUE);
+		}
+	}
+
+	/**
+	 * Sets whether to remove the environment variables.
+	 * 
+	 * @param remove
+	 *            set to {@code true} to remove the variables.
+	 */
+	public void setRemove(boolean remove) {
+		if (remove) {
+			worker = new RemoveEnv();
+		}
+		log.removeSet(this, remove);
 	}
 
 	/**

@@ -1,13 +1,8 @@
 package com.anrisoftware.mongoose.buildins.exportbuildin;
 
-import static org.apache.commons.lang3.Validate.inclusiveBetween;
-
-import java.io.File;
-
 import javax.inject.Singleton;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
-import com.anrisoftware.mongoose.api.exceptions.DirectoryNotFoundException;
 
 /**
  * Logging messages for {@link ExportBuildin}.
@@ -18,8 +13,8 @@ import com.anrisoftware.mongoose.api.exceptions.DirectoryNotFoundException;
 @Singleton
 class ExportBuildinLogger extends AbstractLogger {
 
-	private static final String ARGUMENTS = "Can have only zero or one arguments.";
-	private static final String CHANGED_DIRECTORY = "Changed directory to '{}'.";
+	private static final String SET_REMOVE_INFO = "Set remove environment variable {}.";
+	private static final String SET_REMOVE = "Set remove {} for {}.";
 
 	/**
 	 * Create logger for {@link ExportBuildin}.
@@ -28,17 +23,11 @@ class ExportBuildinLogger extends AbstractLogger {
 		super(ExportBuildin.class);
 	}
 
-	void checkDirectory(File directory) throws DirectoryNotFoundException {
-		if (!directory.isDirectory()) {
-			throw new DirectoryNotFoundException(directory);
+	void removeSet(ExportBuildin buildin, boolean remove) {
+		if (log.isDebugEnabled()) {
+			log.debug(SET_REMOVE, remove, buildin);
+		} else {
+			log.info(SET_REMOVE_INFO, remove);
 		}
-	}
-
-	void changedDirectory(File directory) {
-		log.debug(CHANGED_DIRECTORY, directory);
-	}
-
-	void checkArguments(ExportBuildin buildin, int size) {
-		inclusiveBetween(0, 1, size, ARGUMENTS);
 	}
 }

@@ -28,7 +28,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Makes the build-in command {@code cd} available as a service.
+ * Makes the build-in command {@code export} available as a service.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
@@ -37,12 +37,12 @@ import com.google.inject.Module;
 public class ExportService implements CommandService {
 
 	/**
-	 * The unique identifier of the build-in command {@code cd}.
+	 * The unique identifier of the build-in command {@code export}.
 	 */
-	public static final String ID = "cd";
+	public static final String ID = "export";
 
 	/**
-	 * The command information of the build-in command {@code cd}.
+	 * The command information of the build-in command {@code export}.
 	 */
 	public static final CommandInfo INFO = new CommandInfo() {
 

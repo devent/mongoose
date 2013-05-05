@@ -22,6 +22,7 @@ import static org.apache.commons.lang3.Validate.isTrue;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CancellationException;
@@ -59,6 +60,8 @@ class EnvironmentImplLogger extends AbstractLogger {
 	private static final String SET_SCRIPT_HOME = "Set script home directory '{}'.";
 	private static final String SET_ARGS = "Set command line arguments {}.";
 	private static final String SET_WORKING_DIRECTORY = "Set working directory '{}'.";
+	private static final String SET_ENVIRONMENT = "Set environment {} for {}.";
+	private static final String SET_ENVIRONMENT_INFO = "Set environment {}.";
 
 	/**
 	 * Creates logger for {@link EnvironmentImpl}.
@@ -137,5 +140,14 @@ class EnvironmentImplLogger extends AbstractLogger {
 
 	void checkVariableReadOnly(boolean containsKey, String name) {
 		isTrue(containsKey, BUILD_IN_VARIABLE_READ_ONLY, name);
+	}
+
+	void environmentSet(EnvironmentImpl environment,
+			HashMap<String, String> value) {
+		if (log.isDebugEnabled()) {
+			log.debug(SET_ENVIRONMENT, value, environment);
+		} else {
+			log.info(SET_ENVIRONMENT_INFO, value);
+		}
 	}
 }

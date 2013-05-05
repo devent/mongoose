@@ -199,7 +199,9 @@ class EnvironmentImpl implements Environment {
 
 	@Override
 	public void setEnv(Map<String, String> env) {
-		variables.put(ENV_VARIABLE, new HashMap<String, String>(env));
+		HashMap<String, String> value = new HashMap<String, String>(env);
+		variables.put(ENV_VARIABLE, value);
+		log.environmentSet(this, value);
 	}
 
 	@SuppressWarnings("unchecked")
