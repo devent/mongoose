@@ -154,4 +154,22 @@ class StubEnvironment implements Environment {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public boolean hasVariable(String name) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Object getVariable(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setVariable(String name, Object value) {
+		// TODO Auto-generated method stub
+
+	}
 }

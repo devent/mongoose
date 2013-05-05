@@ -18,6 +18,7 @@
  */
 package com.anrisoftware.mongoose.environment;
 
+import static org.apache.commons.lang3.Validate.isTrue;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import java.io.File;
@@ -38,6 +39,10 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
  */
 class EnvironmentImplLogger extends AbstractLogger {
 
+	private static final String BUILD_IN_VARIABLE_READ_ONLY = "Build-in variable %s is read-only.";
+	private static final String NO_BUILD_IN_VARIABLE = "No build-in variable %s.";
+	private static final String SET_VARIABLE_INFO = "Set variable {} to '{}'.";
+	private static final String SET_VARIABLE = "Set variable {} to '{}' for {}.";
 	private static final String NO_COMMAND = "No command '%s' found.";
 	private static final String EXECUTION_MODE_SET_INFO = "Set execution mode {}.";
 	private static final String EXECUTION_MODE_SET = "Set execution mode {} for {}.";
@@ -116,5 +121,21 @@ class EnvironmentImplLogger extends AbstractLogger {
 
 	void checkCommand(EnvironmentImpl environment, Command command, String name) {
 		notNull(command, NO_COMMAND, name);
+	}
+
+	void checkVariable(boolean hasVariable, String name) {
+		isTrue(hasVariable, NO_BUILD_IN_VARIABLE, name);
+	}
+
+	void variableSet(EnvironmentImpl environment, String name, Object value) {
+		if (log.isDebugEnabled()) {
+			log.debug(SET_VARIABLE, name, value, environment);
+		} else {
+			log.info(SET_VARIABLE_INFO, name, value);
+		}
+	}
+
+	void checkVariableReadOnly(boolean containsKey, String name) {
+		isTrue(containsKey, BUILD_IN_VARIABLE_READ_ONLY, name);
 	}
 }

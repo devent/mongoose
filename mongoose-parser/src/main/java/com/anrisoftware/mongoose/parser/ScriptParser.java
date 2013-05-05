@@ -53,9 +53,7 @@ public class ScriptParser implements Callable<ScriptParser> {
 
 	private final ScriptParserLogger log;
 
-	private final Script script;
-
-	private final ParserMetaClass parserMetaClass;
+	private final EnvironmentScript script;
 
 	private final String scriptHome;
 
@@ -85,24 +83,23 @@ public class ScriptParser implements Callable<ScriptParser> {
 	ScriptParser(ScriptParserLogger logger,
 			ImportCustomizerProvider importCustomizerProvider,
 			ScriptPackageToClasspath scriptPackageToClasspath,
-			ParserMetaClass parserMetaClass,
 			@Named("parser-properties") ContextProperties p,
 			@Assisted Reader source, @Assisted String fileName) {
 		this.log = logger;
 		this.importCustomizer = importCustomizerProvider.get();
 		this.scriptPackageToClasspath = scriptPackageToClasspath;
-		this.parserMetaClass = parserMetaClass;
 		this.scriptHome = p.getProperty(SCRIPT_HOME_PROPERTY,
 				System.getProperty(USER_DIR_PROPERTY));
 		this.script = createScript(source, fileName);
 	}
 
-	private Script createScript(Reader source, String fileName) {
+	private EnvironmentScript createScript(Reader source, String fileName) {
 		CompilerConfiguration config = new CompilerConfiguration();
 		config.addCompilationCustomizers(importCustomizer);
+		config.setScriptBaseClass(EnvironmentScript.class.getCanonicalName());
 		Script script = new GroovyShell(config).parse(source, fileName);
 		scriptPackageToClasspath.addPackageNameToClassPath(script, scriptHome);
-		return script;
+		return (EnvironmentScript) script;
 	}
 
 	/**
@@ -113,7 +110,7 @@ public class ScriptParser implements Callable<ScriptParser> {
 	 */
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
-		parserMetaClass.setDelegate(script, environment);
+		script.setEnvironment(environment);
 		environment.setScriptHome(new File(scriptHome));
 		environment.setScriptClassLoader(script.getClass().getClassLoader());
 		environment.setScriptLoggerContext(script.getClass());

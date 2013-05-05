@@ -26,7 +26,6 @@ import static java.util.Collections.unmodifiableList;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.PrintStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,7 +52,6 @@ import com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.environment.ExecutionMode;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
-import com.anrisoftware.mongoose.command.StandardStreams;
 import com.anrisoftware.mongoose.resources.LocaleHooks;
 import com.anrisoftware.mongoose.resources.TemplatesResources;
 import com.anrisoftware.mongoose.resources.TextsResources;
@@ -93,7 +91,7 @@ class EnvironmentImpl implements Environment {
 
 	private final List<Future<Command>> backgroundTasks;
 
-	private final StandardStreams streams;
+	private final Map<String, VariableSetter> variablesSetters;
 
 	private Logger scriptLogger;
 
@@ -107,12 +105,12 @@ class EnvironmentImpl implements Environment {
 			@Named("environment-properties") ContextProperties properties,
 			PropertiesThreadsFactory threadsFactory,
 			TextsResources textsResources,
-			TemplatesResources templatesResources, LocaleHooks localeHooks,
-			StandardStreams streams) throws ParseException, ThreadsException {
+			TemplatesResources templatesResources, LocaleHooks localeHooks)
+			throws ParseException, ThreadsException {
 		this.log = logger;
 		this.threads = threadsFactory.create(threadsProperties, "script");
 		this.variables = new HashMap<String, Object>();
-		this.streams = streams;
+		this.variablesSetters = new HashMap<String, VariableSetter>();
 		this.textsResources = textsResources;
 		this.templatesResources = templatesResources;
 		this.backgroundTasks = synchronizedList(new ArrayList<Future<Command>>());
@@ -124,6 +122,7 @@ class EnvironmentImpl implements Environment {
 				EXECUTION_MODE_PROPERTY, ExecutionMode.FORMAT));
 		setupLocaleHooks(localeHooks);
 		setupVariables();
+		setupVariablesSetters();
 	}
 
 	private void setupLocaleHooks(LocaleHooks localeHooks) {
@@ -146,6 +145,38 @@ class EnvironmentImpl implements Environment {
 		setHomeDirectory();
 		setResources();
 		setLocale(Locale.getDefault());
+	}
+
+	private void setupVariablesSetters() {
+		variablesSetters.put(ARGS_VARIABLE, new VariableSetter() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void setVariable(Object value) {
+				setArgs((List<String>) value);
+			}
+		});
+		variablesSetters.put(EXECUTION_MODE_VARIABLE, new VariableSetter() {
+
+			@Override
+			public void setVariable(Object value) {
+				setExecutionMode((ExecutionMode) value);
+			}
+		});
+		variablesSetters.put(LOCALE_VARIABLE, new VariableSetter() {
+
+			@Override
+			public void setVariable(Object value) {
+				setLocale((Locale) value);
+			}
+		});
+		variablesSetters.put(WORKING_DIRECTORY_VARIABLE, new VariableSetter() {
+
+			@Override
+			public void setVariable(Object value) {
+				setWorkingDirectory((File) value);
+			}
+		});
 	}
 
 	private void setHomeDirectory() {
@@ -262,18 +293,31 @@ class EnvironmentImpl implements Environment {
 
 	@Override
 	public void setExecutionMode(ExecutionMode mode) {
-		variables.put(EXECUTION_MODE, mode);
+		variables.put(EXECUTION_MODE_VARIABLE, mode);
 		log.executionModeSet(this, mode);
 	}
 
 	@Override
 	public ExecutionMode getExecutionMode() {
-		return (ExecutionMode) variables.get(EXECUTION_MODE);
+		return (ExecutionMode) variables.get(EXECUTION_MODE_VARIABLE);
 	}
 
-	public PrintStream getOut() {
-		System.out.println("getOut()"); // TODO println
-		return System.out;
+	@Override
+	public void setVariable(String name, Object value) {
+		log.checkVariable(hasVariable(name), name);
+		log.checkVariableReadOnly(variablesSetters.containsKey(name), name);
+		variablesSetters.get(name).setVariable(value);
+	}
+
+	@Override
+	public boolean hasVariable(String name) {
+		return variables.containsKey(name);
+	}
+
+	@Override
+	public Object getVariable(String name) {
+		log.checkVariable(hasVariable(name), name);
+		return variables.get(name);
 	}
 
 	/**

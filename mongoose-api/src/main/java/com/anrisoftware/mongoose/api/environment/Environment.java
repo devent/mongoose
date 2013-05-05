@@ -81,7 +81,7 @@ public interface Environment {
 	/**
 	 * Commands execution mode {@link ExecutionMode}.
 	 */
-	static final String EXECUTION_MODE = "EXECUTION_MODE";
+	static final String EXECUTION_MODE_VARIABLE = "EXECUTION_MODE";
 
 	/**
 	 * Sets the environment variables of the script.
@@ -107,6 +107,38 @@ public interface Environment {
 	 * @return the command line arguments.
 	 */
 	List<String> getArgs();
+
+	/**
+	 * Tests if the build-in environment have the variable with the specified
+	 * name.
+	 * 
+	 * @param name
+	 *            the {@link String} name of the variable.
+	 * 
+	 * @return {@code true} if the variable exists; {@code false} if not.
+	 */
+	boolean hasVariable(String name);
+
+	/**
+	 * Returns the build-in variable with the specified name.
+	 * 
+	 * @param name
+	 *            the {@link String} name of the variable.
+	 * 
+	 * @return the {@link Object} variable.
+	 */
+	Object getVariable(String name);
+
+	/**
+	 * Sets a new value to the build-in variable with the specified name.
+	 * 
+	 * @param name
+	 *            the {@link String} name of the variable.
+	 * 
+	 * @param value
+	 *            the new {@link Object} value.
+	 */
+	void setVariable(String name, Object value);
 
 	/**
 	 * Sets the current working directory.

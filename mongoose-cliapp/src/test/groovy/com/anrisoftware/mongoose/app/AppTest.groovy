@@ -82,10 +82,23 @@ cmd()
 		app.start(["-file", file] as String[])
 	}
 
-	@Test(timeout = 1000l)
+	@Test(timeout = 100000l)
 	void "scipt file [log context]"() {
 		def file = folder.newFile("Script.groovy");
-		write file, """echo debug.theContext"""
+		write file, '''
+import com.anrisoftware.mongoose.api.environment.ExecutionMode
+EXECUTION_MODE = ExecutionMode.EXPLICIT
+echo debug.theContext
+'''
+		app.start(["-file", file] as String[])
+	}
+
+	@Test(timeout = 100000l)
+	void "scipt file [println]"() {
+		def file = folder.newFile("Script.groovy");
+		write file, '''
+println "Test"
+'''
 		app.start(["-file", file] as String[])
 	}
 
