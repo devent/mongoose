@@ -19,19 +19,8 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.anrisoftware.mongoose</groupId>
-			<artifactId>mongoose-api</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.anrisoftware.propertiesutils</groupId>
-			<artifactId>propertiesutils-contextproperties</artifactId>
-		</dependency>
+
+		<!-- test dependencies -->
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-test</artifactId>
@@ -41,6 +30,23 @@
 			<groupId>com.anrisoftware.globalpom</groupId>
 			<artifactId>globalpom-groovytestutils</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<!-- own modules dependencies -->
+		<dependency>
+			<groupId>com.anrisoftware.mongoose</groupId>
+			<artifactId>mongoose-api</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<!-- compile dependencies -->
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.anrisoftware.propertiesutils</groupId>
+			<artifactId>propertiesutils-contextproperties</artifactId>
 		</dependency>
 	</dependencies>
 </project>

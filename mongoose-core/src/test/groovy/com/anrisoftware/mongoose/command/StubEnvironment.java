@@ -38,6 +38,12 @@ class StubEnvironment implements Environment {
 	}
 
 	@Override
+	public Map<String, String> getEnv() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public void setArgs(List<String> args) {
 		// TODO Auto-generated method stub
 

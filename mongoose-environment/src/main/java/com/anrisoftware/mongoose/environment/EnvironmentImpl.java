@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
@@ -177,6 +178,14 @@ class EnvironmentImpl implements Environment {
 				setWorkingDirectory((File) value);
 			}
 		});
+		variablesSetters.put(ENV_VARIABLE, new VariableSetter() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void setVariable(Object value) {
+				setEnv((Map<String, String>) value);
+			}
+		});
 	}
 
 	private void setHomeDirectory() {
@@ -191,7 +200,13 @@ class EnvironmentImpl implements Environment {
 
 	@Override
 	public void setEnv(Map<String, String> env) {
-		variables.putAll(env);
+		variables.put(ENV_VARIABLE, new ConcurrentHashMap<String, String>(env));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, String> getEnv() {
+		return (Map<String, String>) variables.get(ENV_VARIABLE);
 	}
 
 	@Override

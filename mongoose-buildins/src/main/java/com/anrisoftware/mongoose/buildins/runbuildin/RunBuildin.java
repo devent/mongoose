@@ -95,6 +95,7 @@ class RunBuildin extends AbstractCommand {
 	public void setEnvironment(Environment environment) {
 		super.setEnvironment(environment);
 		setDirectory(environment.getWorkingDirectory());
+		env = environment.getEnv();
 	}
 
 	/**

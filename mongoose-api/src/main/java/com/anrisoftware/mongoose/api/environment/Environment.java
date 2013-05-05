@@ -44,6 +44,11 @@ public interface Environment {
 	static final String ARGS_VARIABLE = "ARGS";
 
 	/**
+	 * The environment variables of the script.
+	 */
+	static final String ENV_VARIABLE = "ENV";
+
+	/**
 	 * Current working directory.
 	 */
 	static final String WORKING_DIRECTORY_VARIABLE = "PWD";
@@ -92,6 +97,15 @@ public interface Environment {
 	 * @see System#getenv()
 	 */
 	void setEnv(Map<String, String> env);
+
+	/**
+	 * Returns the environment variables of the script.
+	 * 
+	 * @return the environment variables {@link Map}.
+	 * 
+	 * @see System#getenv()
+	 */
+	Map<String, String> getEnv();
 
 	/**
 	 * Sets the command line arguments of the script.
