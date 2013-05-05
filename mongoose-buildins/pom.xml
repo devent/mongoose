@@ -51,6 +51,10 @@
 			<artifactId>args4j</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.anrisoftware.globalpom</groupId>
+			<artifactId>globalpom-utils</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.mangosdk</groupId>
 			<artifactId>spi</artifactId>
 			<optional>true</optional>
