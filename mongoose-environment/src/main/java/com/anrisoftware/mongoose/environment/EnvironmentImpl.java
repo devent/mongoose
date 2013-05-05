@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
@@ -200,13 +199,14 @@ class EnvironmentImpl implements Environment {
 
 	@Override
 	public void setEnv(Map<String, String> env) {
-		variables.put(ENV_VARIABLE, new ConcurrentHashMap<String, String>(env));
+		variables.put(ENV_VARIABLE, new HashMap<String, String>(env));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, String> getEnv() {
-		return (Map<String, String>) variables.get(ENV_VARIABLE);
+		return new HashMap<String, String>(
+				(Map<String, String>) variables.get(ENV_VARIABLE));
 	}
 
 	@Override
