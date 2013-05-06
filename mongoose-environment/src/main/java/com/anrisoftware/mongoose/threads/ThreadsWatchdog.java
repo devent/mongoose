@@ -14,7 +14,9 @@ import javax.inject.Inject;
 
 import org.joda.time.Duration;
 
-import com.anrisoftware.mongoose.threads.PropertyListenerFuture.Status;
+import com.anrisoftware.mongoose.api.commans.ListenableFuture;
+import com.anrisoftware.mongoose.api.commans.ListenableFuture.Status;
+import com.anrisoftware.mongoose.command.DefaultListenableFuture;
 
 /**
  * Keeps track of the submitted tasks.
@@ -50,25 +52,31 @@ class ThreadsWatchdog {
 	}
 
 	/**
-	 * @see ExecutorService#submit(Callable)
+	 * @see Threads#submit(Callable, PropertyChangeListener...)
 	 */
-	public <V> PropertyListenerFuture<V> submit(Callable<V> callable) {
-		PropertyListenerFuture<V> futureTask;
-		futureTask = new PropertyListenerFuture<V>(callable);
-		return submit(futureTask);
+	public <V> DefaultListenableFuture<V> submit(Callable<V> callable,
+			PropertyChangeListener... listeners) {
+		DefaultListenableFuture<V> futureTask;
+		futureTask = new DefaultListenableFuture<V>(callable);
+		return submit(futureTask, listeners);
 	}
 
 	/**
-	 * @see ExecutorService#submit(Runnable, Object)
+	 * @see Threads#submit(Runnable, Object, PropertyChangeListener...)
 	 */
-	public <V> Future<V> submit(Runnable runable, V result) {
-		PropertyListenerFuture<V> futureTask;
-		futureTask = new PropertyListenerFuture<V>(runable, result);
-		return submit(futureTask);
+	public <V> ListenableFuture<V> submit(Runnable runable, V result,
+			PropertyChangeListener... listeners) {
+		DefaultListenableFuture<V> futureTask;
+		futureTask = new DefaultListenableFuture<V>(runable, result);
+		return submit(futureTask, null);
 	}
 
-	private <V> PropertyListenerFuture<V> submit(
-			final PropertyListenerFuture<V> task) {
+	private <V> DefaultListenableFuture<V> submit(
+			final DefaultListenableFuture<V> task,
+			PropertyChangeListener[] listeners) {
+		for (PropertyChangeListener l : listeners) {
+			task.addPropertyChangeListener(l);
+		}
 		task.addPropertyChangeListener(new PropertyChangeListener() {
 
 			@Override
@@ -92,6 +100,17 @@ class ThreadsWatchdog {
 		synchronized (this) {
 			notified = true;
 			notify();
+		}
+	}
+
+	/**
+	 * @see Threads#getTasks()
+	 * 
+	 * @return a copy of the submitted tasks.
+	 */
+	public List<Future<?>> getTasks() {
+		synchronized (tasks) {
+			return new ArrayList<Future<?>>(tasks);
 		}
 	}
 

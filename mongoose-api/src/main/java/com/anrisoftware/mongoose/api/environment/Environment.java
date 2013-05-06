@@ -18,6 +18,7 @@
  */
 package com.anrisoftware.mongoose.api.environment;
 
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +29,7 @@ import org.joda.time.Duration;
 import org.slf4j.Logger;
 
 import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
@@ -287,9 +289,21 @@ public interface Environment {
 	 * @param command
 	 *            the {@link Command} to execute.
 	 * 
-	 * @return the {@link Future} of the command.
+	 * @param listeners
+	 *            the {@link PropertyChangeListener} listeners that are informed
+	 *            when the command finishes.
+	 * 
+	 * @return the {@link ListenableFuture} of the command.
 	 */
-	Future<Command> executeCommand(Command command);
+	ListenableFuture<Command> executeCommand(Command command,
+			PropertyChangeListener... listeners);
+
+	/**
+	 * Returns a list of the in the background started commands.
+	 * 
+	 * @return {@link List} of the in the background started commands.
+	 */
+	List<Future<?>> getBackgroundTasks();
 
 	/**
 	 * Execute the command in the environment and wait for the command to

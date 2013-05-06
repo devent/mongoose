@@ -1,5 +1,6 @@
 package com.anrisoftware.mongoose.command;
 
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
@@ -12,6 +13,7 @@ import org.joda.time.Duration;
 import org.slf4j.Logger;
 
 import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.environment.ExecutionMode;
@@ -140,8 +142,15 @@ class StubEnvironment implements Environment {
 	}
 
 	@Override
-	public Future<Command> executeCommand(Command command) {
-		return executor.submit(command);
+	public ListenableFuture<Command> executeCommand(Command command,
+			PropertyChangeListener... listeners) {
+		DefaultListenableFuture<Command> futureTask;
+		futureTask = new DefaultListenableFuture<Command>(command);
+		for (PropertyChangeListener l : listeners) {
+			futureTask.addPropertyChangeListener(l);
+		}
+		executor.submit(futureTask);
+		return futureTask;
 	}
 
 	@Override
@@ -151,6 +160,12 @@ class StubEnvironment implements Environment {
 		} catch (Exception e) {
 			throw new CommandException("Error execute command.", e);
 		}
+	}
+
+	@Override
+	public List<Future<?>> getBackgroundTasks() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

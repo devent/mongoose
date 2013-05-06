@@ -1,4 +1,4 @@
-package com.anrisoftware.mongoose.threads;
+package com.anrisoftware.mongoose.command;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -7,37 +7,16 @@ import java.util.concurrent.FutureTask;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.anrisoftware.mongoose.api.commans.ListenableFuture;
+
 /**
  * Informs property change listener when the task is finish.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public class PropertyListenerFuture<V> extends FutureTask<V> {
-
-	/**
-	 * The status of the task property.
-	 */
-	public static final String STATUS_PROPERTY = "status";
-
-	/**
-	 * Status of the task.
-	 * 
-	 * @author Erwin Mueller, erwin.mueller@deventm.org
-	 * @since 1.0
-	 */
-	public enum Status {
-
-		/**
-		 * The task is currently running.
-		 */
-		RUNNING,
-
-		/**
-		 * The task is finished.
-		 */
-		DONE;
-	}
+public class DefaultListenableFuture<V> extends FutureTask<V> implements
+		ListenableFuture<V> {
 
 	private final PropertyChangeSupport propertySupport;
 
@@ -52,7 +31,7 @@ public class PropertyListenerFuture<V> extends FutureTask<V> {
 	/**
 	 * @see FutureTask#FutureTask(Callable)
 	 */
-	public PropertyListenerFuture(Callable<V> callable) {
+	public DefaultListenableFuture(Callable<V> callable) {
 		super(callable);
 		this.callable = callable;
 		this.propertySupport = new PropertyChangeSupport(this);
@@ -62,7 +41,7 @@ public class PropertyListenerFuture<V> extends FutureTask<V> {
 	/**
 	 * @see FutureTask#FutureTask(Runnable, Object)
 	 */
-	public PropertyListenerFuture(Runnable runnable, V result) {
+	public DefaultListenableFuture(Runnable runnable, V result) {
 		super(runnable, result);
 		this.runnable = runnable;
 		this.result = result;
@@ -91,6 +70,7 @@ public class PropertyListenerFuture<V> extends FutureTask<V> {
 	 * @see PropertyChangeSupport#addPropertyChangeListener(PropertyChangeListener)
 	 * @see #STATUS_PROPERTY
 	 */
+	@Override
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
 		propertySupport.addPropertyChangeListener(listener);
 	}
@@ -99,6 +79,7 @@ public class PropertyListenerFuture<V> extends FutureTask<V> {
 	 * @see PropertyChangeSupport#removePropertyChangeListener(PropertyChangeListener)
 	 * @see #STATUS_PROPERTY
 	 */
+	@Override
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		propertySupport.removePropertyChangeListener(listener);
 	}
@@ -108,6 +89,7 @@ public class PropertyListenerFuture<V> extends FutureTask<V> {
 	 *      PropertyChangeListener)
 	 * @see #STATUS_PROPERTY
 	 */
+	@Override
 	public void addPropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
 		propertySupport.addPropertyChangeListener(propertyName, listener);
@@ -118,6 +100,7 @@ public class PropertyListenerFuture<V> extends FutureTask<V> {
 	 *      PropertyChangeListener)
 	 * @see #STATUS_PROPERTY
 	 */
+	@Override
 	public void removePropertyChangeListener(String propertyName,
 			PropertyChangeListener listener) {
 		propertySupport.removePropertyChangeListener(propertyName, listener);

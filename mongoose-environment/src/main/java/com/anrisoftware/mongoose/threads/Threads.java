@@ -18,11 +18,15 @@
  */
 package com.anrisoftware.mongoose.threads;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import org.joda.time.Duration;
+
+import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 
 /**
  * Submits tasks for execution.
@@ -55,6 +59,33 @@ public interface Threads extends ExecutorService {
 	 * @return the {@link String} name.
 	 */
 	String getName();
+
+	/**
+	 * @see ExecutorService#submit(Callable)
+	 * 
+	 * @param listeners
+	 *            {@link PropertyChangeListener} listeners that are informed
+	 *            when the task finishes.
+	 */
+	<V> ListenableFuture<V> submit(Callable<V> callable,
+			PropertyChangeListener... listeners);
+
+	/**
+	 * @see ExecutorService#submit(Runnable, Object)
+	 * 
+	 * @param listeners
+	 *            {@link PropertyChangeListener} listeners that are informed
+	 *            when the task finishes.
+	 */
+	<V> ListenableFuture<V> submit(Runnable runable, V result,
+			PropertyChangeListener... listeners);
+
+	/**
+	 * Returns a list of submitted tasks.
+	 * 
+	 * @return {@link List} of the submitted tasks.
+	 */
+	List<Future<?>> getTasks();
 
 	/**
 	 * Waits for all tasks to finish.

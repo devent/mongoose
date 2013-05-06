@@ -151,6 +151,25 @@ public interface Command extends Callable<Command> {
 	Command args(Map<String, Object> named, Object... args) throws Exception;
 
 	/**
+	 * Starts the command in the background.
+	 * 
+	 * @see #setArgs(Object...)
+	 * 
+	 * @return {@link ListenableFuture} of the command.
+	 */
+	ListenableFuture<Command> background(Object... args) throws Exception;
+
+	/**
+	 * Starts the command in the background.
+	 * 
+	 * @see #setArgs(Map, Object...)
+	 * 
+	 * @return {@link ListenableFuture} of the command.
+	 */
+	ListenableFuture<Command> background(Map<String, Object> named,
+			Object... args) throws Exception;
+
+	/**
 	 * Returns the arguments of the command.
 	 * 
 	 * @return the arguments.

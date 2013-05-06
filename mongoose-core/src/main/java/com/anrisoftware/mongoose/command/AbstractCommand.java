@@ -3,6 +3,7 @@ package com.anrisoftware.mongoose.command;
 import static com.anrisoftware.mongoose.command.StandardStreams.STANDRD_OUTPUT_DESCRIPTOR;
 import static java.lang.String.format;
 
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
 import java.beans.VetoableChangeSupport;
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.mongoose.api.environment.Environment;
 
 /**
@@ -37,6 +39,10 @@ import com.anrisoftware.mongoose.api.environment.Environment;
  * @since 1.0
  */
 public abstract class AbstractCommand implements Command {
+
+	private static final String LISTENER_KEY = "listener";
+
+	private static final String LISTENERS_KEY = "listeners";
 
 	/**
 	 * Key for the unnamed arguments.
@@ -236,6 +242,37 @@ public abstract class AbstractCommand implements Command {
 	 */
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
+	}
+
+	@Override
+	public ListenableFuture<Command> background(Map<String, Object> named,
+			Object... args) throws Exception {
+		PropertyChangeListener[] l = parseBackgroundListener(named);
+		args(named, args);
+		return l == null ? environment.executeCommand(this) : environment
+				.executeCommand(this, l);
+	}
+
+	@SuppressWarnings("unchecked")
+	private PropertyChangeListener[] parseBackgroundListener(
+			Map<String, Object> named) {
+		List<PropertyChangeListener> l = new ArrayList<PropertyChangeListener>();
+		if (named.containsKey(LISTENER_KEY)) {
+			l.add((PropertyChangeListener) named.get(LISTENER_KEY));
+			named.remove(LISTENER_KEY);
+		}
+		if (named.containsKey(LISTENERS_KEY)) {
+			l.addAll((List<PropertyChangeListener>) named.get(LISTENERS_KEY));
+			named.remove(LISTENERS_KEY);
+		}
+		return l.toArray(new PropertyChangeListener[l.size()]);
+	}
+
+	@Override
+	public ListenableFuture<Command> background(Object... args)
+			throws Exception {
+		args(args);
+		return environment.executeCommand(this);
 	}
 
 	@Override

@@ -1,12 +1,13 @@
 package com.anrisoftware.mongoose.threads
 
-import static com.anrisoftware.mongoose.threads.PropertyListenerFuture.Status.*
-
 import java.beans.PropertyChangeListener
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 import org.junit.Test
+
+import com.anrisoftware.mongoose.api.commans.ListenableFuture.Status
+import com.anrisoftware.mongoose.command.DefaultListenableFuture
 
 /**
  * @see PropertyListenerFuture
@@ -22,7 +23,7 @@ class PropertyListenerFutureTest {
 		def listener = { evt -> taskStatus = evt.newValue } as PropertyChangeListener
 		boolean taskRun = false
 		def task = { taskRun = true }
-		def future = new PropertyListenerFuture(task)
+		def future = new DefaultListenableFuture(task)
 		future.addPropertyChangeListener listener
 		def service = Executors.newCachedThreadPool()
 
@@ -30,6 +31,6 @@ class PropertyListenerFutureTest {
 		service.shutdown()
 		service.awaitTermination(100, TimeUnit.MILLISECONDS)
 		assert taskRun == true
-		assert taskStatus == DONE
+		assert taskStatus == Status.DONE
 	}
 }

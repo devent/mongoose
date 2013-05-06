@@ -5,6 +5,7 @@ import java.util.concurrent.Future;
 import javax.inject.Singleton;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
+import com.anrisoftware.mongoose.command.DefaultListenableFuture;
 
 /**
  * Logging messages for {@link ThreadsWatchdog}.
@@ -22,7 +23,7 @@ class ThreadsWatchdogLogger extends AbstractLogger {
 		super(ThreadsWatchdog.class);
 	}
 
-	void taskSubmitted(PropertyListenerFuture<?> task) {
+	void taskSubmitted(DefaultListenableFuture<?> task) {
 		log.debug("Task {} submitted.", task);
 	}
 

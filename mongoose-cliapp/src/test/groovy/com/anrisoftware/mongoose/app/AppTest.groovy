@@ -82,22 +82,55 @@ cmd()
 		app.start(["-file", file] as String[])
 	}
 
-	@Test(timeout = 100000l)
+	@Test(timeout = 1000l)
 	void "scipt file [log context]"() {
 		def file = folder.newFile("Script.groovy");
 		write file, '''
-import com.anrisoftware.mongoose.api.environment.ExecutionMode
 EXECUTION_MODE = ExecutionMode.EXPLICIT
 echo debug.theContext
 '''
 		app.start(["-file", file] as String[])
 	}
 
-	@Test(timeout = 100000l)
+	@Test(timeout = 1000l)
 	void "scipt file [println]"() {
 		def file = folder.newFile("Script.groovy");
 		write file, '''
 println "Test"
+'''
+		app.start(["-file", file] as String[])
+	}
+
+	@Test(timeout = 1000l)
+	void "scipt file [background]"() {
+		def file = folder.newFile("Script.groovy");
+		write file, '''
+def cmd = create "echo" theCommand
+def task = cmd.background "Test"
+task.get()
+'''
+		app.start(["-file", file] as String[])
+	}
+
+	@Test(timeout = 1000l)
+	void "scipt file [background, listener]"() {
+		def file = folder.newFile("Script.groovy");
+		write file, '''
+def mylistener = { evt -> echo "Done." } as PropertyChangeListener
+def cmd = create "echo" theCommand
+def task = cmd.background listener: mylistener, "Test"
+'''
+		app.start(["-file", file] as String[])
+	}
+
+	@Test(timeout = 1000l)
+	void "scipt file [background, listeners]"() {
+		def file = folder.newFile("Script.groovy");
+		write file, '''
+def mylistenerA = { evt -> echo "Done A." } as PropertyChangeListener
+def mylistenerB = { evt -> echo "Done B." } as PropertyChangeListener
+def cmd = create "echo" theCommand
+def task = cmd.background listeners: [mylistenerA, mylistenerB], "Test"
 '''
 		app.start(["-file", file] as String[])
 	}

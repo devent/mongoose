@@ -20,7 +20,6 @@ package com.anrisoftware.mongoose.environment;
 
 import static com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy.POLICY_FORMAT;
 import static com.anrisoftware.mongoose.resources.LocaleHooks.DISPLAY_LOCALE_PROPERTY;
-import static java.util.Collections.synchronizedList;
 import static java.util.Collections.unmodifiableList;
 
 import java.beans.PropertyChangeEvent;
@@ -48,6 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.CommandService;
+import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.environment.ExecutionMode;
@@ -57,8 +57,6 @@ import com.anrisoftware.mongoose.resources.TemplatesResources;
 import com.anrisoftware.mongoose.resources.TextsResources;
 import com.anrisoftware.mongoose.threads.PropertiesThreads;
 import com.anrisoftware.mongoose.threads.PropertiesThreadsFactory;
-import com.anrisoftware.mongoose.threads.PropertyListenerFuture;
-import com.anrisoftware.mongoose.threads.PropertyListenerFuture.Status;
 import com.anrisoftware.mongoose.threads.ThreadsException;
 import com.anrisoftware.propertiesutils.ContextProperties;
 
@@ -89,8 +87,6 @@ class EnvironmentImpl implements Environment {
 
 	private final TemplatesResources templatesResources;
 
-	private final List<Future<Command>> backgroundTasks;
-
 	private final Map<String, VariableSetter> variablesSetters;
 
 	private Logger scriptLogger;
@@ -113,7 +109,6 @@ class EnvironmentImpl implements Environment {
 		this.variablesSetters = new HashMap<String, VariableSetter>();
 		this.textsResources = textsResources;
 		this.templatesResources = templatesResources;
-		this.backgroundTasks = synchronizedList(new ArrayList<Future<Command>>());
 		this.backgroundCommandsPolicy = properties.getTypedProperty(
 				BACKGROUND_COMMANDS_POLICY_PROPERTY, POLICY_FORMAT);
 		this.backgroundCommandsTimeout = Duration.parse(properties
@@ -399,20 +394,10 @@ class EnvironmentImpl implements Environment {
 	}
 
 	@Override
-	public Future<Command> executeCommand(Command command) {
-		final PropertyListenerFuture<Command> task;
-		task = (PropertyListenerFuture<Command>) threads.submit(command);
-		task.addPropertyChangeListener(new PropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				Status status = (Status) evt.getNewValue();
-				if (status == Status.DONE) {
-					backgroundTasks.remove(task);
-				}
-			}
-		});
-		backgroundTasks.add(task);
+	public ListenableFuture<Command> executeCommand(Command command,
+			PropertyChangeListener... listeners) {
+		ListenableFuture<Command> task;
+		task = threads.submit(command, listeners);
 		return task;
 	}
 
@@ -431,11 +416,16 @@ class EnvironmentImpl implements Environment {
 	}
 
 	@Override
+	public List<Future<?>> getBackgroundTasks() {
+		return threads.getTasks();
+	}
+
+	@Override
 	public List<Future<?>> shutdown() throws InterruptedException {
 		List<Future<?>> canceledTasks = new ArrayList<Future<?>>();
 		switch (backgroundCommandsPolicy) {
 		case CANCEL:
-			canceledTasks.addAll(cancelTasks(copyBackgroundTasks()));
+			canceledTasks.addAll(cancelTasks(getBackgroundTasks()));
 			break;
 		case WAIT:
 			canceledTasks.addAll(cancelTasks(threads
@@ -449,12 +439,6 @@ class EnvironmentImpl implements Environment {
 		return canceledTasks;
 	}
 
-	private ArrayList<Future<?>> copyBackgroundTasks() {
-		synchronized (backgroundTasks) {
-			return new ArrayList<Future<?>>(backgroundTasks);
-		}
-	}
-
 	private List<Future<?>> cancelTasks(List<Future<?>> tasks) {
 		for (Future<?> future : tasks) {
 			future.cancel(true);
@@ -465,6 +449,6 @@ class EnvironmentImpl implements Environment {
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).append("background tasks",
-				backgroundTasks.size()).toString();
+				getBackgroundTasks()).toString();
 	}
 }

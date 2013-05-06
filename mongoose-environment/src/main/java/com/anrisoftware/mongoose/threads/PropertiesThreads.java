@@ -1,5 +1,6 @@
 package com.anrisoftware.mongoose.threads;
 
+import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.joda.time.Duration;
 
+import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
@@ -184,8 +186,20 @@ public class PropertiesThreads implements Threads {
 	}
 
 	@Override
+	public <V> ListenableFuture<V> submit(Callable<V> callable,
+			PropertyChangeListener... listeners) {
+		return watchdog.submit(callable, listeners);
+	}
+
+	@Override
 	public <T> Future<T> submit(Runnable task, T result) {
 		return watchdog.submit(task, result);
+	}
+
+	@Override
+	public <V> ListenableFuture<V> submit(Runnable runable, V result,
+			PropertyChangeListener... listeners) {
+		return watchdog.submit(runable, result, listeners);
 	}
 
 	@Override
@@ -229,6 +243,11 @@ public class PropertiesThreads implements Threads {
 			long timeout, TimeUnit unit) throws InterruptedException,
 			ExecutionException, TimeoutException {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List<Future<?>> getTasks() {
+		return watchdog.getTasks();
 	}
 
 	@Override

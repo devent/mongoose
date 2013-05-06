@@ -1,5 +1,6 @@
 package com.anrisoftware.groovybash.parser;
 
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.joda.time.Duration;
 import org.slf4j.Logger;
 
 import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.environment.ExecutionMode;
@@ -133,15 +135,22 @@ class StubEnvironment implements Environment {
 	}
 
 	@Override
-	public Future<Command> executeCommand(Command command) {
+	public void executeCommandAndWait(Command command) throws CommandException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ListenableFuture<Command> executeCommand(Command command,
+			PropertyChangeListener... listeners) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void executeCommandAndWait(Command command) throws CommandException {
+	public List<Future<?>> getBackgroundTasks() {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
