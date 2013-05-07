@@ -141,7 +141,7 @@ def task = cmd.background listeners: [mylistenerA, mylistenerB], "Test"
 		write file, '''
 def cd() {
   echo "Cd called."
-  buildin command: "cd"
+  buildin name: "cd"
 }
 
 cd
