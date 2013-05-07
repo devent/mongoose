@@ -198,7 +198,7 @@ public abstract class AbstractCommand implements Command {
 	public Command args(Object... args) throws Exception {
 		Map<String, Object> oldValue = this.args;
 		Map<String, Object> newValue = createMap(10);
-		newValue.put(UNNAMED_KEY, Arrays.asList(args));
+		newValue.put(UNNAMED_KEY, new ArrayList<Object>(Arrays.asList(args)));
 		vetoable.fireVetoableChange(ARGUMENTS_PROPERTY, oldValue, newValue);
 		this.args = newValue;
 		log.argumentsSet(this, args);
@@ -218,7 +218,7 @@ public abstract class AbstractCommand implements Command {
 		Map<String, Object> oldValue = this.args;
 		Map<String, Object> newValue = createMap(10);
 		newValue.putAll(named);
-		newValue.put(UNNAMED_KEY, Arrays.asList(args));
+		newValue.put(UNNAMED_KEY, new ArrayList<Object>(Arrays.asList(args)));
 		vetoable.fireVetoableChange(ARGUMENTS_PROPERTY, oldValue, newValue);
 		this.args = newValue;
 		log.argumentsSet(this, args);
