@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.commans.CommandService;
 import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.mongoose.api.environment.Environment;
 
@@ -466,6 +468,29 @@ public abstract class AbstractCommand implements Command {
 	 */
 	public Command rightShift(Object rhs) {
 		return this;
+	}
+
+	/**
+	 * Loads the command with the specified name.
+	 * 
+	 * @param name
+	 *            the {@link String} name of the command.
+	 * 
+	 * @return the {@link Command} or {@code null} if no such command can be
+	 *         found.
+	 */
+	protected final Command loadCommand(String name) {
+		CommandService service = loadCommandService(name);
+		return service == null ? null : service.getCommandFactory().create();
+	}
+
+	private CommandService loadCommandService(String name) {
+		for (CommandService service : ServiceLoader.load(CommandService.class)) {
+			if (service.getInfo().getId().equals(name)) {
+				return service;
+			}
+		}
+		return null;
 	}
 
 	@Override

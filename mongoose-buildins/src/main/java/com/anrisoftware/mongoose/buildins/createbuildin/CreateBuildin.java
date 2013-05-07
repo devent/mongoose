@@ -20,12 +20,10 @@ package com.anrisoftware.mongoose.buildins.createbuildin;
 
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 
 import javax.inject.Inject;
 
 import com.anrisoftware.mongoose.api.commans.Command;
-import com.anrisoftware.mongoose.api.commans.CommandService;
 import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 
@@ -67,20 +65,6 @@ class CreateBuildin extends AbstractCommand {
 		if (unnamedArgs.size() == 1) {
 			name = unnamedArgs.get(0).toString();
 		}
-	}
-
-	private Command loadCommand(String name) {
-		CommandService service = loadCommandService(name);
-		return service == null ? null : service.getCommandFactory().create();
-	}
-
-	private CommandService loadCommandService(String name) {
-		for (CommandService service : ServiceLoader.load(CommandService.class)) {
-			if (service.getInfo().getId().equals(name)) {
-				return service;
-			}
-		}
-		return null;
 	}
 
 	/**

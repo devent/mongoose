@@ -135,6 +135,20 @@ def task = cmd.background listeners: [mylistenerA, mylistenerB], "Test"
 		app.start(["-file", file] as String[])
 	}
 
+	@Test(timeout = 1000l)
+	void "scipt file [override build-in]"() {
+		def file = folder.newFile("Script.groovy");
+		write file, '''
+def cd() {
+  echo "Cd called."
+  buildin command: "cd"
+}
+
+cd
+'''
+		app.start(["-file", file] as String[])
+	}
+
 	@Rule
 	public TemporaryFolder folder = new TemporaryFolder();
 
