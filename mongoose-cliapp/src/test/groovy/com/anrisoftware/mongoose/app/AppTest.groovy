@@ -44,7 +44,7 @@ class AppTest {
 	void "scipt file [create]"() {
 		def file = folder.newFile("script.groovy");
 		write file, '''
-def cmd = create "pwd" theCommand
+def cmd = create name: "pwd" theCommand
 cmd()
 '''
 		app.start(["-file", file] as String[])
@@ -105,7 +105,7 @@ println "Test"
 	void "scipt file [background]"() {
 		def file = folder.newFile("Script.groovy");
 		write file, '''
-def cmd = create "echo" theCommand
+def cmd = create name: "echo" theCommand
 def task = cmd.background "Test"
 task.get()
 '''
@@ -117,7 +117,7 @@ task.get()
 		def file = folder.newFile("Script.groovy");
 		write file, '''
 def mylistener = { evt -> echo "Done." } as PropertyChangeListener
-def cmd = create "echo" theCommand
+def cmd = create name: "echo" theCommand
 def task = cmd.background listener: mylistener, "Test"
 '''
 		app.start(["-file", file] as String[])
@@ -129,7 +129,7 @@ def task = cmd.background listener: mylistener, "Test"
 		write file, '''
 def mylistenerA = { evt -> echo "Done A." } as PropertyChangeListener
 def mylistenerB = { evt -> echo "Done B." } as PropertyChangeListener
-def cmd = create "echo" theCommand
+def cmd = create name: "echo" theCommand
 def task = cmd.background listeners: [mylistenerA, mylistenerB], "Test"
 '''
 		app.start(["-file", file] as String[])

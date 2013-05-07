@@ -1,6 +1,7 @@
 package com.anrisoftware.mongoose.buildins.createbuildin;
 
-import static org.apache.commons.lang3.Validate.inclusiveBetween;
+import static org.apache.commons.lang3.Validate.isTrue;
+import static org.apache.commons.lang3.Validate.notBlank;
 import static org.apache.commons.lang3.Validate.notNull;
 
 import javax.inject.Singleton;
@@ -20,7 +21,9 @@ class CreateBuildinLogger extends AbstractLogger {
 	private static final String CREATED_COMMAND_INFO = "Created command '{}'.";
 	private static final String CREATED_COMMAND = "Created command '{}' for {}.";
 	private static final String NO_COMMAND = "No command '%s' found.";
-	private static final String ARGUMENTS = "Expects one arguments.";
+	private static final String COMMAND_NAME_SET = "Command name '{}' set for {}.";
+	private static final String COMMAND_NAME_EMPTY = "Command name can not be empty.";
+	private static final String COMMAND_NAME = "Command name is expected.";
 
 	/**
 	 * Create logger for {@link CreateBuildin}.
@@ -29,8 +32,20 @@ class CreateBuildinLogger extends AbstractLogger {
 		super(CreateBuildin.class);
 	}
 
-	void checkArguments(CreateBuildin buildin, int size) {
-		inclusiveBetween(1, 1, size, ARGUMENTS);
+	void checkArguments(CreateBuildin buildin, boolean containsKey) {
+		isTrue(containsKey, COMMAND_NAME);
+	}
+
+	void checkName(CreateBuildin buildin, String name) {
+		notBlank(name, COMMAND_NAME_EMPTY);
+	}
+
+	void nameSet(CreateBuildin buildin, String name) {
+		if (log.isDebugEnabled()) {
+			log.debug(COMMAND_NAME_SET, name, buildin);
+		} else {
+			log.info(COMMAND_NAME_SET, name, buildin.getTheName());
+		}
 	}
 
 	void checkCommand(CreateBuildin buildin, Command command) {

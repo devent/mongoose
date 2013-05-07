@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import com.anrisoftware.mongoose.api.commans.Command;
-import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 
 /**
@@ -34,6 +33,8 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
  * @since 1.0
  */
 class CreateBuildin extends AbstractCommand {
+
+	private static final String NAME_KEY = "name";
 
 	private final CreateBuildinLogger log;
 
@@ -51,20 +52,51 @@ class CreateBuildin extends AbstractCommand {
 	}
 
 	@Override
-	protected void doCall() throws ExecutionException {
+	protected void doCall() throws Exception {
 		command = loadCommand(name);
+		if (command == null) {
+			command = loadCommand("run");
+			insertName(name);
+		}
 		log.checkCommand(this, command);
 		command.setEnvironment(getTheEnvironment());
+		command.args(getArgs(), getUnnamedArgs().toArray());
 		log.loadCommand(this, name);
+	}
+
+	private void insertName(String name) {
+		List<Object> args = getUnnamedArgs();
+		args.add(0, name);
 	}
 
 	@Override
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
-		log.checkArguments(this, unnamedArgs.size());
-		if (unnamedArgs.size() == 1) {
-			name = unnamedArgs.get(0).toString();
-		}
+		parseName(args);
+	}
+
+	private void parseName(Map<String, Object> args) {
+		log.checkArguments(this, args.containsKey(NAME_KEY));
+		setName(args.get(NAME_KEY).toString());
+		args.remove(NAME_KEY);
+	}
+
+	/**
+	 * Sets the command name.
+	 * 
+	 * @param name
+	 *            the command {@link String} name.
+	 * 
+	 * @throws NullPointerException
+	 *             if the specified name is {@code null}.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the specified name is empty.
+	 */
+	public void setName(String name) {
+		log.checkName(this, name);
+		this.name = name;
+		log.nameSet(this, name);
 	}
 
 	/**

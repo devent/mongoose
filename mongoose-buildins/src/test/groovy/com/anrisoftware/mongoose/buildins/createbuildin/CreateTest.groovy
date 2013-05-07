@@ -18,6 +18,7 @@
  */
 package com.anrisoftware.mongoose.buildins.createbuildin
 
+import org.apache.commons.io.FileUtils
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
@@ -40,7 +41,7 @@ class CreateTest {
 
 	@Test
 	void "create"() {
-		def created = command "cd" theCommand
+		def created = command name: "cd" theCommand
 		assert created != null
 	}
 
@@ -50,9 +51,17 @@ class CreateTest {
 		command()
 	}
 
-	@Test(expected = ServiceConfigurationError)
-	void "create [no command]"() {
-		command "unknown"
+	@Test
+	void "create [external command]"() {
+		def tmp = File.createTempFile("text", "txt")
+		FileUtils.write tmp, "Hello"
+
+		try {
+			def cmd = command name: "cat $tmp" theCommand
+			cmd()
+		} finally {
+			tmp.delete()
+		}
 	}
 
 	CreateBuildin command
