@@ -58,10 +58,14 @@ abstract class EnvironmentScript extends Script {
 
 	@Override
 	Object getProperty(String property) {
-		if (environment.hasVariable(property)) {
-			return environment.getVariable(property);
-		} else {
-			return super.getProperty(property);
+		try {
+			return invokeMethod(property, null)
+		} catch (e) {
+			if (environment.hasVariable(property)) {
+				return environment.getVariable(property);
+			} else {
+				return super.getProperty(property);
+			}
 		}
 	}
 }

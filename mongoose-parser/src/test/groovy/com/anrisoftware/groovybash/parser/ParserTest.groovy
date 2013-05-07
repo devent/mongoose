@@ -61,6 +61,23 @@ println Executors.class
 """
 	}
 
+	@Test
+	void "no parenthesis function"() {
+		def script = createReader("""
+def foo() {
+  println "Foo"
+}
+
+foo
+""")
+		def parser = factory.create(script, "Test")
+		parser.setEnvironment environment
+		parser()
+		assertStringContent output(streams.byteOutputStream),
+				"""Foo
+"""
+	}
+
 	Map streams
 
 	Environment environment
