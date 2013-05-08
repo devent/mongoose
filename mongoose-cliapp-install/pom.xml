@@ -1,13 +1,75 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.anrisoftware.mongoose</groupId>
-    <artifactId>mongoose-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
-  <groupId>com.anrisoftware.mongoose</groupId>
-  <artifactId>mongoose-cliapp-install</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Mongoose :: CLI App :: Installation</name>
-  <description>Installation for the command line application.</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.anrisoftware.globalpom</groupId>
+		<artifactId>globalpom-izpack-singlejar</artifactId>
+		<version>2.3-SNAPSHOT</version>
+	</parent>
+
+	<groupId>com.anrisoftware.mongoose</groupId>
+	<artifactId>mongoose-cliapp-install</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Mongoose :: CLI App :: Installation</name>
+	<description>Installation for the command line application.</description>
+	<inceptionYear>2013</inceptionYear>
+	<url>https://www.anr-institute.com/projects/projects/groovybash-parent</url>
+
+	<properties>
+		<project.custom.mainclass>com.anrisoftware.mongoose.app.Start</project.custom.mainclass>
+		<project.custom.organization.url>http://www.anr-institute.com</project.custom.organization.url>
+		<project.custom.name>mongoose-cliapp</project.custom.name>
+		<project.custom.version>1.0</project.custom.version>
+		<project.custom.type>gui</project.custom.type>
+		<project.custom.copyright>${project.custom.year} ${project.custom.user.name}</project.custom.copyright>
+		<project.custom.author.name>Erwin Müller</project.custom.author.name>
+		<project.custom.author.email>erwin.mueller@deventm.org</project.custom.author.email>
+	</properties>
+
+	<developers>
+		<developer>
+			<id>EM</id>
+			<name>Erwin Müller</name>
+			<organization>Advanced Natural Research Insitute GmbH</organization>
+			<email>erwin.mueller@deventm.org</email>
+			<roles>
+				<role>Owner</role>
+				<role>Developer</role>
+			</roles>
+			<timezone>Europe/Berlin</timezone>
+		</developer>
+	</developers>
+
+	<licenses>
+		<license>
+			<name>GPLv3</name>
+			<url>http://www.gnu.org/licenses/gpl.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<issueManagement>
+		<system>Redmine</system>
+		<url>https://www.anr-institute.com/projects/projects/mongoose-cliapp-install</url>
+	</issueManagement>
+
+	<scm>
+		<connection>scm:git:${custom.gitpublic.url}groovybash.git</connection>
+		<developerConnection>scm:git:${custom.gitpublic.url}groovybash.git</developerConnection>
+		<url>scm:git:${custom.gitpublic.url}groovybash.git</url>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>${custom.repository.anrispublic.id}</id>
+			<url>${custom.repository.root}${custom.repository.anrispublic.path}</url>
+		</repository>
+		<snapshotRepository>
+			<id>${custom.repository.anrispublicsnapshots.id}</id>
+			<url>${custom.repository.root}${custom.repository.anrispublicsnapshots.path}</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 </project>
