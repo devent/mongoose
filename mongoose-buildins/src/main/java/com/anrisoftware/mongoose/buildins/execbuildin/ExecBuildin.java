@@ -18,12 +18,9 @@
  */
 package com.anrisoftware.mongoose.buildins.execbuildin;
 
-import static org.apache.commons.lang3.StringUtils.split;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -277,11 +274,16 @@ class ExecBuildin extends AbstractCommand {
 	private void unnamedArgsSet(List<Object> args) {
 		setCommand(args.get(0));
 		if (args.size() > 1) {
-			setEnv(args.get(1));
+			setEnv(asMap(args.get(1)));
 		}
 		if (args.size() > 2) {
 			setDirectory(args.get(2));
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, String> asMap(Object obj) {
+		return (Map<String, String>) obj;
 	}
 
 	/**
@@ -301,29 +303,9 @@ class ExecBuildin extends AbstractCommand {
 		log.commandSet(this, this.command);
 	}
 
-	public void setEnv(Object object) {
-		if (object instanceof Map) {
-			this.env = asMap(object);
-		} else {
-			this.env = parseEnvironment(object.toString());
-		}
+	public void setEnv(Map<String, String> env) {
+		this.env = env;
 		log.envSet(this, this.env);
-	}
-
-	@SuppressWarnings("unchecked")
-	private Map<String, String> asMap(Object obj) {
-		return (Map<String, String>) obj;
-	}
-
-	private Map<String, String> parseEnvironment(String string) {
-		String[] strings = split(string, " ;,");
-		Map<String, String> map = new HashMap<String, String>(
-				strings.length / 2);
-		for (String tuple : strings) {
-			String[] entry = split(tuple, "=");
-			map.put(entry[0], entry[1]);
-		}
-		return map;
 	}
 
 	public void setDirectory(Object object) {
