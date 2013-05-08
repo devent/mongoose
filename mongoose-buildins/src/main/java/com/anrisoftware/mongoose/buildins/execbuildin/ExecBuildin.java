@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.buildins.runbuildin;
+package com.anrisoftware.mongoose.buildins.execbuildin;
 
 import static org.apache.commons.lang3.StringUtils.split;
 
@@ -52,7 +52,7 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class RunBuildin extends AbstractCommand {
+class ExecBuildin extends AbstractCommand {
 
 	private static final String SUCCESS_EXIT_VALUES_KEY = "successExitValues";
 
@@ -66,7 +66,7 @@ class RunBuildin extends AbstractCommand {
 
 	private static final String HANDLER_KEY = "handler";
 
-	private final RunBuildinLogger log;
+	private final ExecBuildinLogger log;
 
 	private final Executor executor;
 
@@ -81,7 +81,7 @@ class RunBuildin extends AbstractCommand {
 	private ExecuteWatchdog watchdog;
 
 	@Inject
-	RunBuildin(RunBuildinLogger logger, Executor executor) {
+	ExecBuildin(ExecBuildinLogger logger, Executor executor) {
 		this.log = logger;
 		this.executor = executor;
 		this.command = null;
@@ -99,11 +99,11 @@ class RunBuildin extends AbstractCommand {
 	}
 
 	/**
-	 * Returns the name {@code run} or the command's executable.
+	 * Returns the name {@code exec} or the command's executable.
 	 */
 	@Override
 	public String getTheName() {
-		return command == null ? "run" : command.getExecutable();
+		return command == null ? "exec" : command.getExecutable();
 	}
 
 	@Override

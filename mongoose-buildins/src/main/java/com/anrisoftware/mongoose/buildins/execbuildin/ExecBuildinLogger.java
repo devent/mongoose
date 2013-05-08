@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.buildins.runbuildin;
+package com.anrisoftware.mongoose.buildins.execbuildin;
 
 import java.util.Map;
 
@@ -26,12 +26,12 @@ import com.anrisoftware.globalpom.log.AbstractLogger;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
- * Logging messages for {@link RunBuildin}.
+ * Logging messages for {@link ExecBuildin}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class RunBuildinLogger extends AbstractLogger {
+class ExecBuildinLogger extends AbstractLogger {
 
 	private static final String SET_EXIT_VALUES = "Set success exit values to {} for {}.";
 	private static final String SET_EXIT_VALUE = "Set success exit value to {} for {}.";
@@ -56,65 +56,65 @@ class RunBuildinLogger extends AbstractLogger {
 	private static final String NO_DEFAULT_CONTRUCTOR = "No default contructor";
 
 	/**
-	 * Creates a logger for {@link RunBuildin}.
+	 * Creates a logger for {@link ExecBuildin}.
 	 */
-	RunBuildinLogger() {
-		super(RunBuildin.class);
+	ExecBuildinLogger() {
+		super(ExecBuildin.class);
 	}
 
-	CommandException noDefaultCtor(RunBuildin buildin,
+	CommandException noDefaultCtor(ExecBuildin buildin,
 			ReflectiveOperationException e, Class<?> type) {
 		return logException(new CommandException(NO_DEFAULT_CONTRUCTOR, e)
 				.addContext(BUILDIN, buildin).addContext(TYPE, type),
 				NO_DEFAULT_CONTRUCTOR_MESSAGE, type);
 	}
 
-	CommandException errorInstantiate(RunBuildin buildin,
+	CommandException errorInstantiate(ExecBuildin buildin,
 			ReflectiveOperationException e, Class<?> type) {
 		return logException(new CommandException(ERROR_INSTANTIATE, e)
 				.addContext(BUILDIN, buildin).addContext(TYPE, type),
 				ERROR_INSTANTIATE_MESSAGE, type);
 	}
 
-	CommandException errorHandlerType(RunBuildin buildin, Object object) {
+	CommandException errorHandlerType(ExecBuildin buildin, Object object) {
 		return logException(new CommandException(SPECIFIED_HANDER_TYPE)
 				.addContext(BUILDIN, buildin).addContext(OBJECT, object),
 				SPECIFIED_HANDER_TYPE_MESSAGE, object);
 	}
 
-	void handlerSet(RunBuildin buildin, Object object) {
+	void handlerSet(ExecBuildin buildin, Object object) {
 		log.debug(SET_HANDLER, object);
 	}
 
-	CommandException errorDestroyerType(RunBuildin buildin, Object object) {
+	CommandException errorDestroyerType(ExecBuildin buildin, Object object) {
 		return logException(new CommandException(SPECIFIED_DESTROYER_TYPE)
 				.addContext(BUILDIN, buildin).addContext(OBJECT, object),
 				SPECIFIED_DESTROYER_TYPE_MESSAGE, object);
 	}
 
-	void destroyerSet(RunBuildin buildin, Object object) {
+	void destroyerSet(ExecBuildin buildin, Object object) {
 		log.debug(SET_DESTROYER, object);
 	}
 
-	CommandException errorWatchdogType(RunBuildin buildin, Object object) {
+	CommandException errorWatchdogType(ExecBuildin buildin, Object object) {
 		return logException(new CommandException(SPECIFIED_WATCHDOG_TYPE)
 				.addContext(BUILDIN, buildin).addContext(OBJECT, object),
 				SPECIFIED_WATCHDOG_TYPE_MESSAGE, object);
 	}
 
-	void watchdogSet(RunBuildin buildin, Object object) {
+	void watchdogSet(ExecBuildin buildin, Object object) {
 		log.debug(SET_WATCHDOG, object);
 	}
 
-	void commandSet(RunBuildin buildin, Object object) {
+	void commandSet(ExecBuildin buildin, Object object) {
 		log.debug(SET_COMMAND, object);
 	}
 
-	void envSet(RunBuildin buildin, Map<String, String> env) {
+	void envSet(ExecBuildin buildin, Map<String, String> env) {
 		log.debug(SET_ENVIRONMENT, env);
 	}
 
-	void directorySet(RunBuildin buildin, Object dir) {
+	void directorySet(ExecBuildin buildin, Object dir) {
 		if (log.isDebugEnabled()) {
 			log.debug(SET_WORKING_DIRECTORY, dir, buildin);
 		} else {
@@ -122,20 +122,20 @@ class RunBuildinLogger extends AbstractLogger {
 		}
 	}
 
-	IllegalStateException notExitValueAvailable(RunBuildin buildin) {
+	IllegalStateException notExitValueAvailable(ExecBuildin buildin) {
 		return logException(
 				new IllegalStateException(
 						"No exit value is available, try ask your execute result handler."),
 				"No exit value is available, try ask your execute result handler.");
 	}
 
-	CommandException errorCommand(RunBuildin buildin, ExecuteException e) {
+	CommandException errorCommand(ExecBuildin buildin, ExecuteException e) {
 		return logException(new CommandException("Command returns with error",
 				e).addContext(BUILDIN, buildin),
 				"Command returns with error: '%s'", buildin.getTheName());
 	}
 
-	void exitValueSet(RunBuildin buildin, int value) {
+	void exitValueSet(ExecBuildin buildin, int value) {
 		if (log.isDebugEnabled()) {
 			log.debug(SET_EXIT_VALUE, value, buildin);
 		} else {
@@ -143,7 +143,7 @@ class RunBuildinLogger extends AbstractLogger {
 		}
 	}
 
-	void exitValuesSet(RunBuildin buildin, int[] values) {
+	void exitValuesSet(ExecBuildin buildin, int[] values) {
 		if (log.isDebugEnabled()) {
 			log.debug(SET_EXIT_VALUES, values, buildin);
 		} else {

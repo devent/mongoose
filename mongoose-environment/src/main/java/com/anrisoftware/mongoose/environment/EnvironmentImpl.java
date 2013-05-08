@@ -68,6 +68,8 @@ import com.anrisoftware.propertiesutils.ContextProperties;
  */
 class EnvironmentImpl implements Environment {
 
+	private static final String EXEC_COMMAND = "exec";
+
 	private static final String USER_HOME_PROPERTY = System
 			.getProperty("user.home");
 
@@ -341,7 +343,7 @@ class EnvironmentImpl implements Environment {
 	public Object methodMissing(String name, Object args) throws Exception {
 		Command command = loadCommand(name);
 		if (command == null) {
-			command = loadCommand("run");
+			command = loadCommand(EXEC_COMMAND);
 			command.setArgs(name, args);
 		} else {
 			command.setArgs(args);

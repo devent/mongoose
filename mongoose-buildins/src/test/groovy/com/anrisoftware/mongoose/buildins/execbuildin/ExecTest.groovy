@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.buildins.runbuildin
+package com.anrisoftware.mongoose.buildins.execbuildin
 import static com.anrisoftware.globalpom.utils.TestUtils.*
 import static org.apache.commons.io.FileUtils.*
 
@@ -24,7 +24,7 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.environment.Environment
 import com.anrisoftware.mongoose.api.exceptions.CommandException
 import com.anrisoftware.mongoose.environment.EnvironmentModule
 import com.anrisoftware.mongoose.resources.ResourcesModule
@@ -33,12 +33,12 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
- * @see RunBuildin
+ * @see ExecBuildin
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class RunTest {
+class ExecTest {
 
 	@Test
 	void "cat file"() {
@@ -109,7 +109,7 @@ class RunTest {
 		}
 	}
 
-	RunBuildin command
+	ExecBuildin command
 
 	Environment environment
 
@@ -117,7 +117,7 @@ class RunTest {
 
 	@Before
 	void setupCommand() {
-		command = injector.getInstance(RunBuildin)
+		command = injector.getInstance(ExecBuildin)
 		environment = injector.getInstance(Environment)
 		command.setEnvironment environment
 		byteOutput = new ByteArrayOutputStream()
@@ -130,7 +130,7 @@ class RunTest {
 	static void setupInjector() {
 		toStringStyle
 		injector = Guice.createInjector(
-				new RunModule(), new EnvironmentModule(), new ThreadsModule(),
+				new ExecModule(), new EnvironmentModule(), new ThreadsModule(),
 				new ResourcesModule())
 	}
 

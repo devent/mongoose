@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-core. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.buildins.runbuildin;
+package com.anrisoftware.mongoose.buildins.execbuildin;
 
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.Executor;
@@ -32,12 +32,12 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class RunModule extends AbstractModule {
+class ExecModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
 		install(new FactoryModuleBuilder().implement(Command.class,
-				RunBuildin.class).build(CommandFactory.class));
+				ExecBuildin.class).build(CommandFactory.class));
 		bind(Executor.class).to(DefaultExecutor.class);
 	}
 }

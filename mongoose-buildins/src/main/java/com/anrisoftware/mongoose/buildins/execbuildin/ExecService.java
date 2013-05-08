@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.buildins.runbuildin;
+package com.anrisoftware.mongoose.buildins.execbuildin;
 
 import org.mangosdk.spi.ProviderFor;
 
@@ -28,21 +28,21 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Makes the build-in command {@code run} available as a service.
+ * Makes the build-in command {@code exec} available as a service.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
 @ProviderFor(CommandService.class)
-public class RunService implements CommandService {
+public class ExecService implements CommandService {
 
 	/**
-	 * The unique identifier of the build-in command {@code run}.
+	 * The unique identifier of the build-in command {@code exec}.
 	 */
-	public static final String ID = "run";
+	public static final String ID = "exec";
 
 	/**
-	 * The command runrmation of the build-in command {@code run}.
+	 * The command execrmation of the build-in command {@code exec}.
 	 */
 	public static final CommandInfo INFO = new CommandInfo() {
 
@@ -52,7 +52,7 @@ public class RunService implements CommandService {
 		}
 	};
 
-	private static final Module[] MODULES = new Module[] { new RunModule() };
+	private static final Module[] MODULES = new Module[] { new ExecModule() };
 
 	@Override
 	public CommandInfo getInfo() {
