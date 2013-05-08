@@ -6,11 +6,10 @@
 	<parent>
 		<groupId>com.anrisoftware.mongoose</groupId>
 		<artifactId>mongoose-parent</artifactId>
-		<version>1.0</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mongoose-devices</artifactId>
-	<packaging>jar</packaging>
-	<name>Devices</name>
+	<name>Mongoose :: Devices</name>
 
 </project>
