@@ -22,7 +22,9 @@ import static org.apache.commons.io.FileUtils.*
 
 import org.junit.Before
 import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 import com.anrisoftware.mongoose.api.environment.Environment
 import com.anrisoftware.mongoose.api.exceptions.CommandException
@@ -43,41 +45,29 @@ class ExecTest {
 	@Test
 	void "cat file"() {
 		def string = "Test"
-		def tmp = File.createTempFile("file", "")
-		try {
-			write tmp, string
-			command "cat $tmp"
-			assertStringContent output(byteOutput), string
-		} finally {
-			tmp.delete()
-		}
+		def file = tmp.newFile()
+		write file, string
+		command "cat $file"
+		assertStringContent output(byteOutput), string
 	}
 
 	@Test
 	void "cat file [+ working directory]"() {
 		def string = "Test"
-		def dir = File.createTempDir()
-		def tmp = new File(dir, "file")
-		try {
-			write tmp, string
-			command "cat ${tmp.name}", [:], dir
-			assertStringContent output(byteOutput), string
-		} finally {
-			dir.deleteDir()
-		}
+		def dir = tmp.newFolder()
+		def file = new File(dir, "file")
+		write file, string
+		command "cat ${file.name}", [:], dir
+		assertStringContent output(byteOutput), string
 	}
 
 	@Test
 	void "bash [+env variable]"() {
-		def scriptFile = File.createTempFile("bash", null)
+		def file = tmp.newFile()
 		def string = "Test"
-		try {
-			write scriptFile, 'echo -n $VAR'
-			command "bash $scriptFile", [VAR: string]
-			assertStringContent output(byteOutput), string
-		} finally {
-			scriptFile.delete()
-		}
+		write file, 'echo -n $VAR'
+		command "bash $file", [VAR: string]
+		assertStringContent output(byteOutput), string
 	}
 
 	@Test(expected = CommandException)
@@ -88,25 +78,17 @@ class ExecTest {
 	@Test
 	void "exit value"() {
 		def value = 99
-		def scriptFile = File.createTempFile("bash", null)
-		try {
-			write scriptFile, "exit $value"
-			command successExitValue: value, "bash $scriptFile"
-		} finally {
-			scriptFile.delete()
-		}
+		def file = tmp.newFile()
+		write file, "exit $value"
+		command successExitValue: value, "bash $file"
 	}
 
 	@Test
 	void "exit values"() {
 		def value = 99
-		def scriptFile = File.createTempFile("bash", null)
-		try {
-			write scriptFile, "exit $value"
-			command successExitValues: [value], "bash $scriptFile"
-		} finally {
-			scriptFile.delete()
-		}
+		def file = tmp.newFile()
+		write file, "exit $value"
+		command successExitValues: [value], "bash $file"
 	}
 
 	ExecBuildin command
@@ -114,6 +96,9 @@ class ExecTest {
 	Environment environment
 
 	ByteArrayOutputStream byteOutput
+
+	@Rule
+	public TemporaryFolder tmp = new TemporaryFolder();
 
 	@Before
 	void setupCommand() {
