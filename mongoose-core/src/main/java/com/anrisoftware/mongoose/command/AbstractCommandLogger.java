@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
  * Logging messages for {@link AbstractCommand}.
@@ -20,6 +21,12 @@ class AbstractCommandLogger extends AbstractLogger {
 	private static final String SET_PIPE_BUFFER_SIZE_INFO = "Set the pipe buffer size to {} for command {}.";
 	private static final String SET_PIPE_BUFFER_SIZE = "Set the pipe buffer size to {} for {}.";
 	private static final String PIPE_BUFFER_SIZE = "Pipe buffer size not be zero or negative.";
+	private static final String ERROR_INSTANTIATE_MESSAGE = "Error instantiate %s.";
+	private static final String ERROR_INSTANTIATE = "Error instantiate";
+	private static final String TYPE = "type";
+	private static final String COMMAND = "command";
+	private static final String NO_DEFAULT_CONTRUCTOR_MESSAGE = "No default contructor found for %s.";
+	private static final String NO_DEFAULT_CONTRUCTOR = "No default contructor";
 
 	/**
 	 * Create logger for {@link AbstractCommand}.
@@ -70,4 +77,19 @@ class AbstractCommandLogger extends AbstractLogger {
 			log.info(SET_PIPE_BUFFER_SIZE_INFO, size, command.getTheName());
 		}
 	}
+
+	CommandException noDefaultCtor(AbstractCommand command,
+			ReflectiveOperationException e, Class<?> type) {
+		return logException(new CommandException(NO_DEFAULT_CONTRUCTOR, e)
+				.addContext(COMMAND, command).addContext(TYPE, type),
+				NO_DEFAULT_CONTRUCTOR_MESSAGE, type);
+	}
+
+	CommandException errorInstantiate(AbstractCommand command,
+			ReflectiveOperationException e, Class<?> type) {
+		return logException(new CommandException(ERROR_INSTANTIATE, e)
+				.addContext(COMMAND, command).addContext(TYPE, type),
+				ERROR_INSTANTIATE_MESSAGE, type);
+	}
+
 }

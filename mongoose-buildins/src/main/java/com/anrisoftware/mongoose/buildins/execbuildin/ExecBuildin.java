@@ -20,7 +20,6 @@ package com.anrisoftware.mongoose.buildins.execbuildin;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,6 @@ import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.ProcessDestroyer;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.exec.ShutdownHookProcessDestroyer;
-import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.joda.time.Duration;
 
 import com.anrisoftware.mongoose.api.environment.Environment;
@@ -255,20 +253,6 @@ class ExecBuildin extends AbstractCommand {
 			throw log.errorWatchdogType(this, object);
 		}
 		log.watchdogSet(this, object);
-	}
-
-	private <T> T createType(Class<T> type) throws CommandException {
-		try {
-			return ConstructorUtils.invokeConstructor(type);
-		} catch (NoSuchMethodException e) {
-			throw log.noDefaultCtor(this, e, type);
-		} catch (IllegalAccessException e) {
-			throw log.noDefaultCtor(this, e, type);
-		} catch (InvocationTargetException e) {
-			throw log.errorInstantiate(this, e, type);
-		} catch (InstantiationException e) {
-			throw log.errorInstantiate(this, e, type);
-		}
 	}
 
 	private void unnamedArgsSet(List<Object> args) {

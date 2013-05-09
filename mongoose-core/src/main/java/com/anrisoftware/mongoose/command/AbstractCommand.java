@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,10 +27,12 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
  * Sets the standard streams of the command and implements the stream
@@ -469,9 +472,27 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	/**
+	 * Instantiates the specified type with the default constructor.
 	 * 
+	 * @param type
+	 *            the {@link Class} type.
 	 * 
+	 * @return the instantiated type.
+	 * 
+	 * @throws CommandException
+	 *             if there were errors instantiate the class type.
 	 */
+	protected <T> T createType(Class<T> type) throws CommandException {
+		try {
+			return ConstructorUtils.invokeConstructor(type);
+		} catch (NoSuchMethodException e) {
+			throw log.noDefaultCtor(this, e, type);
+		} catch (IllegalAccessException e) {
+			throw log.noDefaultCtor(this, e, type);
+		} catch (InvocationTargetException e) {
+			throw log.errorInstantiate(this, e, type);
+		} catch (InstantiationException e) {
+			throw log.errorInstantiate(this, e, type);
 		}
 	}
 

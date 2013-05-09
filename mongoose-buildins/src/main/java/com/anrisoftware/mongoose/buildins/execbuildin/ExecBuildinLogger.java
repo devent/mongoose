@@ -39,21 +39,16 @@ class ExecBuildinLogger extends AbstractLogger {
 	private static final String SET_ENVIRONMENT = "Set environment {}.";
 	private static final String SET_COMMAND = "Set command '{}'.";
 	private static final String SET_WATCHDOG = "Set process watchdog {}.";
-	private static final String SPECIFIED_WATCHDOG_TYPE_MESSAGE = "Specified watchdog %s is not of type ExecuteWatchdog";
-	private static final String SPECIFIED_WATCHDOG_TYPE = "Specified watchdog is not of type ExecuteWatchdog";
+	private static final String WATCHDOG_TYPE_MESSAGE = "Specified watchdog %s is not of type ExecuteWatchdog";
+	private static final String WATCHDOG_TYPE = "Specified watchdog is not of type ExecuteWatchdog";
 	private static final String SET_DESTROYER = "Set process destroyer %s.";
 	private static final String OBJECT = "object";
-	private static final String SPECIFIED_DESTROYER_TYPE_MESSAGE = "Specified destroyer %s is not of type ProcessDestroyer";
-	private static final String SPECIFIED_DESTROYER_TYPE = "Specified destroyer is not of type ProcessDestroyer";
+	private static final String DESTROYER_TYPE_MESSAGE = "Specified destroyer %s is not of type ProcessDestroyer";
+	private static final String DESTROYER_TYPE = "Specified destroyer is not of type ProcessDestroyer";
 	private static final String SET_HANDLER = "Set process handler {}.";
-	private static final String SPECIFIED_HANDER_TYPE_MESSAGE = "Specified hander %s is not of type ExecuteResultHandler";
-	private static final String SPECIFIED_HANDER_TYPE = "Specified hander is not of type ExecuteResultHandler";
-	private static final String ERROR_INSTANTIATE_MESSAGE = "Error instantiate %s.";
-	private static final String ERROR_INSTANTIATE = "Error instantiate";
-	private static final String TYPE = "type";
+	private static final String HANDER_TYPE_MESSAGE = "Specified hander %s is not of type ExecuteResultHandler";
+	private static final String HANDER_TYPE = "Specified hander is not of type ExecuteResultHandler";
 	private static final String BUILDIN = "buildin";
-	private static final String NO_DEFAULT_CONTRUCTOR_MESSAGE = "No default contructor found for %s.";
-	private static final String NO_DEFAULT_CONTRUCTOR = "No default contructor";
 
 	/**
 	 * Creates a logger for {@link ExecBuildin}.
@@ -62,24 +57,11 @@ class ExecBuildinLogger extends AbstractLogger {
 		super(ExecBuildin.class);
 	}
 
-	CommandException noDefaultCtor(ExecBuildin buildin,
-			ReflectiveOperationException e, Class<?> type) {
-		return logException(new CommandException(NO_DEFAULT_CONTRUCTOR, e)
-				.addContext(BUILDIN, buildin).addContext(TYPE, type),
-				NO_DEFAULT_CONTRUCTOR_MESSAGE, type);
-	}
-
-	CommandException errorInstantiate(ExecBuildin buildin,
-			ReflectiveOperationException e, Class<?> type) {
-		return logException(new CommandException(ERROR_INSTANTIATE, e)
-				.addContext(BUILDIN, buildin).addContext(TYPE, type),
-				ERROR_INSTANTIATE_MESSAGE, type);
-	}
-
 	CommandException errorHandlerType(ExecBuildin buildin, Object object) {
-		return logException(new CommandException(SPECIFIED_HANDER_TYPE)
-				.addContext(BUILDIN, buildin).addContext(OBJECT, object),
-				SPECIFIED_HANDER_TYPE_MESSAGE, object);
+		return logException(
+				new CommandException(HANDER_TYPE).addContext(BUILDIN, buildin)
+						.addContext(OBJECT, object), HANDER_TYPE_MESSAGE,
+				object);
 	}
 
 	void handlerSet(ExecBuildin buildin, Object object) {
@@ -87,9 +69,10 @@ class ExecBuildinLogger extends AbstractLogger {
 	}
 
 	CommandException errorDestroyerType(ExecBuildin buildin, Object object) {
-		return logException(new CommandException(SPECIFIED_DESTROYER_TYPE)
-				.addContext(BUILDIN, buildin).addContext(OBJECT, object),
-				SPECIFIED_DESTROYER_TYPE_MESSAGE, object);
+		return logException(
+				new CommandException(DESTROYER_TYPE).addContext(BUILDIN,
+						buildin).addContext(OBJECT, object),
+				DESTROYER_TYPE_MESSAGE, object);
 	}
 
 	void destroyerSet(ExecBuildin buildin, Object object) {
@@ -97,9 +80,11 @@ class ExecBuildinLogger extends AbstractLogger {
 	}
 
 	CommandException errorWatchdogType(ExecBuildin buildin, Object object) {
-		return logException(new CommandException(SPECIFIED_WATCHDOG_TYPE)
-				.addContext(BUILDIN, buildin).addContext(OBJECT, object),
-				SPECIFIED_WATCHDOG_TYPE_MESSAGE, object);
+		return logException(
+				new CommandException(WATCHDOG_TYPE)
+						.addContext(BUILDIN, buildin)
+						.addContext(OBJECT, object), WATCHDOG_TYPE_MESSAGE,
+				object);
 	}
 
 	void watchdogSet(ExecBuildin buildin, Object object) {
