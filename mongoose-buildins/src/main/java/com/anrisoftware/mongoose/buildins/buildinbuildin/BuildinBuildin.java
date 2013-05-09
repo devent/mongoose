@@ -28,6 +28,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
+import com.anrisoftware.mongoose.command.CommandLoader;
 
 /**
  * The build-in command {@code buildin}.
@@ -41,6 +42,8 @@ class BuildinBuildin extends AbstractCommand {
 
 	private final BuildinBuildinLogger log;
 
+	private final CommandLoader loader;
+
 	private String name;
 
 	private Command command;
@@ -50,13 +53,14 @@ class BuildinBuildin extends AbstractCommand {
 	 *            the {@link BuildinBuildinLogger} for logging messages;
 	 */
 	@Inject
-	BuildinBuildin(BuildinBuildinLogger logger) {
+	BuildinBuildin(BuildinBuildinLogger logger, CommandLoader loader) {
 		this.log = logger;
+		this.loader = loader;
 	}
 
 	@Override
 	protected void doCall() throws CommandException {
-		command = loadCommand(name);
+		command = loader.loadCommand(name);
 		log.checkCommand(this, command);
 		command.setEnvironment(getTheEnvironment());
 		log.loadCommand(this, name);

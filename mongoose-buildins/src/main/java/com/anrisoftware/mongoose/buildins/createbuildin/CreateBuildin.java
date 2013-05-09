@@ -25,6 +25,7 @@ import javax.inject.Inject;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.command.AbstractCommand;
+import com.anrisoftware.mongoose.command.CommandLoader;
 
 /**
  * The build-in command {@code create}.
@@ -38,6 +39,8 @@ class CreateBuildin extends AbstractCommand {
 
 	private final CreateBuildinLogger log;
 
+	private final CommandLoader loader;
+
 	private String name;
 
 	private Command command;
@@ -47,15 +50,16 @@ class CreateBuildin extends AbstractCommand {
 	 *            the {@link CreateBuildinLogger} for logging messages;
 	 */
 	@Inject
-	CreateBuildin(CreateBuildinLogger logger) {
+	CreateBuildin(CreateBuildinLogger logger, CommandLoader loader) {
 		this.log = logger;
+		this.loader = loader;
 	}
 
 	@Override
 	protected void doCall() throws Exception {
-		command = loadCommand(name);
+		command = loader.loadCommand(name);
 		if (command == null) {
-			command = loadCommand("run");
+			command = loader.loadCommand("run");
 			insertName(name);
 		}
 		log.checkCommand(this, command);
