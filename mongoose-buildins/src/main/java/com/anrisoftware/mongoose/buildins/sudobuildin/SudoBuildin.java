@@ -42,13 +42,20 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
  */
 class SudoBuildin extends AbstractCommand {
 
+	private static final String BACKEND_KEY = "backend";
+
+	/**
+	 * Default sudo build-in command back-end type.
+	 */
+	static final String SUDO_BACKEND_VARIABLE = "SUDO_BACKEND";
+
 	private final SudoBuildinLogger log;
+
+	private final VetoableChangeListener commandListener;
 
 	private Command command;
 
 	private Backend backend;
-
-	private final VetoableChangeListener commandListener;
 
 	/**
 	 * @param logger
@@ -103,13 +110,17 @@ class SudoBuildin extends AbstractCommand {
 	@Override
 	public void setEnvironment(Environment environment) throws CommandException {
 		super.setEnvironment(environment);
+		if (environment.getEnv().containsKey(SUDO_BACKEND_VARIABLE)) {
+			setBackend(environment.getEnv().get(SUDO_BACKEND_VARIABLE));
+		}
 	}
 
 	@Override
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
-		if (args.containsKey("backend")) {
-			setBackend(args.get("backend"));
+		if (args.containsKey(BACKEND_KEY)) {
+			setBackend(args.get(BACKEND_KEY));
+			args.remove(BACKEND_KEY);
 		}
 	}
 
