@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
  * Command that can be executed.
@@ -63,8 +64,11 @@ public interface Command extends Callable<Command> {
 	 * 
 	 * @param environment
 	 *            the {@link Environment}.
+	 * 
+	 * @throws CommandException
+	 *             if there are errors set the environment.
 	 */
-	void setEnvironment(Environment environment);
+	void setEnvironment(Environment environment) throws CommandException;
 
 	/**
 	 * Returns the environment of the command. The environment contains the

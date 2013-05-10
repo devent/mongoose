@@ -87,7 +87,7 @@ class ExecBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public void setEnvironment(Environment environment) {
+	public void setEnvironment(Environment environment) throws CommandException {
 		super.setEnvironment(environment);
 		setDirectory(environment.getWorkingDirectory());
 		env = environment.getEnv();

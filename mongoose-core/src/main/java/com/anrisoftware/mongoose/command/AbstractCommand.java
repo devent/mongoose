@@ -86,7 +86,7 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	@Override
-	public void setEnvironment(Environment environment) {
+	public void setEnvironment(Environment environment) throws CommandException {
 		this.environment = environment;
 	}
 

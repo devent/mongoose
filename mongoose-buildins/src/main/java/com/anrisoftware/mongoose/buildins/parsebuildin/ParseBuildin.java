@@ -34,6 +34,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.ExampleMode;
 
 import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 
 /**
@@ -91,7 +92,7 @@ class ParseBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public void setEnvironment(Environment environment) {
+	public void setEnvironment(Environment environment) throws CommandException {
 		super.setEnvironment(environment);
 		setArguments(environment.getArgs());
 	}

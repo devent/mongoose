@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.api.exceptions.ExecutionException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 
@@ -58,7 +59,7 @@ class CdBuildin extends AbstractCommand {
 	}
 
 	@Override
-	public void setEnvironment(Environment environment) {
+	public void setEnvironment(Environment environment) throws CommandException {
 		super.setEnvironment(environment);
 		this.directory = environment.getUserHome();
 	}
