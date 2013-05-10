@@ -49,7 +49,7 @@ class SudoModule extends AbstractModule {
 		install(new FactoryModuleBuilder().implement(Command.class,
 				SudoBuildin.class).build(CommandFactory.class));
 		bind(Backend.class).annotatedWith(named("sudo-default-backend")).to(
-				SudoBackend.class);
+				KdesuBackend.class);
 	}
 
 	@Provides

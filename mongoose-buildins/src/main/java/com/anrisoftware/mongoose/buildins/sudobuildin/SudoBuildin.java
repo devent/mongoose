@@ -18,6 +18,9 @@
  */
 package com.anrisoftware.mongoose.buildins.sudobuildin;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +48,8 @@ class SudoBuildin extends AbstractCommand {
 
 	private Backend backend;
 
+	private final VetoableChangeListener commandListener;
+
 	/**
 	 * @param logger
 	 *            the {@link SudoBuildinLogger} for logging messages;
@@ -54,12 +59,44 @@ class SudoBuildin extends AbstractCommand {
 			@Named("sudo-default-backend") Backend backend) {
 		this.log = logger;
 		this.backend = backend;
+		this.commandListener = new VetoableChangeListener() {
+
+			@Override
+			public void vetoableChange(PropertyChangeEvent evt)
+					throws PropertyVetoException {
+				try {
+					setupChangedProperties(evt);
+				} catch (Exception e) {
+					throw log.errorSetupProperties(SudoBuildin.this, e, evt);
+				}
+			}
+		};
+	}
+
+	private void setupChangedProperties(PropertyChangeEvent evt)
+			throws Exception {
+		if (evt.getPropertyName() == OUTPUT_TARGET_PROPERTY) {
+			command.setOutput(evt.getNewValue());
+			return;
+		}
+		if (evt.getPropertyName() == ERROR_TARGET_PROPERTY) {
+			command.setError(evt.getNewValue());
+			return;
+		}
+		if (evt.getPropertyName() == INPUT_SOURCE_PROPERTY) {
+			command.setInput(evt.getNewValue());
+			return;
+		}
 	}
 
 	@Override
 	protected void doCall() throws Exception {
 		command = backend.getBackendCommand(getArgs(), getUnnamedArgs());
 		command.setEnvironment(getTheEnvironment());
+		command.setInput(getInput());
+		command.setOutput(getOutput());
+		command.setError(getError());
+		command.addVetoableChangeListener(commandListener);
 		getTheEnvironment().executeCommandAndWait(command);
 	}
 

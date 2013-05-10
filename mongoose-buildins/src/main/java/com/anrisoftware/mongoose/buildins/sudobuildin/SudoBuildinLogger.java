@@ -1,5 +1,8 @@
 package com.anrisoftware.mongoose.buildins.sudobuildin;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
+
 import javax.inject.Singleton;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
@@ -14,6 +17,8 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
 @Singleton
 class SudoBuildinLogger extends AbstractLogger {
 
+	private static final String ERROR_SET_PROPERTY_MESSAGE = "Error set property '%s' to backend %s";
+	private static final String ERROR_SET_PROPERTY = "Error set property to backend";
 	private static final String BACKEND_TYPE_MESSAGE = "Backend %s is not of type SudoBackend";
 	private static final String BACKEND_TYPE = "Backend is not of type SudoBackend";
 	private static final String BUILDIN = "build-in";
@@ -40,5 +45,11 @@ class SudoBuildinLogger extends AbstractLogger {
 		} else {
 			log.info(HANDLER_SET, object, buildin.getTheName());
 		}
+	}
+
+	PropertyVetoException errorSetupProperties(SudoBuildin buildin,
+			Exception e, PropertyChangeEvent evt) {
+		return logException(new PropertyVetoException(ERROR_SET_PROPERTY, evt),
+				ERROR_SET_PROPERTY_MESSAGE, evt.getPropertyName(), buildin);
 	}
 }

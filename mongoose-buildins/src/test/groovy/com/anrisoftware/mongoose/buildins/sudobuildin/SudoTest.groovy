@@ -19,7 +19,9 @@
 package com.anrisoftware.mongoose.buildins.sudobuildin
 import static com.anrisoftware.globalpom.utils.TestUtils.*
 import static org.apache.commons.io.FileUtils.*
+import groovy.util.logging.Slf4j
 
+import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -27,7 +29,6 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import com.anrisoftware.mongoose.api.environment.Environment
-import com.anrisoftware.mongoose.api.exceptions.CommandException
 import com.anrisoftware.mongoose.environment.EnvironmentModule
 import com.anrisoftware.mongoose.resources.ResourcesModule
 import com.anrisoftware.mongoose.threads.ThreadsModule
@@ -40,6 +41,7 @@ import com.google.inject.Injector
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
+@Slf4j
 class SudoTest {
 
 	@Test
@@ -51,51 +53,13 @@ class SudoTest {
 		assertStringContent output(byteOutput), string
 	}
 
-	@Test
-	void "cat file [+ working directory]"() {
-		def string = "Test"
-		def dir = tmp.newFolder()
-		def file = new File(dir, "file")
-		write file, string
-		command "cat ${file.name}", [:], dir
-		assertStringContent output(byteOutput), string
-	}
-
-	@Test
-	void "bash [+env variable]"() {
-		def file = tmp.newFile()
-		def string = "Test"
-		write file, 'echo -n $VAR'
-		command "bash $file", [VAR: string]
-		assertStringContent output(byteOutput), string
-	}
-
-	@Test(expected = CommandException)
-	void "sleep [+timeout]"() {
-		command timeout: 1000, "sleep 2"
-	}
-
-	@Test
-	void "exit value"() {
-		def value = 99
-		def file = tmp.newFile()
-		write file, "exit $value"
-		command successExitValue: value, "bash $file"
-	}
-
-	@Test
-	void "exit values"() {
-		def value = 99
-		def file = tmp.newFile()
-		write file, "exit $value"
-		command successExitValues: [value], "bash $file"
-	}
-
 	SudoBuildin command
 
 	Environment environment
 
 	ByteArrayOutputStream byteOutput
+
+	ByteArrayOutputStream byteError
 
 	@Rule
 	public TemporaryFolder tmp = new TemporaryFolder();
@@ -106,7 +70,14 @@ class SudoTest {
 		environment = injector.getInstance(Environment)
 		command.setEnvironment environment
 		byteOutput = new ByteArrayOutputStream()
+		byteError = new ByteArrayOutputStream()
 		command.setOutput(byteOutput)
+		command.setError(byteError)
+	}
+
+	@After
+	void logErrors() {
+		log.info output(byteError)
 	}
 
 	static Injector injector
