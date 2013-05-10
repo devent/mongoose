@@ -386,7 +386,7 @@ public abstract class AbstractCommand implements Command {
 		log.checkTarget(this, target);
 		Object newValue;
 		OutputStream stream;
-		if (target instanceof InputStream) {
+		if (target instanceof OutputStream) {
 			newValue = target;
 			stream = (OutputStream) target;
 		} else if (target instanceof File) {
