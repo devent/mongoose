@@ -474,6 +474,29 @@ public abstract class AbstractCommand implements Command {
 	/**
 	 * Instantiates the specified type with the default constructor.
 	 * 
+	 * @param name
+	 *            the canonical name of the type.
+	 * 
+	 * @return the instantiated type.
+	 * 
+	 * @throws CommandException
+	 *             if there were errors instantiate the class type.
+	 * 
+	 * @see Class#forName(String)
+	 */
+	protected <T> T createType(String name) throws CommandException {
+		try {
+			@SuppressWarnings("unchecked")
+			Class<T> type = (Class<T>) Class.forName(name);
+			return createType(type);
+		} catch (ClassNotFoundException e) {
+			throw log.classNotFound(this, e, name);
+		}
+	}
+
+	/**
+	 * Instantiates the specified type with the default constructor.
+	 * 
 	 * @param type
 	 *            the {@link Class} type.
 	 * 
