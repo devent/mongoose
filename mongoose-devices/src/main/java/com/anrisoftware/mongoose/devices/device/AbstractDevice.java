@@ -1,4 +1,4 @@
-package com.anrisoftware.mongoose.devices.core;
+package com.anrisoftware.mongoose.devices.device;
 
 import java.io.File;
 
@@ -14,9 +14,9 @@ import com.anrisoftware.mongoose.devices.api.Device;
  */
 public abstract class AbstractDevice implements Device {
 
-	private final String name;
+	private final String theName;
 
-	private final File path;
+	private final File thePath;
 
 	/**
 	 * Constructs a device with the specified path.
@@ -39,18 +39,18 @@ public abstract class AbstractDevice implements Device {
 	 *            {@link File} path of the device.
 	 */
 	protected AbstractDevice(String name, File path) {
-		this.name = name;
-		this.path = path;
+		this.theName = name;
+		this.thePath = path;
 	}
 
 	@Override
-	public String getName() {
-		return name;
+	public String getTheName() {
+		return theName;
 	}
 
 	@Override
-	public File getPath() {
-		return path;
+	public File getThePath() {
+		return thePath;
 	}
 
 	/**
@@ -68,12 +68,12 @@ public abstract class AbstractDevice implements Device {
 			return false;
 		}
 		Device rhs = (Device) obj;
-		return path.equals(rhs.getPath());
+		return thePath.equals(rhs.getThePath());
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append(name).append(path).toString();
+		return new ToStringBuilder(this).append(theName).append(thePath).toString();
 	}
 
 }

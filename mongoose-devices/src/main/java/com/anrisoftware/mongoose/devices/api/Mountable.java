@@ -28,7 +28,22 @@ public interface Mountable {
 	 * @throws IOException
 	 *             if there was an error mounting or un-mounting the device.
 	 */
-	void setMounted(boolean mount, File path) throws IOException;
+	void mount(boolean mount, File path) throws IOException;
+
+	/**
+	 * Un-mount the device from a specified path.
+	 * 
+	 * @param mount
+	 *            {@code false} if the device should be un-mounted from the
+	 *            specified path.
+	 * 
+	 * @throws IOException
+	 *             if there was an error un-mounting the device.
+	 * 
+	 * @throws NullPointerException
+	 *             if the device should be mounted.
+	 */
+	void mount(boolean mount) throws IOException;
 
 	/**
 	 * Returns if the device is mounted on the specified path.
@@ -45,7 +60,7 @@ public interface Mountable {
 	 * @throws IOException
 	 *             if there was an error checking if the device is mounted.
 	 */
-	boolean isMounted(File path) throws IOException;
+	boolean getIsMounted(File path) throws IOException;
 
 	/**
 	 * Check the file system on the device.
@@ -53,12 +68,12 @@ public interface Mountable {
 	 * @throws IOException
 	 *             if there was an error checking the file system of the device.
 	 */
-	void checkFilesystem() throws IOException;
+	void fsck() throws IOException;
 
 	/**
 	 * Check the file system on the device.
 	 * 
-	 * @param forceIfMounted
+	 * @param force
 	 *            because some file systems should not be checked if they are
 	 *            mounted the operation will fail for those file systems.
 	 *            Specifying {@code true} to force the check even if such a
@@ -67,6 +82,6 @@ public interface Mountable {
 	 * @throws IOException
 	 *             if there was an error checking the file system of the device.
 	 */
-	void checkFilesystem(boolean forceIfMounted) throws IOException;
+	void fsck(boolean force) throws IOException;
 
 }

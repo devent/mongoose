@@ -10,4 +10,9 @@ import com.anrisoftware.mongoose.api.commans.Command;
  */
 public interface SudoCommand extends Command {
 
+	/**
+	 * Returns the name of the sudo command.
+	 */
+	public static final String ID = "sudo";
+
 }

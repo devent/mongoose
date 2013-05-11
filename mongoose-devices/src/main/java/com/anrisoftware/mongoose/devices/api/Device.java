@@ -16,12 +16,12 @@ public interface Device {
 	 * 
 	 * @return the name of the device.
 	 */
-	String getName();
+	String getTheName();
 
 	/**
 	 * Returns the path of the device.
 	 * 
 	 * @return the {@link File} path.
 	 */
-	File getPath();
+	File getThePath();
 }

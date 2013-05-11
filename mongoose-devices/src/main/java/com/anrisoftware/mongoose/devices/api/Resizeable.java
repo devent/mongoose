@@ -15,14 +15,14 @@ public interface Resizeable {
 	 * 
 	 * @return the block size.
 	 */
-	long getBlockSize();
+	long getTheBlockSize();
 
 	/**
 	 * Returns the byte size of the device.
 	 * 
 	 * @return the byte size.
 	 */
-	long getByteSize();
+	long getTheByteSize();
 
 	/**
 	 * Resize the device to the new size.
