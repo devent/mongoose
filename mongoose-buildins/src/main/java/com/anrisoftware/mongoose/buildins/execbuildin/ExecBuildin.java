@@ -24,9 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.ExecuteResultHandler;
@@ -40,7 +38,6 @@ import org.joda.time.Duration;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
-import com.anrisoftware.propertiesutils.ContextProperties;
 
 /**
  * Executes the specified command in a separate process with the specified
@@ -50,8 +47,6 @@ import com.anrisoftware.propertiesutils.ContextProperties;
  * @since 1.0
  */
 class ExecBuildin extends AbstractCommand {
-
-	private static final String TERMINAL_COMMAND_PROPERTY = "terminal_command";
 
 	private static final String SUCCESS_EXIT_VALUES_KEY = "successExitValues";
 
@@ -75,6 +70,8 @@ class ExecBuildin extends AbstractCommand {
 
 	private final Executor executor;
 
+	private final CommandParser parser;
+
 	private String command;
 
 	private Map<String, String> env;
@@ -85,13 +82,9 @@ class ExecBuildin extends AbstractCommand {
 
 	private ExecuteWatchdog watchdog;
 
-	private String terminalCommand;
-
-	private boolean useTerminal;
-
 	@Inject
 	ExecBuildin(ExecBuildinLogger logger, Executor executor,
-			@Named("exec-properties") ContextProperties p) {
+			CommandParser parser) {
 		this.log = logger;
 		this.executor = executor;
 		this.command = null;
@@ -99,8 +92,7 @@ class ExecBuildin extends AbstractCommand {
 		this.handler = new DefaultExecuteResultHandler();
 		this.destroyer = new ShutdownHookProcessDestroyer();
 		this.watchdog = null;
-		this.useTerminal = false;
-		this.terminalCommand = p.getProperty(TERMINAL_COMMAND_PROPERTY);
+		this.parser = parser;
 	}
 
 	@Override
@@ -131,16 +123,9 @@ class ExecBuildin extends AbstractCommand {
 		executor.setWatchdog(watchdog);
 		executor.setStreamHandler(new PumpStreamHandler(getOutput(),
 				getError(), getInput()));
-		executor.execute(createCommand(), env, handler);
+		executor.execute(parser.parseCommand(command), env, handler);
 		waitForCommand();
-	}
-
-	private CommandLine createCommand() {
-		String cmd = command;
-		if (useTerminal) {
-			cmd = terminalCommand.replace("{}", cmd);
-		}
-		return CommandLine.parse(cmd);
+		parser.cleanUp();
 	}
 
 	private void waitForCommand() throws InterruptedException, CommandException {
@@ -377,11 +362,11 @@ class ExecBuildin extends AbstractCommand {
 	}
 
 	public void setTerminalCommand(String command) {
-		this.terminalCommand = command;
+		parser.setTerminalCommand(command);
 	}
 
 	public void setTerminal(boolean terminal) {
-		this.useTerminal = terminal;
+		parser.setUseTerminal(terminal);
 	}
 
 }

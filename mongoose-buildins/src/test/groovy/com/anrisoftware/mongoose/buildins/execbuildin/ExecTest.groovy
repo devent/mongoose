@@ -102,6 +102,13 @@ class ExecTest {
 		command terminal: true, "sleep 2"
 	}
 
+	@Test
+	void "interactive [+default terminal command, error return]"() {
+		def cmd = command
+		shouldFailWith(CommandException) { cmd terminal: true, "fsck xxx" }
+		assert cmd.theExitValue == 16
+	}
+
 	ExecBuildin command
 
 	Environment environment

@@ -33,6 +33,9 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
  */
 class ExecBuildinLogger extends AbstractLogger {
 
+	private static final String COMMAND_ERROR_MESSAGE = "Command returns with error: '%s'";
+	private static final String COMMAND_ERROR = "Command returns with error";
+	private static final String NO_EXIT_VALUE = "No exit value is available, try ask your execute result handler.";
 	private static final String SET_EXIT_VALUES = "Set success exit values to {} for {}.";
 	private static final String SET_EXIT_VALUE = "Set success exit value to {} for {}.";
 	private static final String SET_WORKING_DIRECTORY = "Set working directory to '{}' for {}.";
@@ -108,16 +111,13 @@ class ExecBuildinLogger extends AbstractLogger {
 	}
 
 	IllegalStateException notExitValueAvailable(ExecBuildin buildin) {
-		return logException(
-				new IllegalStateException(
-						"No exit value is available, try ask your execute result handler."),
-				"No exit value is available, try ask your execute result handler.");
+		return logException(new IllegalStateException(NO_EXIT_VALUE),
+				NO_EXIT_VALUE);
 	}
 
 	CommandException errorCommand(ExecBuildin buildin, ExecuteException e) {
-		return logException(new CommandException("Command returns with error",
-				e).addContext(BUILDIN, buildin),
-				"Command returns with error: '%s'", buildin.getTheName());
+		return logException(new CommandException(COMMAND_ERROR, e).addContext(
+				BUILDIN, buildin), COMMAND_ERROR_MESSAGE, buildin.getTheName());
 	}
 
 	void exitValueSet(ExecBuildin buildin, int value) {

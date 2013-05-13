@@ -50,6 +50,7 @@ class SudoTest {
 		def file = tmp.newFile()
 		write file, string
 		command terminal: true, "cat $file"
+		println output(byteOutput)
 	}
 
 	SudoBuildin command
