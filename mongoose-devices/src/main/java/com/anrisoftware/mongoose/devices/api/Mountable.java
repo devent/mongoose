@@ -60,7 +60,7 @@ public interface Mountable {
 	 * @throws IOException
 	 *             if there was an error checking if the device is mounted.
 	 */
-	boolean getIsMounted(File path) throws IOException;
+	boolean isMounted(File path) throws IOException;
 
 	/**
 	 * Check the file system on the device.
@@ -74,14 +74,32 @@ public interface Mountable {
 	 * Check the file system on the device.
 	 * 
 	 * @param force
-	 *            because some file systems should not be checked if they are
-	 *            mounted the operation will fail for those file systems.
-	 *            Specifying {@code true} to force the check even if such a
-	 *            system is mounted.
+	 *            {@code true} to force the check even if the file system is
+	 *            clean.
 	 * 
 	 * @throws IOException
 	 *             if there was an error checking the file system of the device.
 	 */
 	void fsck(boolean force) throws IOException;
+
+	/**
+	 * Check the file system on the device and automatically repair it.
+	 * 
+	 * @throws IOException
+	 *             if there was an error checking the file system of the device.
+	 */
+	void autoFsck() throws IOException;
+
+	/**
+	 * Check the file system on the device and automatically repair it.
+	 * 
+	 * @param force
+	 *            {@code true} to force the check even if the file system is
+	 *            clean.
+	 * 
+	 * @throws IOException
+	 *             if there was an error checking the file system of the device.
+	 */
+	void autoFsck(boolean force) throws IOException;
 
 }
