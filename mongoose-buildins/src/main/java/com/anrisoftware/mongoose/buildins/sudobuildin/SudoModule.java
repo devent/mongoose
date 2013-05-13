@@ -46,7 +46,7 @@ class SudoModule extends AbstractModule {
 	private static final String SUDO_BACKEND_PROPERTY = "sudo_backend";
 
 	private static final URL SUDO_PROPERTIES = SudoModule.class
-			.getResource("sudo.properties");
+			.getResource("/sudo.properties");
 
 	@Override
 	protected void configure() {
