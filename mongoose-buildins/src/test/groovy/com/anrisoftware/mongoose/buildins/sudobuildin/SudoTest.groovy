@@ -49,8 +49,7 @@ class SudoTest {
 		def string = "Test"
 		def file = tmp.newFile()
 		write file, string
-		command "cat $file"
-		assertStringContent output(byteOutput), string
+		command terminal: true, "cat $file"
 	}
 
 	SudoBuildin command

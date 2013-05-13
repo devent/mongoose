@@ -17,6 +17,7 @@
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.anrisoftware.mongoose.buildins.execbuildin
+
 import static com.anrisoftware.globalpom.utils.TestUtils.*
 import static org.apache.commons.io.FileUtils.*
 
@@ -91,6 +92,16 @@ class ExecTest {
 		command successExitValues: [value], "bash $file"
 	}
 
+	@Test
+	void "interactive [+terminal command]"() {
+		command terminal: true, terminalCommand: konsoleCmd, "sleep 2"
+	}
+
+	@Test
+	void "interactive [+default terminal command]"() {
+		command terminal: true, "sleep 2"
+	}
+
 	ExecBuildin command
 
 	Environment environment
@@ -110,6 +121,8 @@ class ExecTest {
 	}
 
 	static Injector injector
+
+	static String konsoleCmd = "konsole --nofork --hide-menubar --hide-tabbar -e {}"
 
 	@BeforeClass
 	static void setupInjector() {

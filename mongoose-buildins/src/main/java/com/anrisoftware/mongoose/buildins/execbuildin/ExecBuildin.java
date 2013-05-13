@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecuteResultHandler;
@@ -39,6 +40,7 @@ import org.joda.time.Duration;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
+import com.anrisoftware.propertiesutils.ContextProperties;
 
 /**
  * Executes the specified command in a separate process with the specified
@@ -48,6 +50,8 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
  * @since 1.0
  */
 class ExecBuildin extends AbstractCommand {
+
+	private static final String TERMINAL_COMMAND_PROPERTY = "terminal_command";
 
 	private static final String SUCCESS_EXIT_VALUES_KEY = "successExitValues";
 
@@ -61,11 +65,17 @@ class ExecBuildin extends AbstractCommand {
 
 	private static final String HANDLER_KEY = "handler";
 
+	private static final String TERMINAL_KEY = "terminal";
+
+	private static final String TERMINAL_COMMAND_KEY = "terminalCommand";
+
+	private static final String TERMINAL_COMMAND_VARIABLE = "TERMINAL_COMMAND";
+
 	private final ExecBuildinLogger log;
 
 	private final Executor executor;
 
-	private CommandLine command;
+	private String command;
 
 	private Map<String, String> env;
 
@@ -75,8 +85,13 @@ class ExecBuildin extends AbstractCommand {
 
 	private ExecuteWatchdog watchdog;
 
+	private String terminalCommand;
+
+	private boolean useTerminal;
+
 	@Inject
-	ExecBuildin(ExecBuildinLogger logger, Executor executor) {
+	ExecBuildin(ExecBuildinLogger logger, Executor executor,
+			@Named("exec-properties") ContextProperties p) {
 		this.log = logger;
 		this.executor = executor;
 		this.command = null;
@@ -84,6 +99,8 @@ class ExecBuildin extends AbstractCommand {
 		this.handler = new DefaultExecuteResultHandler();
 		this.destroyer = new ShutdownHookProcessDestroyer();
 		this.watchdog = null;
+		this.useTerminal = false;
+		this.terminalCommand = p.getProperty(TERMINAL_COMMAND_PROPERTY);
 	}
 
 	@Override
@@ -91,6 +108,9 @@ class ExecBuildin extends AbstractCommand {
 		super.setEnvironment(environment);
 		setDirectory(environment.getWorkingDirectory());
 		env = environment.getEnv();
+		if (env.containsKey(TERMINAL_COMMAND_VARIABLE)) {
+			setTerminalCommand(env.get(TERMINAL_COMMAND_VARIABLE));
+		}
 	}
 
 	/**
@@ -98,7 +118,7 @@ class ExecBuildin extends AbstractCommand {
 	 */
 	@Override
 	public String getTheName() {
-		return command == null ? "exec" : command.getExecutable();
+		return command == null ? "exec" : command;
 	}
 
 	@Override
@@ -111,8 +131,16 @@ class ExecBuildin extends AbstractCommand {
 		executor.setWatchdog(watchdog);
 		executor.setStreamHandler(new PumpStreamHandler(getOutput(),
 				getError(), getInput()));
-		executor.execute(command, env, handler);
+		executor.execute(createCommand(), env, handler);
 		waitForCommand();
+	}
+
+	private CommandLine createCommand() {
+		String cmd = command;
+		if (useTerminal) {
+			cmd = terminalCommand.replace("{}", cmd);
+		}
+		return CommandLine.parse(cmd);
 	}
 
 	private void waitForCommand() throws InterruptedException, CommandException {
@@ -148,6 +176,12 @@ class ExecBuildin extends AbstractCommand {
 		}
 		if (args.containsKey(SUCCESS_EXIT_VALUES_KEY)) {
 			setSuccessExitValues((List<?>) args.get(SUCCESS_EXIT_VALUES_KEY));
+		}
+		if (args.containsKey(TERMINAL_KEY)) {
+			setTerminal((Boolean) args.get(TERMINAL_KEY));
+		}
+		if (args.containsKey(TERMINAL_COMMAND_KEY)) {
+			setTerminalCommand(args.get(TERMINAL_COMMAND_KEY).toString());
 		}
 		unnamedArgsSet(unnamedArgs);
 	}
@@ -256,7 +290,7 @@ class ExecBuildin extends AbstractCommand {
 	}
 
 	private void unnamedArgsSet(List<Object> args) {
-		setCommand(args.get(0));
+		setCommand(args.get(0).toString());
 		if (args.size() > 1) {
 			setEnv(asMap(args.get(1)));
 		}
@@ -282,8 +316,8 @@ class ExecBuildin extends AbstractCommand {
 	 * @throws IllegalArgumentException
 	 *             if the command string is empty.
 	 */
-	public void setCommand(Object object) {
-		this.command = CommandLine.parse(object.toString());
+	public void setCommand(String command) {
+		this.command = command;
 		log.commandSet(this, this.command);
 	}
 
@@ -341,4 +375,13 @@ class ExecBuildin extends AbstractCommand {
 			throw log.notExitValueAvailable(this);
 		}
 	}
+
+	public void setTerminalCommand(String command) {
+		this.terminalCommand = command;
+	}
+
+	public void setTerminal(boolean terminal) {
+		this.useTerminal = terminal;
+	}
+
 }

@@ -18,12 +18,20 @@
  */
 package com.anrisoftware.mongoose.buildins.execbuildin;
 
+import java.io.IOException;
+import java.net.URL;
+
+import javax.inject.Named;
+
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.Executor;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.CommandFactory;
+import com.anrisoftware.propertiesutils.ContextProperties;
+import com.anrisoftware.propertiesutils.ContextPropertiesFactory;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
@@ -34,10 +42,22 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  */
 class ExecModule extends AbstractModule {
 
+	private static final URL EXEC_PROPERTIES = ExecModule.class
+			.getResource("/exec.properties");
+
 	@Override
 	protected void configure() {
 		install(new FactoryModuleBuilder().implement(Command.class,
 				ExecBuildin.class).build(CommandFactory.class));
 		bind(Executor.class).to(DefaultExecutor.class);
 	}
+
+	@Provides
+	@Named("exec-properties")
+	ContextProperties getExecProperties() throws IOException {
+		return new ContextPropertiesFactory(ExecBuildin.class)
+				.withDefaultProperties(System.getProperties()).fromResource(
+						EXEC_PROPERTIES);
+	}
+
 }
