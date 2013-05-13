@@ -41,6 +41,10 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  */
 class SudoModule extends AbstractModule {
 
+	private static final String SUDO_DEFAULT_BACKEND_KEY = "sudo-default-backend";
+
+	private static final String SUDO_BACKEND_PROPERTY = "sudo_backend";
+
 	private static final URL SUDO_PROPERTIES = SudoModule.class
 			.getResource("sudo.properties");
 
@@ -48,8 +52,7 @@ class SudoModule extends AbstractModule {
 	protected void configure() {
 		install(new FactoryModuleBuilder().implement(Command.class,
 				SudoBuildin.class).build(CommandFactory.class));
-		bind(Backend.class).annotatedWith(named("sudo-default-backend")).to(
-				KdesuBackend.class);
+		bindDefaultBackend();
 	}
 
 	@Provides
@@ -58,5 +61,20 @@ class SudoModule extends AbstractModule {
 		return new ContextPropertiesFactory(SudoBackend.class)
 				.withDefaultProperties(System.getProperties()).fromResource(
 						SUDO_PROPERTIES);
+	}
+
+	private void bindDefaultBackend() {
+		try {
+			String name = getSudoProperties()
+					.getProperty(SUDO_BACKEND_PROPERTY);
+			@SuppressWarnings("unchecked")
+			Class<Backend> type = (Class<Backend>) Class.forName(name);
+			bind(Backend.class).annotatedWith(named(SUDO_DEFAULT_BACKEND_KEY))
+					.to(type);
+		} catch (ClassNotFoundException e) {
+			addError(e);
+		} catch (IOException e) {
+			addError(e);
+		}
 	}
 }

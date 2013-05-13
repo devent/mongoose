@@ -23,7 +23,7 @@ class SudoBuildinLogger extends AbstractLogger {
 	private static final String BACKEND_TYPE = "Backend is not of type SudoBackend";
 	private static final String BUILDIN = "build-in";
 	private static final String OBJECT = "object";
-	private static final String HANDLER_SET = "Backend set to {} for {}.";
+	private static final String BACKEND_SET = "Backend set {} for {}.";
 
 	/**
 	 * Create logger for {@link SudoBuildin}.
@@ -41,9 +41,9 @@ class SudoBuildinLogger extends AbstractLogger {
 
 	void backendSet(SudoBuildin buildin, Object object) {
 		if (log.isDebugEnabled()) {
-			log.debug(HANDLER_SET, object, buildin);
+			log.debug(BACKEND_SET, object, buildin);
 		} else {
-			log.info(HANDLER_SET, object, buildin.getTheName());
+			log.info(BACKEND_SET, object, buildin.getTheName());
 		}
 	}
 

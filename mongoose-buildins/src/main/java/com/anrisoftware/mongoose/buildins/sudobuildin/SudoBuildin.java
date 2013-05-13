@@ -47,7 +47,7 @@ class SudoBuildin extends AbstractCommand {
 	/**
 	 * Default sudo build-in command back-end type.
 	 */
-	static final String SUDO_BACKEND_VARIABLE = "SUDO_BACKEND";
+	public static final String SUDO_BACKEND_VARIABLE = "SUDO_BACKEND";
 
 	private final SudoBuildinLogger log;
 
@@ -144,7 +144,7 @@ class SudoBuildin extends AbstractCommand {
 		} else if (object instanceof Backend) {
 			this.backend = (Backend) object;
 		} else {
-			throw log.errorBackendType(this, object);
+			this.backend = (Backend) createType(object.toString());
 		}
 		log.backendSet(this, object);
 	}
