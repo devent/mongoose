@@ -17,14 +17,10 @@
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.anrisoftware.mongoose.devices.mount
+
 import static com.anrisoftware.globalpom.utils.TestUtils.*
-import static org.apache.commons.io.FileUtils.*
 import groovy.util.logging.Slf4j
 
-import org.apache.commons.exec.CommandLine
-import org.apache.commons.exec.DefaultExecutor
-import org.apache.commons.exec.PumpStreamHandler
-import org.apache.commons.io.FileUtils
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
@@ -33,6 +29,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import com.anrisoftware.mongoose.api.environment.Environment
+import com.anrisoftware.mongoose.devices.utils.TestDeviceUtil
 import com.anrisoftware.mongoose.environment.EnvironmentModule
 import com.anrisoftware.mongoose.resources.ResourcesModule
 import com.anrisoftware.mongoose.threads.ThreadsModule
@@ -51,7 +48,7 @@ class MountTest {
 	@Test
 	void "mount [auto fsck]"() {
 		def tmpdir = tmp.newFolder()
-		mount = mountFactory.create devicePath
+		mount = mountFactory.create device.devicePath
 		mount.setEnvironment environment
 		assert mount.isMounted(tmpdir) == false
 		mount.autoFsck()
@@ -60,7 +57,7 @@ class MountTest {
 	@Test
 	void "mount [fsck]"() {
 		def tmpdir = tmp.newFolder()
-		mount = mountFactory.create devicePath
+		mount = mountFactory.create device.devicePath
 		mount.setEnvironment environment
 		assert mount.isMounted(tmpdir) == false
 		mount.autoFsck()
@@ -70,9 +67,7 @@ class MountTest {
 
 	Environment environment
 
-	File testImage
-
-	String devicePath
+	TestDeviceUtil device
 
 	@Before
 	void setupEnvironment() {
@@ -81,24 +76,17 @@ class MountTest {
 
 	@Before
 	void mountTestDevice() {
-		testImage = File.createTempFile("test", "dd")
-		FileUtils.copyURLToFile deviceImage, testImage
-		def out = executeCommand("sudo /sbin/losetup --find --show ${testImage.absolutePath}")
-		devicePath = out.out
-		log.info "losetup: {}", out.out
-		log.error "losetup: {}", out.err
+		device = new TestDeviceUtil()
+		device.createTestDevice()
 	}
 
 	@After
 	void removeMountTestDevice() {
-		def out = executeCommand("sudo /sbin/losetup -d $devicePath")
-		testImage.delete()
+		device.removeTestDevice()
 	}
 
 	@Rule
 	public TemporaryFolder tmp = new TemporaryFolder()
-
-	static deviceImage = MountTest.class.getResource("/test.dd")
 
 	static Injector injector
 
@@ -111,16 +99,5 @@ class MountTest {
 				new MountModule(), new EnvironmentModule(), new ThreadsModule(),
 				new ResourcesModule())
 		mountFactory = injector.getInstance(MountFactory)
-	}
-
-	static def executeCommand(String command) {
-		def ex = new DefaultExecutor()
-		def out = new ByteArrayOutputStream();
-		def err = new ByteArrayOutputStream();
-		def streams = new PumpStreamHandler(out, err)
-		def cmd = CommandLine.parse(command)
-		ex.setStreamHandler streams
-		ex.execute(cmd)
-		[out: out.toString(), err: err.toString()]
 	}
 }

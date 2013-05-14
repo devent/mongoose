@@ -21,10 +21,13 @@ import static com.anrisoftware.globalpom.utils.TestUtils.*
 import static org.apache.commons.io.FileUtils.*
 import groovy.util.logging.Slf4j
 
+import org.apache.commons.io.FileUtils
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 import com.anrisoftware.mongoose.api.environment.Environment
 import com.anrisoftware.mongoose.environment.EnvironmentModule
@@ -43,7 +46,7 @@ import com.google.inject.Injector
 class BlkidTest {
 
 	@Test
-	void "cat file"() {
+	void "disk partition"() {
 		command "/dev/sda2"
 		println command
 	}
@@ -72,7 +75,31 @@ class BlkidTest {
 		log.info output(byteError)
 	}
 
+	File testImage
+
+	String devicePath
+
+	@Before
+	void loadTestDevice() {
+		testImage = File.createTempFile("test", "dd")
+		FileUtils.copyURLToFile deviceImage, testImage
+		def out = executeCommand("sudo /sbin/losetup --find --show ${testImage.absolutePath}")
+		devicePath = out.out
+		log.info "losetup: {}", out.out
+		log.error "losetup: {}", out.err
+	}
+
+	@After
+	void removeMountTestDevice() {
+		def out = executeCommand("sudo /sbin/losetup -d $devicePath")
+		testImage.delete()
+	}
+
+	@Rule
+	public TemporaryFolder tmp = new TemporaryFolder()
+
 	static Injector injector
+
 
 	@BeforeClass
 	static void setupInjector() {
