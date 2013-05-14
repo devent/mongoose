@@ -67,8 +67,8 @@ class BlkidTest {
 		command.setEnvironment environment
 		byteOutput = new ByteArrayOutputStream()
 		byteError = new ByteArrayOutputStream()
-		//command.setOutput(byteOutput)
-		//command.setError(byteError)
+		command.setOutput(byteOutput)
+		command.setError(byteError)
 	}
 
 	@After

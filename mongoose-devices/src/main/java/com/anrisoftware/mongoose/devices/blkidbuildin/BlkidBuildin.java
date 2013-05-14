@@ -36,11 +36,9 @@ public class BlkidBuildin extends AbstractCommand {
 
 	private final BlkidParser parser;
 
-	private ByteArrayOutputStream output;
-
-	private ByteArrayOutputStream error;
-
 	private final Map<String, String> values;
+
+	private ByteArrayOutputStream output;
 
 	private Command cmd;
 
@@ -59,11 +57,10 @@ public class BlkidBuildin extends AbstractCommand {
 	@Override
 	protected void doCall() throws Exception {
 		output = new ByteArrayOutputStream();
-		error = new ByteArrayOutputStream();
 		cmd = loader.loadCommand("sudo");
 		cmd.setEnvironment(getTheEnvironment());
 		cmd.setOutput(output);
-		cmd.setError(error);
+		cmd.setError(getError());
 		cmd.args(getArgs(), format("%s %s", blkidCommand, devicePath));
 		getTheEnvironment().executeCommandAndWait(cmd);
 		parser.withDevice(devicePath).withString(output.toString())
