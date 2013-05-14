@@ -3,6 +3,7 @@ package com.anrisoftware.mongoose.devices.blkidbuildin;
 import static java.lang.String.format;
 import static java.util.regex.Pattern.compile;
 
+import java.io.File;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -29,7 +30,7 @@ class BlkidParser implements Builder<Map<String, String>> {
 
 	private String string;
 
-	private String device;
+	private File device;
 
 	private Map<String, String> values;
 
@@ -54,13 +55,13 @@ class BlkidParser implements Builder<Map<String, String>> {
 	/**
 	 * Sets the device path.
 	 * 
-	 * @param device
+	 * @param devicePath
 	 *            the device path.
 	 * 
 	 * @return this {@link BlkidParser}.
 	 */
-	public BlkidParser withDevice(String device) {
-		this.device = device;
+	public BlkidParser withDevice(File devicePath) {
+		this.device = devicePath;
 		return this;
 	}
 

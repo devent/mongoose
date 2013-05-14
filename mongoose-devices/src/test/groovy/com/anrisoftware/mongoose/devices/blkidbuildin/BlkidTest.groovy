@@ -21,7 +21,6 @@ import static com.anrisoftware.globalpom.utils.TestUtils.*
 import static org.apache.commons.io.FileUtils.*
 import groovy.util.logging.Slf4j
 
-import org.apache.commons.io.FileUtils
 import org.junit.After
 import org.junit.Before
 import org.junit.BeforeClass
@@ -30,6 +29,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import com.anrisoftware.mongoose.api.environment.Environment
+import com.anrisoftware.mongoose.devices.utils.TestDeviceUtil
 import com.anrisoftware.mongoose.environment.EnvironmentModule
 import com.anrisoftware.mongoose.resources.ResourcesModule
 import com.anrisoftware.mongoose.threads.ThreadsModule
@@ -46,9 +46,10 @@ import com.google.inject.Injector
 class BlkidTest {
 
 	@Test
-	void "disk partition"() {
-		command "/dev/sda2"
-		println command
+	void "image"() {
+		command device.devicePath
+		assert command.getTheUUID() == "c298c2a2-50d5-4a79-991b-90ac6d9265b3"
+		assert command.getTheType() == "ext2"
 	}
 
 	BlkidBuildin command
@@ -77,29 +78,23 @@ class BlkidTest {
 
 	File testImage
 
-	String devicePath
+	TestDeviceUtil device
 
 	@Before
 	void loadTestDevice() {
-		testImage = File.createTempFile("test", "dd")
-		FileUtils.copyURLToFile deviceImage, testImage
-		def out = executeCommand("sudo /sbin/losetup --find --show ${testImage.absolutePath}")
-		devicePath = out.out
-		log.info "losetup: {}", out.out
-		log.error "losetup: {}", out.err
+		device = new TestDeviceUtil()
+		device.createTestDevice()
 	}
 
 	@After
 	void removeMountTestDevice() {
-		def out = executeCommand("sudo /sbin/losetup -d $devicePath")
-		testImage.delete()
+		device.removeTestDevice()
 	}
 
 	@Rule
 	public TemporaryFolder tmp = new TemporaryFolder()
 
 	static Injector injector
-
 
 	@BeforeClass
 	static void setupInjector() {

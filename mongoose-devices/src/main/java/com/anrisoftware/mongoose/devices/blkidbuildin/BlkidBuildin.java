@@ -3,6 +3,7 @@ package com.anrisoftware.mongoose.devices.blkidbuildin;
 import static java.lang.String.format;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,12 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
 import com.anrisoftware.mongoose.command.CommandLoader;
 import com.anrisoftware.propertiesutils.ContextProperties;
 
+/**
+ * Execute the {@code blkid} command on a device path.
+ * 
+ * @author Erwin Mueller, erwin.mueller@deventm.org
+ * @since 1.0
+ */
 public class BlkidBuildin extends AbstractCommand {
 
 	private static final String BLKID_COMMAND_PROPERTY = "blkid_command";
@@ -37,7 +44,7 @@ public class BlkidBuildin extends AbstractCommand {
 
 	private Command cmd;
 
-	private String devicePath;
+	private File devicePath;
 
 	@Inject
 	BlkidBuildin(BlkidBuildinLogger logger, BlkidParser parser,
@@ -67,32 +74,30 @@ public class BlkidBuildin extends AbstractCommand {
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
 		log.checkArgs(this, unnamedArgs.size());
-		setDevicePath(unnamedArgs.get(0).toString());
+		setDevicePath(new File(unnamedArgs.get(0).toString()));
 	}
 
 	/**
 	 * Sets the device path.
 	 * 
 	 * @param path
-	 *            the device {@link String} path.
+	 *            the device {@link File} path.
 	 * 
 	 * @throws NullPointerException
 	 *             if the specified path is {@code null}.
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if the specified path is empty.
 	 */
-	public void setDevicePath(String path) {
+	public void setDevicePath(File path) {
 		log.checkDevicePath(this, path);
 		this.devicePath = path;
+		log.devicePathSet(this, path);
 	}
 
 	/**
 	 * Returns the device path.
 	 * 
-	 * @return the device {@link String} path.
+	 * @return the device {@link File} path.
 	 */
-	public String getTheDevicePath() {
+	public File getTheDevicePath() {
 		return devicePath;
 	}
 
@@ -120,7 +125,7 @@ public class BlkidBuildin extends AbstractCommand {
 	 * @return the device {@link String} UUID, or {@code null}.
 	 */
 	public String getTheUUID() {
-		return values.get("TYPE");
+		return values.get("UUID");
 	}
 
 	/**

@@ -6,6 +6,7 @@ import groovy.util.logging.Slf4j
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.exec.DefaultExecutor
 import org.apache.commons.exec.PumpStreamHandler
+import org.apache.commons.lang3.StringUtils
 
 /**
  * Setups a test image as block device
@@ -24,8 +25,8 @@ class TestDeviceUtil {
 		testImage = File.createTempFile("test", "dd")
 		copyURLToFile deviceImage, testImage
 		def out = executeCommand("sudo /sbin/losetup --find --show ${testImage.absolutePath}")
-		devicePath = out.out
-		log.info "losetup: {}", out.out
+		devicePath = StringUtils.substring(out.out, 0, -1)
+		log.info "losetup: {}", devicePath
 		log.error "losetup: {}", out.err
 	}
 
