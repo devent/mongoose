@@ -32,7 +32,7 @@ class MountTask {
 
 	private final String mountMatchPattern;
 
-	private final String devicePath;
+	private final File devicePath;
 
 	private final CommandLoader loader;
 
@@ -50,7 +50,7 @@ class MountTask {
 	@Inject
 	MountTask(MountTaskLogger logger,
 			@Named("mount-properties") ContextProperties p,
-			CommandLoader loader, @Assisted String devicePath) {
+			CommandLoader loader, @Assisted File devicePath) {
 		this.log = logger;
 		this.mountCommand = p.getProperty("mount_command");
 		this.mountMatchPattern = p.getProperty("mount_match_pattern");

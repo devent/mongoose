@@ -15,7 +15,7 @@ public class Mount implements Mountable {
 
 	private final MountLogger log;
 
-	private final String devicePath;
+	private final File devicePath;
 
 	private final FsckTask fsck;
 
@@ -27,7 +27,7 @@ public class Mount implements Mountable {
 
 	@Inject
 	Mount(MountLogger logger, FsckTaskFactory fsckTaskFactory,
-			MountTaskFactory mountTaskFactory, @Assisted String devicePath) {
+			MountTaskFactory mountTaskFactory, @Assisted File devicePath) {
 		this.log = logger;
 		this.devicePath = devicePath;
 		this.fsck = fsckTaskFactory.create(devicePath);
@@ -58,7 +58,7 @@ public class Mount implements Mountable {
 		fsck.setInput(source);
 	}
 
-	public String getDevicePath() {
+	public File getDevicePath() {
 		return devicePath;
 	}
 

@@ -4,6 +4,7 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ class FsckTask {
 
 	private final String fsckCommand;
 
-	private final String devicePath;
+	private final File devicePath;
 
 	private final CommandLoader loader;
 
@@ -59,7 +60,7 @@ class FsckTask {
 	@Inject
 	FsckTask(FsckTaskLogger logger,
 			@Named("mount-properties") ContextProperties p,
-			CommandLoader loader, @Assisted String devicePath) {
+			CommandLoader loader, @Assisted File devicePath) {
 		this.log = logger;
 		this.fsckCommand = p.getProperty("fsck_command");
 		this.loader = loader;
@@ -138,19 +139,21 @@ class FsckTask {
 			args.put("successExitValues", successExitValues);
 			args.put("terminal", true);
 
-			Command mount = loader.loadCommand("sudo");
-			mount.setEnvironment(environment);
+			Command cmd = loader.loadCommand("sudo");
+			cmd.setEnvironment(environment);
 			if (outputTarget != null) {
-				mount.setOutput(outputTarget);
+				cmd.setOutput(outputTarget);
 			}
 			if (errorTarget != null) {
-				mount.setError(errorTarget);
+				cmd.setError(errorTarget);
 			}
 			if (inputSource != null) {
-				mount.setInput(inputSource);
+				cmd.setInput(inputSource);
 			}
-			mount.args(args, format("%s %s %s", fsckCommand, flags, devicePath));
-			return mount;
+			String fsck = format("%s %s %s", fsckCommand, flags, devicePath);
+			System.out.println(fsck);// TODO println
+			cmd.args(args, fsck);
+			return cmd;
 		} catch (Exception e) {
 			throw log.errorLoadCommand(mount, e);
 		}

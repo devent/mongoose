@@ -48,7 +48,7 @@ class MountTest {
 	@Test
 	void "mount [auto fsck]"() {
 		def tmpdir = tmp.newFolder()
-		mount = mountFactory.create device.devicePath
+		mount = mountFactory.create device.devicePath as File
 		mount.setEnvironment environment
 		assert mount.isMounted(tmpdir) == false
 		mount.autoFsck()
@@ -57,10 +57,10 @@ class MountTest {
 	@Test
 	void "mount [fsck]"() {
 		def tmpdir = tmp.newFolder()
-		mount = mountFactory.create device.devicePath
+		mount = mountFactory.create device.devicePath as File
 		mount.setEnvironment environment
 		assert mount.isMounted(tmpdir) == false
-		mount.autoFsck()
+		mount.fsck()
 	}
 
 	Mount mount
@@ -77,11 +77,13 @@ class MountTest {
 	@Before
 	void mountTestDevice() {
 		device = new TestDeviceUtil()
+		device.createTestImage()
 		device.createTestDevice()
 	}
 
 	@After
 	void removeMountTestDevice() {
+		device.removeTestImage()
 		device.removeTestDevice()
 	}
 

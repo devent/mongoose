@@ -1,5 +1,7 @@
 package com.anrisoftware.mongoose.devices.mount;
 
+import java.io.File;
+
 /**
  * Factory to create the mount utility.
  * 
@@ -11,10 +13,10 @@ public interface MountFactory {
 	/**
 	 * Creates the mount utility with the specified device path.
 	 * 
-	 * @param devicePath
-	 *            the device {@link String} path.
+	 * @param path
+	 *            the device {@link File} path.
 	 * 
 	 * @return the {@link Mount}.
 	 */
-	Mount create(String devicePath);
+	Mount create(File path);
 }
