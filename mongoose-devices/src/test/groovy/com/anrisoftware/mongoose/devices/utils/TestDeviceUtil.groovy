@@ -22,16 +22,30 @@ class TestDeviceUtil {
 	String devicePath
 
 	void createTestDevice() {
-		testImage = File.createTempFile("test", "dd")
-		copyURLToFile deviceImage, testImage
 		def out = executeCommand("sudo /sbin/losetup --find --show ${testImage.absolutePath}")
 		devicePath = StringUtils.substring(out.out, 0, -1)
 		log.info "losetup: {}", devicePath
 		log.error "losetup: {}", out.err
 	}
 
+	void createTestImage() {
+		testImage = File.createTempFile("test", "dd")
+		copyURLToFile deviceImage, testImage
+	}
+
 	void removeTestDevice() {
 		def out = executeCommand("sudo /sbin/losetup -d $devicePath")
+		log.info "losetup: {}", out.out
+		log.error "losetup: {}", out.err
+	}
+
+	void removeUnusedDevice() {
+		def out = executeCommand("sudo /sbin/losetup -D")
+		log.info "losetup: {}", out.out
+		log.error "losetup: {}", out.err
+	}
+
+	void removeTestImage() {
 		testImage.delete()
 	}
 
