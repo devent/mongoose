@@ -29,7 +29,7 @@ import javax.inject.Named;
 
 import org.codehaus.groovy.runtime.InvokerHelper;
 
-import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.commans.ExecCommand;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
@@ -40,7 +40,7 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class SudoBuildin extends AbstractCommand {
+class SudoBuildin extends AbstractCommand implements ExecCommand {
 
 	private static final String BACKEND_KEY = "backend";
 
@@ -53,7 +53,7 @@ class SudoBuildin extends AbstractCommand {
 
 	private final VetoableChangeListener commandListener;
 
-	private Command command;
+	private ExecCommand command;
 
 	private Backend backend;
 
@@ -98,7 +98,8 @@ class SudoBuildin extends AbstractCommand {
 
 	@Override
 	protected void doCall() throws Exception {
-		command = backend.getBackendCommand(getArgs(), getUnnamedArgs());
+		command = (ExecCommand) backend.getBackendCommand(getArgs(),
+				getUnnamedArgs());
 		command.setEnvironment(getTheEnvironment());
 		command.setInput(getInput());
 		command.setOutput(getOutput());
@@ -168,6 +169,11 @@ class SudoBuildin extends AbstractCommand {
 	 */
 	public Object propertyMissing(String name) {
 		return InvokerHelper.getProperty(command, name);
+	}
+
+	@Override
+	public int getTheExitValue() {
+		return command.getTheExitValue();
 	}
 
 	/**

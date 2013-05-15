@@ -1,5 +1,6 @@
 package com.anrisoftware.mongoose.command;
 
+import static com.anrisoftware.globalpom.arrays.ToList.toList;
 import static com.anrisoftware.mongoose.command.StandardStreams.STANDRD_OUTPUT_DESCRIPTOR;
 import static java.lang.String.format;
 
@@ -142,7 +143,7 @@ public abstract class AbstractCommand implements Command {
 	@Override
 	public void setArgs(Object arg, Object args) throws Exception {
 		log.checkArgs(this, args);
-		Object[] commandArgs = parseArgs(asList(args));
+		Object[] commandArgs = parseArgs(toList(args));
 		insertAdditional(arg, (List<Object>) commandArgs[1]);
 		Map<String, Object> oldValue = this.args;
 		Map<String, Object> newValue = createMap(10);
@@ -157,19 +158,6 @@ public abstract class AbstractCommand implements Command {
 	private void insertAdditional(Object arg, List<Object> unnamed) {
 		if (arg != null && unnamed.size() > 0) {
 			unnamed.set(0, format("%s %s", arg, unnamed.get(0)));
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<Object> asList(Object obj) {
-		if (obj instanceof List) {
-			return (List<Object>) obj;
-		} else if (obj.getClass().isArray()) {
-			return Arrays.asList((Object[]) obj);
-		} else {
-			List<Object> list = new ArrayList<Object>();
-			list.add(obj);
-			return list;
 		}
 	}
 

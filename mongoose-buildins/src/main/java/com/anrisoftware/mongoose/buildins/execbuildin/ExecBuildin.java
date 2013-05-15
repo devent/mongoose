@@ -35,6 +35,7 @@ import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.exec.ShutdownHookProcessDestroyer;
 import org.joda.time.Duration;
 
+import com.anrisoftware.mongoose.api.commans.ExecCommand;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
@@ -46,7 +47,7 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class ExecBuildin extends AbstractCommand {
+class ExecBuildin extends AbstractCommand implements ExecCommand {
 
 	private static final String SUCCESS_EXIT_VALUES_KEY = "successExitValues";
 
@@ -346,12 +347,11 @@ class ExecBuildin extends AbstractCommand {
 	}
 
 	/**
-	 * @see DefaultExecuteResultHandler#getExitValue()
-	 * 
 	 * @throws IllegalStateException
 	 *             if the handler is not of type
 	 *             {@link DefaultExecuteResultHandler}.
 	 */
+	@Override
 	public int getTheExitValue() {
 		if (handler instanceof DefaultExecuteResultHandler) {
 			DefaultExecuteResultHandler h = (DefaultExecuteResultHandler) handler;
