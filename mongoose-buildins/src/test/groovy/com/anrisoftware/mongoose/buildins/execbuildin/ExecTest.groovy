@@ -103,6 +103,11 @@ class ExecTest {
 	}
 
 	@Test
+	void "interactive [+default terminal command, +new line]"() {
+		command terminal: true, "sleep 2\n"
+	}
+
+	@Test
 	void "interactive [+default terminal command, error return]"() {
 		def cmd = command
 		shouldFailWith(CommandException) { cmd terminal: true, "fsck xxx" }

@@ -92,7 +92,10 @@ class CommandParser {
 		if (useTerminal) {
 			scriptFile = createTempFile();
 			cmd = StringUtils.replace(cmd, "\n", ";");
-			cmd = StringUtils.substring(cmd, 0, -1);
+			int i = cmd.lastIndexOf(';');
+			if (cmd.length() == i + 1) {
+				cmd = StringUtils.substring(cmd, 0, -1);
+			}
 			cmd = format(REDIRECT, cmd);
 			String terminal = terminalCommand.replace("{}", cmd);
 			terminal = StringUtils.replace(terminal, ";;", ";");
