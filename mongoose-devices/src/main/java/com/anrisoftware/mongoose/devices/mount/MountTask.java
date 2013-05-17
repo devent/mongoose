@@ -7,6 +7,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
@@ -14,6 +16,7 @@ import javax.inject.Named;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.CommandLoader;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.assistedinject.Assisted;
@@ -30,9 +33,11 @@ class MountTask {
 
 	private final String mountCommand;
 
+	private final String umountCommand;
+
 	private final String mountMatchPattern;
 
-	private final File devicePath;
+	private final File device;
 
 	private final CommandLoader loader;
 
@@ -44,18 +49,22 @@ class MountTask {
 
 	private Mount mount;
 
+	private Map<String, Object> named;
+
 	/**
-	 * @see MountTaskFactory#create(String)
+	 * @see MountTaskFactory#create(File)
 	 */
 	@Inject
 	MountTask(MountTaskLogger logger,
 			@Named("mount-properties") ContextProperties p,
-			CommandLoader loader, @Assisted File devicePath) {
+			CommandLoader loader, @Assisted File device) {
 		this.log = logger;
 		this.mountCommand = p.getProperty("mount_command");
+		this.umountCommand = p.getProperty("umount_command");
 		this.mountMatchPattern = p.getProperty("mount_match_pattern");
 		this.loader = loader;
-		this.devicePath = devicePath;
+		this.device = device;
+		this.named = new HashMap<String, Object>();
 	}
 
 	public void setMount(Mount mount) {
@@ -77,19 +86,38 @@ class MountTask {
 		this.inputSource = source;
 	}
 
-	public boolean checkMounted(File path) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		Command mount = createMountCommand(output);
-		environment.executeCommandAndWait(mount);
-		Pattern pattern = compile(format(mountMatchPattern, devicePath, path));
-		String mountOutput = output.toString();
-		log.mountOutput(this.mount, mountOutput);
-		return pattern.matcher(mountOutput).matches();
+	public void setNamed(Map<String, Object> named) {
+		this.named = named;
 	}
 
-	private Command createMountCommand(OutputStream output) {
+	public boolean checkMounted(File path) throws IOException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		Command mount = createMountCommand("exec", mountCommand, "", output);
+		environment.executeCommandAndWait(mount);
+		Pattern pattern = compile(format(mountMatchPattern, device, path));
+		String mountOutput = output.toString();
+		log.mountOutput(this.mount, mountOutput);
+		return pattern.matcher(mountOutput).find();
+	}
+
+	public void mountDevice(File path) throws CommandException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		Command mount = createMountCommand("sudo", mountCommand,
+				format("%s %s", device, path), output);
+		environment.executeCommandAndWait(mount);
+	}
+
+	public void umountDevice(File path) throws CommandException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		Command mount = createMountCommand("sudo", umountCommand,
+				path.getAbsolutePath(), output);
+		environment.executeCommandAndWait(mount);
+	}
+
+	private Command createMountCommand(String command, String name,
+			String args, OutputStream output) {
 		try {
-			Command mount = loader.loadCommand("exec");
+			Command mount = loader.loadCommand(command);
 			mount.setEnvironment(environment);
 			mount.setOutput(output);
 			if (errorTarget != null) {
@@ -98,7 +126,7 @@ class MountTask {
 			if (inputSource != null) {
 				mount.setInput(inputSource);
 			}
-			mount.args(format("%s", mountCommand));
+			mount.args(named, format("%s %s", name, args));
 			return mount;
 		} catch (Exception e) {
 			throw log.errorLoadCommand(mount, e);

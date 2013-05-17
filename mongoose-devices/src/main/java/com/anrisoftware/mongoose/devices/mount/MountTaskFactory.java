@@ -13,10 +13,10 @@ interface MountTaskFactory {
 	/**
 	 * Creates the mounting task with the device path.
 	 * 
-	 * @param devicePath
+	 * @param device
 	 *            the device {@link File} path.
 	 * 
 	 * @return the {@link MountTask}.
 	 */
-	MountTask create(File devicePath);
+	MountTask create(File device);
 }

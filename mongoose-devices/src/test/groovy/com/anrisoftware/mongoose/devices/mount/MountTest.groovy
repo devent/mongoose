@@ -46,21 +46,46 @@ import com.google.inject.Injector
 class MountTest {
 
 	@Test
+	void "mount [check mounted, -mounted]"() {
+		def tmpdir = tmp.newFolder()
+		mount = mountFactory.create device.devicePath as File
+		mount.setEnvironment environment
+		assert mount.isMounted(tmpdir) == false
+	}
+
+	@Test
+	void "mount [check mounted, +mount]"() {
+		def tmpdir = tmp.newFolder()
+		mount = mountFactory.create device.devicePath as File
+		mount.setEnvironment environment
+		mount.mount tmpdir
+		assert mount.isMounted(tmpdir) == true
+		mount.umount tmpdir
+		assert mount.isMounted(tmpdir) == false
+	}
+
+	@Test
+	void "mount [check mounted, +mount] different mount"() {
+		def tmpdir = tmp.newFolder()
+		mount = mountFactory.create device.devicePath as File
+		mount.setEnvironment environment
+		mount.mount tmpdir
+		assert mount.isMounted(tmpdir) == true
+
+		mount = mountFactory.create device.devicePath as File
+		mount.setEnvironment environment
+		assert mount.isMounted(tmpdir) == true
+		mount.umount tmpdir
+		assert mount.isMounted(tmpdir) == false
+	}
+
+	@Test
 	void "mount [auto fsck]"() {
 		def tmpdir = tmp.newFolder()
 		mount = mountFactory.create device.devicePath as File
 		mount.setEnvironment environment
 		assert mount.isMounted(tmpdir) == false
 		mount.autoFsck()
-	}
-
-	@Test
-	void "mount [fsck]"() {
-		def tmpdir = tmp.newFolder()
-		mount = mountFactory.create device.devicePath as File
-		mount.setEnvironment environment
-		assert mount.isMounted(tmpdir) == false
-		mount.fsck()
 	}
 
 	Mount mount

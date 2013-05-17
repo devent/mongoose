@@ -2,6 +2,8 @@ package com.anrisoftware.mongoose.devices.mount;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -11,29 +13,36 @@ import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.devices.api.Mountable;
 import com.google.inject.assistedinject.Assisted;
 
+/**
+ * Mount the device on directories and check the file system of the device.
+ * 
+ * @author Erwin Mueller, erwin.mueller@deventm.org
+ * @since 1.0
+ */
 public class Mount implements Mountable {
+
+	private static final String PATHS = "paths";
+
+	private static final String DEVICE = "device";
 
 	private final MountLogger log;
 
-	private final File devicePath;
+	private final File device;
 
 	private final FsckTask fsck;
 
 	private final MountTask mount;
 
-	private boolean mounted;
-
-	private File mountPath;
+	private final Map<File, Boolean> mountedPaths;
 
 	@Inject
 	Mount(MountLogger logger, FsckTaskFactory fsckTaskFactory,
-			MountTaskFactory mountTaskFactory, @Assisted File devicePath) {
+			MountTaskFactory mountTaskFactory, @Assisted File device) {
 		this.log = logger;
-		this.devicePath = devicePath;
-		this.fsck = fsckTaskFactory.create(devicePath);
-		this.mount = mountTaskFactory.create(devicePath);
-		this.mounted = false;
-		this.mountPath = null;
+		this.device = device;
+		this.fsck = fsckTaskFactory.create(device);
+		this.mount = mountTaskFactory.create(device);
+		this.mountedPaths = new HashMap<File, Boolean>();
 		fsck.setMount(this);
 		mount.setMount(this);
 	}
@@ -58,44 +67,54 @@ public class Mount implements Mountable {
 		fsck.setInput(source);
 	}
 
-	public File getDevicePath() {
-		return devicePath;
+	public void setNamed(Map<String, Object> named) {
+		mount.setNamed(named);
 	}
 
-	public boolean isMounted() {
-		return mounted;
+	public File getDevice() {
+		return device;
 	}
 
-	public File getMountPath() {
-		return mountPath;
+	@Override
+	public void mount(File path) throws IOException {
+		mount(true, path);
 	}
 
 	@Override
 	public void mount(boolean mount, File path) throws IOException {
-		log.checkPath(this, mount, path);
 		if (mount) {
-			// TODO Auto-generated method stub
-			mounted = true;
-			mountPath = path;
+			log.checkPath(this, path);
+			log.checkNotMounted(this, mountedPaths.containsKey(path), path);
+			log.mountDevice(this, path);
+			this.mount.mountDevice(path);
+			mountedPaths.put(path, true);
 		} else {
-			mounted = false;
+			log.checkMounted(this, mountedPaths.containsKey(path), path);
+			this.mount.umountDevice(path);
+			mountedPaths.put(path, false);
 		}
 	}
 
 	@Override
-	public void mount(boolean mount) throws IOException {
-		mount(mount, null);
-		mounted = false;
+	public void umount(File path) throws IOException {
+		mount(false, path);
+	}
+
+	@Override
+	public void umount() throws IOException {
+		for (File path : mountedPaths.keySet()) {
+			mount(false, path);
+		}
 	}
 
 	@Override
 	public boolean isMounted(File path) throws IOException {
-		log.checkPath(this, path);
-		if (mounted && mountPath.equals(path)) {
-			return true;
-		} else {
-			return mount.checkMounted(path);
+		Boolean mounted = mountedPaths.get(path);
+		if (mounted == null) {
+			mounted = mount.checkMounted(path);
+			mountedPaths.put(path, mounted);
 		}
+		return mounted;
 	}
 
 	@Override
@@ -120,9 +139,11 @@ public class Mount implements Mountable {
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("device path", devicePath)
-				.append("mounted", mounted).append("mount path", mountPath)
-				.toString();
+		ToStringBuilder builder = new ToStringBuilder(this);
+		builder.append(DEVICE, device);
+		if (mountedPaths.size() > 0) {
+			builder.append(PATHS, mountedPaths.keySet());
+		}
+		return builder.toString();
 	}
-
 }
