@@ -25,7 +25,7 @@ class TestDeviceUtil {
 		def out = executeCommand("sudo /sbin/losetup --find --show ${testImage.absolutePath}")
 		devicePath = StringUtils.substring(out.out, 0, -1)
 		log.info "losetup: {}", devicePath
-		log.error "losetup: {}", out.err
+		logErr out
 	}
 
 	void createTestImage() {
@@ -35,18 +35,30 @@ class TestDeviceUtil {
 
 	void removeTestDevice() {
 		def out = executeCommand("sudo /sbin/losetup -d $devicePath")
-		log.info "losetup: {}", out.out
-		log.error "losetup: {}", out.err
+		logOut out
+		logErr out
 	}
 
 	void removeUnusedDevice() {
 		def out = executeCommand("sudo /sbin/losetup -D")
-		log.info "losetup: {}", out.out
-		log.error "losetup: {}", out.err
+		logOut out
+		logErr out
 	}
 
 	void removeTestImage() {
 		testImage.delete()
+	}
+
+	private logOut(def out) {
+		if (!out.out.isEmpty()) {
+			log.info "losetup: {}", out.out
+		}
+	}
+
+	private logErr(def out) {
+		if (!out.err.isEmpty()) {
+			log.error "losetup: {}", out.err
+		}
 	}
 
 	static deviceImage = TestDeviceUtil.class.getResource("/test.dd")

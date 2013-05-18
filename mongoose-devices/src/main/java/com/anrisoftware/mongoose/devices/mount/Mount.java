@@ -10,9 +10,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import com.anrisoftware.mongoose.devices.api.Device;
+import com.anrisoftware.mongoose.command.AbstractCommand;
 import com.anrisoftware.mongoose.devices.api.Mountable;
-import com.anrisoftware.mongoose.devices.device.AbstractDevice;
 
 /**
  * Mount the device on directories and check the file system of the device.
@@ -20,7 +19,7 @@ import com.anrisoftware.mongoose.devices.device.AbstractDevice;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public class Mount extends AbstractDevice implements Mountable {
+public class Mount extends AbstractCommand implements Mountable {
 
 	private static final String PATHS = "paths";
 
@@ -28,26 +27,54 @@ public class Mount extends AbstractDevice implements Mountable {
 
 	private final FsckTaskFactory fsckFactory;
 
-	private final MountTask mount;
+	private final MountTaskFactory mountFactory;
 
 	private final Map<File, Boolean> mountedPaths;
 
+	private MountTask mount;
+
 	private FsckTask fsck;
+
+	private File path;
 
 	@Inject
 	Mount(MountLogger logger, FsckTaskFactory fsckFactory,
-			MountTaskFactory mountTaskFactory) {
+			MountTaskFactory mountFactory) {
 		this.log = logger;
 		this.fsckFactory = fsckFactory;
-		this.mount = mountTaskFactory.create(this);
+		this.mountFactory = mountFactory;
 		this.mountedPaths = new HashMap<File, Boolean>();
+	}
+
+	@Override
+	protected void doCall() throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
 		super.argumentsSet(args, unnamedArgs);
+		log.checkArgs(this, unnamedArgs.size());
+		setPath((File) unnamedArgs.get(0));
 		this.fsck = fsckFactory.create(this);
+		this.mount = mountFactory.create(this);
+	}
+
+	/**
+	 * Sets the device path.
+	 * 
+	 * @param path
+	 *            the device {@link File} path.
+	 */
+	public void setPath(File path) {
+		this.path = path;
+		log.devicePathSet(this, path);
+	}
+
+	public File getThePath() {
+		return path;
 	}
 
 	@Override
@@ -113,6 +140,11 @@ public class Mount extends AbstractDevice implements Mountable {
 	}
 
 	@Override
+	public String getTheName() {
+		return "mount";
+	}
+
+	@Override
 	public String toString() {
 		ToStringBuilder builder = new ToStringBuilder(this).appendSuper(super
 				.toString());
@@ -122,14 +154,4 @@ public class Mount extends AbstractDevice implements Mountable {
 		return builder.toString();
 	}
 
-	@Override
-	public <T extends Device> T asType(Class<T> type) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getTheName() {
-		return "mount";
-	}
 }

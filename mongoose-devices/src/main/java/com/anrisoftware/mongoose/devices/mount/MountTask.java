@@ -5,10 +5,6 @@ import static java.util.regex.Pattern.compile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
@@ -29,6 +25,10 @@ import com.google.inject.assistedinject.Assisted;
  */
 class MountTask {
 
+	private static final String EXEC_COMMAND = "exec";
+
+	private static final String SUDO_COMMAND = "sudo";
+
 	private final MountTaskLogger log;
 
 	private final String mountCommand;
@@ -41,15 +41,9 @@ class MountTask {
 
 	private final CommandLoader loader;
 
-	private Environment environment;
+	private final Environment environment;
 
-	private Object errorTarget;
-
-	private Object inputSource;
-
-	private Mount mount;
-
-	private Map<String, Object> named;
+	private final File devicePath;
 
 	/**
 	 * @see MountTaskFactory#create(Mount)
@@ -64,74 +58,64 @@ class MountTask {
 		this.mountMatchPattern = p.getProperty("mount_match_pattern");
 		this.loader = loader;
 		this.device = device;
-		this.named = new HashMap<String, Object>();
+		this.devicePath = device.getThePath();
+		this.environment = device.getTheEnvironment();
 	}
 
-	public void setMount(Mount mount) {
-		this.mount = mount;
-	}
-
-	public void setEnvironment(Environment environment) {
-		this.environment = environment;
-	}
-
-	public void setOutput(Object output) {
-	}
-
-	public void setError(Object error) {
-		this.errorTarget = error;
-	}
-
-	public void setInput(Object source) {
-		this.inputSource = source;
-	}
-
-	public void setNamed(Map<String, Object> named) {
-		this.named = named;
-	}
-
-	public boolean checkMounted(File path) throws IOException {
+	/**
+	 * Checks if the specified path is mounted on the device.
+	 * 
+	 * @param path
+	 *            the {@link File} path.
+	 * 
+	 * @return {@code true} if the path is mounted.
+	 * 
+	 * @throws CommandException
+	 *             if there was an error executing the command.
+	 */
+	public boolean checkMounted(File path) throws CommandException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		Command mount = createMountCommand("exec", mountCommand, "", output);
-		environment.executeCommandAndWait(mount);
-		Pattern pattern = compile(format(mountMatchPattern, device, path));
+		Command cmd = loader.createCommand(EXEC_COMMAND, environment,
+				device.getArgs(), output, device.getError(), device.getInput(),
+				mountCommand);
+		environment.executeCommandAndWait(cmd);
+		Pattern pattern = compile(format(mountMatchPattern, devicePath, path));
 		String mountOutput = output.toString();
-		log.mountOutput(this.mount, mountOutput);
+		log.mountOutput(device, mountOutput);
 		return pattern.matcher(mountOutput).find();
 	}
 
+	/**
+	 * Mount the device on the specified path.
+	 * 
+	 * @param path
+	 *            the {@link File} path.
+	 * 
+	 * @throws CommandException
+	 *             if there was an error executing the command.
+	 */
 	public void mountDevice(File path) throws CommandException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		Command mount = createMountCommand("sudo", mountCommand,
-				format("%s %s", device, path), output);
-		environment.executeCommandAndWait(mount);
+		Command cmd = loader.createCommand(SUDO_COMMAND, environment,
+				device.getArgs(), device.getOutput(), device.getError(),
+				device.getInput(),
+				format("%s %s %s", mountCommand, devicePath, path));
+		environment.executeCommandAndWait(cmd);
 	}
 
+	/**
+	 * Unmount the device on the specified path.
+	 * 
+	 * @param path
+	 *            the {@link File} path.
+	 * 
+	 * @throws CommandException
+	 *             if there was an error executing the command.
+	 */
 	public void umountDevice(File path) throws CommandException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		Command mount = createMountCommand("sudo", umountCommand,
-				path.getAbsolutePath(), output);
-		environment.executeCommandAndWait(mount);
-	}
-
-	private Command createMountCommand(String command, String name,
-			String args, OutputStream output) {
-		try {
-			Command mount = loader.loadCommand(command);
-			mount.setEnvironment(environment);
-			mount.setOutput(output);
-			if (errorTarget != null) {
-				mount.setError(errorTarget);
-			}
-			if (inputSource != null) {
-				mount.setInput(inputSource);
-			}
-			mount.args(named, format("%s %s", name, args));
-			return mount;
-		} catch (Exception e) {
-			return null;
-			// throw log.errorLoadCommand(mount, e);
-		}
+		Command cmd = loader.createCommand(SUDO_COMMAND, environment,
+				device.getArgs(), device.getOutput(), device.getError(),
+				device.getInput(), format("%s %s %s", umountCommand, path));
+		environment.executeCommandAndWait(cmd);
 	}
 
 }

@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import com.anrisoftware.globalpom.log.AbstractLogger;
 
 /**
- * Logging messages for {@link FsckTask}.
+ * Logging messages for {@link MountTask}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
@@ -13,13 +13,13 @@ import com.anrisoftware.globalpom.log.AbstractLogger;
 @Singleton
 class MountTaskLogger extends AbstractLogger {
 
-	private static final String MOUNT_OUTPUT = "Mount output: {}.";
+	private static final String MOUNT_OUTPUT = "Mount output: ``{}''";
 
 	/**
-	 * Create logger for {@link FsckTask}.
+	 * Create logger for {@link MountTask}.
 	 */
 	public MountTaskLogger() {
-		super(FsckTask.class);
+		super(MountTask.class);
 	}
 
 	void mountOutput(Mount mount, String output) {

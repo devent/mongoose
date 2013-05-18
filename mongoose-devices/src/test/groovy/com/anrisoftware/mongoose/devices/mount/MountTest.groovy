@@ -48,9 +48,10 @@ class MountTest {
 	@Test
 	void "mount [check mounted, -mounted]"() {
 		def tmpdir = tmp.newFolder()
-		mount = mountFactory.create device.devicePath as File
+		Mount mount = injector.getInstance Mount
 		mount.setEnvironment environment
-		assert mount.isMounted(tmpdir) == false
+		mount device.devicePath as File
+		mount.isMounted(tmpdir) == false
 	}
 
 	@Test
