@@ -1,7 +1,5 @@
 package com.anrisoftware.mongoose.devices.mount;
 
-import java.io.File;
-
 /**
  * Factory to create {@link FsckTask}.
  * 
@@ -11,12 +9,12 @@ import java.io.File;
 interface FsckTaskFactory {
 
 	/**
-	 * Creates the checking task with the device path.
+	 * Creates the checking task with the mount-able device.
 	 * 
-	 * @param devicePath
-	 *            the device {@link File} path.
+	 * @param mount
+	 *            the mount-able {@link Mount} device.
 	 * 
 	 * @return the {@link FsckTask}.
 	 */
-	FsckTask create(File devicePath);
+	FsckTask create(Mount mount);
 }

@@ -1,9 +1,14 @@
 package com.anrisoftware.mongoose.devices.device;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.anrisoftware.mongoose.command.AbstractCommand;
 import com.anrisoftware.mongoose.devices.api.Device;
 
 /**
@@ -12,45 +17,43 @@ import com.anrisoftware.mongoose.devices.api.Device;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public abstract class AbstractDevice implements Device {
+public abstract class AbstractDevice extends AbstractCommand implements Device {
 
-	private final String theName;
+	private File path;
 
-	private final File thePath;
+	private AbstractDeviceLogger log;
 
-	/**
-	 * Constructs a device with the specified path.
-	 * 
-	 * @param path
-	 *            {@link File} path of the device. The name of the path is used
-	 *            as the name of the device.
-	 */
-	protected AbstractDevice(File path) {
-		this(path.getName(), path);
-	}
-
-	/**
-	 * Constructs a device with the specified name and path.
-	 * 
-	 * @param name
-	 *            the name of the device.
-	 * 
-	 * @param path
-	 *            {@link File} path of the device.
-	 */
-	protected AbstractDevice(String name, File path) {
-		this.theName = name;
-		this.thePath = path;
+	@Inject
+	void setAbstractDeviceLogger(AbstractDeviceLogger logger) {
+		this.log = logger;
 	}
 
 	@Override
-	public String getTheName() {
-		return theName;
+	protected void doCall() throws Exception {
+	}
+
+	@Override
+	protected void argumentsSet(Map<String, Object> args,
+			List<Object> unnamedArgs) throws Exception {
+		super.argumentsSet(args, unnamedArgs);
+		log.checkArgs(this, unnamedArgs.size());
+		setPath((File) unnamedArgs.get(0));
+	}
+
+	/**
+	 * Sets the device path.
+	 * 
+	 * @param path
+	 *            the device {@link File} path.
+	 */
+	public void setPath(File path) {
+		this.path = path;
+		log.devicePathSet(this, path);
 	}
 
 	@Override
 	public File getThePath() {
-		return thePath;
+		return path;
 	}
 
 	/**
@@ -68,12 +71,12 @@ public abstract class AbstractDevice implements Device {
 			return false;
 		}
 		Device rhs = (Device) obj;
-		return thePath.equals(rhs.getThePath());
+		return path.equals(rhs.getThePath());
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append(theName).append(thePath).toString();
+		return new ToStringBuilder(this).append(path).toString();
 	}
 
 }

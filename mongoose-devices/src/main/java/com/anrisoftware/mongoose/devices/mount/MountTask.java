@@ -37,7 +37,7 @@ class MountTask {
 
 	private final String mountMatchPattern;
 
-	private final File device;
+	private final Mount device;
 
 	private final CommandLoader loader;
 
@@ -52,12 +52,12 @@ class MountTask {
 	private Map<String, Object> named;
 
 	/**
-	 * @see MountTaskFactory#create(File)
+	 * @see MountTaskFactory#create(Mount)
 	 */
 	@Inject
 	MountTask(MountTaskLogger logger,
 			@Named("mount-properties") ContextProperties p,
-			CommandLoader loader, @Assisted File device) {
+			CommandLoader loader, @Assisted Mount device) {
 		this.log = logger;
 		this.mountCommand = p.getProperty("mount_command");
 		this.umountCommand = p.getProperty("umount_command");
@@ -129,7 +129,8 @@ class MountTask {
 			mount.args(named, format("%s %s", name, args));
 			return mount;
 		} catch (Exception e) {
-			throw log.errorLoadCommand(mount, e);
+			return null;
+			// throw log.errorLoadCommand(mount, e);
 		}
 	}
 

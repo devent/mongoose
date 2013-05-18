@@ -46,8 +46,6 @@ class MountModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		install(new FactoryModuleBuilder().implement(Mount.class, Mount.class)
-				.build(MountFactory.class));
 		install(new FactoryModuleBuilder().implement(FsckTask.class,
 				FsckTask.class).build(FsckTaskFactory.class));
 		install(new FactoryModuleBuilder().implement(MountTask.class,

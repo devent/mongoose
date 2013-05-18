@@ -2,21 +2,15 @@ package com.anrisoftware.mongoose.devices.api;
 
 import java.io.File;
 
+import com.anrisoftware.mongoose.api.commans.Command;
+
 /**
  * The Linux device.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public interface Device {
-
-	/**
-	 * Returns the name of the device. The name is the identification of the
-	 * device, i.e. {@code sda1}, {@code md0}, {@code lv_volume}.
-	 * 
-	 * @return the name of the device.
-	 */
-	String getTheName();
+public interface Device extends Command {
 
 	/**
 	 * Returns the path of the device.
@@ -24,4 +18,14 @@ public interface Device {
 	 * @return the {@link File} path.
 	 */
 	File getThePath();
+
+	/**
+	 * Converts to a different type of device.
+	 * 
+	 * @param type
+	 *            the {@link Class} type of the device to convert to.
+	 * 
+	 * @return this {@link Device} converted to the new type.
+	 */
+	<T extends Device> T asType(Class<T> type);
 }

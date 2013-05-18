@@ -80,15 +80,13 @@ class MountTest {
 	}
 
 	@Test
-	void "mount [auto fsck]"() {
+	void "auto fsck"() {
 		def tmpdir = tmp.newFolder()
-		mount = mountFactory.create device.devicePath as File
+		Mount mount = injector.getInstance Mount
 		mount.setEnvironment environment
-		assert mount.isMounted(tmpdir) == false
+		mount device.devicePath as File
 		mount.autoFsck()
 	}
-
-	Mount mount
 
 	Environment environment
 
@@ -117,14 +115,11 @@ class MountTest {
 
 	static Injector injector
 
-	static MountFactory mountFactory
-
 	@BeforeClass
 	static void setupInjector() {
 		toStringStyle
 		injector = Guice.createInjector(
 				new MountModule(), new EnvironmentModule(), new ThreadsModule(),
 				new ResourcesModule())
-		mountFactory = injector.getInstance(MountFactory)
 	}
 }

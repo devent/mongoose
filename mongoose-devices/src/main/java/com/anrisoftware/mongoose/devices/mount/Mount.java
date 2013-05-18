@@ -3,15 +3,16 @@ package com.anrisoftware.mongoose.devices.mount;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.devices.api.Device;
 import com.anrisoftware.mongoose.devices.api.Mountable;
-import com.google.inject.assistedinject.Assisted;
+import com.anrisoftware.mongoose.devices.device.AbstractDevice;
 
 /**
  * Mount the device on directories and check the file system of the device.
@@ -19,60 +20,34 @@ import com.google.inject.assistedinject.Assisted;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-public class Mount implements Mountable {
+public class Mount extends AbstractDevice implements Mountable {
 
 	private static final String PATHS = "paths";
 
-	private static final String DEVICE = "device";
-
 	private final MountLogger log;
 
-	private final File device;
-
-	private final FsckTask fsck;
+	private final FsckTaskFactory fsckFactory;
 
 	private final MountTask mount;
 
 	private final Map<File, Boolean> mountedPaths;
 
+	private FsckTask fsck;
+
 	@Inject
-	Mount(MountLogger logger, FsckTaskFactory fsckTaskFactory,
-			MountTaskFactory mountTaskFactory, @Assisted File device) {
+	Mount(MountLogger logger, FsckTaskFactory fsckFactory,
+			MountTaskFactory mountTaskFactory) {
 		this.log = logger;
-		this.device = device;
-		this.fsck = fsckTaskFactory.create(device);
-		this.mount = mountTaskFactory.create(device);
+		this.fsckFactory = fsckFactory;
+		this.mount = mountTaskFactory.create(this);
 		this.mountedPaths = new HashMap<File, Boolean>();
-		fsck.setMount(this);
-		mount.setMount(this);
 	}
 
-	public void setEnvironment(Environment environment) {
-		mount.setEnvironment(environment);
-		fsck.setEnvironment(environment);
-	}
-
-	public void setOutput(Object output) {
-		mount.setOutput(output);
-		fsck.setOutput(output);
-	}
-
-	public void setError(Object error) {
-		mount.setError(error);
-		fsck.setError(error);
-	}
-
-	public void setInput(Object source) {
-		mount.setInput(source);
-		fsck.setInput(source);
-	}
-
-	public void setNamed(Map<String, Object> named) {
-		mount.setNamed(named);
-	}
-
-	public File getDevice() {
-		return device;
+	@Override
+	protected void argumentsSet(Map<String, Object> args,
+			List<Object> unnamedArgs) throws Exception {
+		super.argumentsSet(args, unnamedArgs);
+		this.fsck = fsckFactory.create(this);
 	}
 
 	@Override
@@ -139,11 +114,22 @@ public class Mount implements Mountable {
 
 	@Override
 	public String toString() {
-		ToStringBuilder builder = new ToStringBuilder(this);
-		builder.append(DEVICE, device);
+		ToStringBuilder builder = new ToStringBuilder(this).appendSuper(super
+				.toString());
 		if (mountedPaths.size() > 0) {
 			builder.append(PATHS, mountedPaths.keySet());
 		}
 		return builder.toString();
+	}
+
+	@Override
+	public <T extends Device> T asType(Class<T> type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getTheName() {
+		return "mount";
 	}
 }

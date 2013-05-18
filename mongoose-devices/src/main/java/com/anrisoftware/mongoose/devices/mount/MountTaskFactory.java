@@ -1,7 +1,5 @@
 package com.anrisoftware.mongoose.devices.mount;
 
-import java.io.File;
-
 /**
  * Factory to create {@link MountTask}.
  * 
@@ -11,12 +9,12 @@ import java.io.File;
 interface MountTaskFactory {
 
 	/**
-	 * Creates the mounting task with the device path.
+	 * Creates the mounting task with the mount-able device.
 	 * 
-	 * @param device
-	 *            the device {@link File} path.
+	 * @param mount
+	 *            the mount-able {@link Mount} device.
 	 * 
 	 * @return the {@link MountTask}.
 	 */
-	MountTask create(File device);
+	MountTask create(Mount mount);
 }

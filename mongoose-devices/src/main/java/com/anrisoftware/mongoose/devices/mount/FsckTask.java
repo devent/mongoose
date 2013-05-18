@@ -3,10 +3,8 @@ package com.anrisoftware.mongoose.devices.mount;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +14,7 @@ import javax.inject.Named;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.CommandLoader;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.google.inject.assistedinject.Assisted;
@@ -28,63 +27,48 @@ import com.google.inject.assistedinject.Assisted;
  */
 class FsckTask {
 
+	private static final String FSCK_COMMAND_PROPERTY = "fsck_command";
+
+	private static final String FSCK_COMMAND_VARIABLE = "FSCK_COMMAND";
+
+	private static final String SUDO_COMMAND = "sudo";
+
 	private static final String AUTO_FLAGS = "-a";
 
 	private static final String FORCE_AUTO_FLAGS = "-f -a";
 
-	private static final String EMPTY_FLAGS = "";
-
 	private static final String FORCE_FLAGS = "-f";
-
-	private final FsckTaskLogger log;
 
 	private final String fsckCommand;
 
-	private final File devicePath;
-
 	private final CommandLoader loader;
 
-	private Environment environment;
+	private final File path;
 
-	private Object outputTarget;
+	private final Environment environment;
 
-	private Object errorTarget;
-
-	private Object inputSource;
-
-	private Mount mount;
+	private final Mount device;
 
 	/**
-	 * @see FsckTaskFactory#create(String)
+	 * @see FsckTaskFactory#create(Mount)
 	 */
 	@Inject
-	FsckTask(FsckTaskLogger logger,
-			@Named("mount-properties") ContextProperties p,
-			CommandLoader loader, @Assisted File devicePath) {
-		this.log = logger;
-		this.fsckCommand = p.getProperty("fsck_command");
+	FsckTask(@Named("mount-properties") ContextProperties p,
+			CommandLoader loader, @Assisted Mount device) {
 		this.loader = loader;
-		this.devicePath = devicePath;
+		this.device = device;
+		this.path = device.getThePath();
+		this.environment = device.getTheEnvironment();
+		this.fsckCommand = fsckCommand(p, environment);
 	}
 
-	public void setMount(Mount mount) {
-		this.mount = mount;
-	}
-
-	public void setEnvironment(Environment environment) {
-		this.environment = environment;
-	}
-
-	public void setOutput(Object output) {
-		this.outputTarget = output;
-	}
-
-	public void setError(Object error) {
-		this.errorTarget = error;
-	}
-
-	public void setInput(Object source) {
-		this.inputSource = source;
+	private String fsckCommand(ContextProperties p, Environment environment) {
+		Map<String, String> env = environment.getEnv();
+		if (env.containsKey(FSCK_COMMAND_VARIABLE)) {
+			return env.get(FSCK_COMMAND_VARIABLE);
+		} else {
+			return p.getProperty(FSCK_COMMAND_PROPERTY);
+		}
 	}
 
 	/**
@@ -98,15 +82,13 @@ class FsckTask {
 	 * @see Mount#autoFsck(boolean)
 	 */
 	public void autoFsck(boolean force) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		ByteArrayOutputStream error = new ByteArrayOutputStream();
-		Command fsck;
+		String command;
 		if (force) {
-			fsck = createFsckCommand(output, error, FORCE_AUTO_FLAGS);
+			command = format("%s %s %s", fsckCommand, FORCE_AUTO_FLAGS, path);
 		} else {
-			fsck = createFsckCommand(output, error, AUTO_FLAGS);
+			command = format("%s %s %s", fsckCommand, AUTO_FLAGS, path);
 		}
-		environment.executeCommandAndWait(fsck);
+		environment.executeCommandAndWait(createFsckCommand(command));
 	}
 
 	/**
@@ -119,44 +101,23 @@ class FsckTask {
 	/**
 	 * @see Mount#fsck(boolean)
 	 */
-	public void fsck(boolean force) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		ByteArrayOutputStream error = new ByteArrayOutputStream();
-		Command fsck;
+	public void fsck(boolean force) throws CommandException {
+		String command;
 		if (force) {
-			fsck = createFsckCommand(output, error, FORCE_FLAGS);
+			command = format("%s %s %s", fsckCommand, FORCE_FLAGS, path);
 		} else {
-			fsck = createFsckCommand(output, error, EMPTY_FLAGS);
+			command = format("%s %s", fsckCommand, path);
 		}
-		environment.executeCommandAndWait(fsck);
+		environment.executeCommandAndWait(createFsckCommand(command));
 	}
 
-	private Command createFsckCommand(OutputStream output, OutputStream error,
-			String flags) {
-		try {
-			List<Integer> successExitValues = asList(0, 1, 2, 4);
-			Map<String, Object> args = new HashMap<String, Object>();
-			args.put("successExitValues", successExitValues);
-			args.put("terminal", true);
-
-			Command cmd = loader.loadCommand("sudo");
-			cmd.setEnvironment(environment);
-			if (outputTarget != null) {
-				cmd.setOutput(outputTarget);
-			}
-			if (errorTarget != null) {
-				cmd.setError(errorTarget);
-			}
-			if (inputSource != null) {
-				cmd.setInput(inputSource);
-			}
-			String fsck = format("%s %s %s", fsckCommand, flags, devicePath);
-			System.out.println(fsck);// TODO println
-			cmd.args(args, fsck);
-			return cmd;
-		} catch (Exception e) {
-			throw log.errorLoadCommand(mount, e);
-		}
+	private Command createFsckCommand(String command) throws CommandException {
+		List<Integer> successExitValues = asList(0, 1, 2, 4);
+		Map<String, Object> args = new HashMap<String, Object>(device.getArgs());
+		args.put("successExitValues", successExitValues);
+		args.put("terminal", true);
+		return loader.createCommand(SUDO_COMMAND, environment, args,
+				device.getOutput(), device.getError(), device.getInput(),
+				command);
 	}
-
 }
