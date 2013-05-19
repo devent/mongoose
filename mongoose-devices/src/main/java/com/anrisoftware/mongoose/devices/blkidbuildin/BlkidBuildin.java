@@ -40,7 +40,7 @@ public class BlkidBuildin extends AbstractCommand {
 
 	private Command cmd;
 
-	private File devicePath;
+	private File path;
 
 	@Inject
 	BlkidBuildin(BlkidBuildinLogger logger, BlkidParser parser,
@@ -57,9 +57,9 @@ public class BlkidBuildin extends AbstractCommand {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		cmd = loader.createCommand("sudo", getTheEnvironment(), getArgs(),
 				output, getError(), getInput(),
-				format("%s %s", blkidCommand, devicePath));
+				format("%s %s", blkidCommand, path));
 		getTheEnvironment().executeCommandAndWait(cmd);
-		parser.withDevice(devicePath).withString(output.toString())
+		parser.withDevice(path).withString(output.toString())
 				.withValues(values).build();
 	}
 
@@ -67,7 +67,7 @@ public class BlkidBuildin extends AbstractCommand {
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
 		log.checkArgs(this, unnamedArgs.size());
-		setDevicePath(new File(unnamedArgs.get(0).toString()));
+		setPath(new File(unnamedArgs.get(0).toString()));
 	}
 
 	/**
@@ -79,9 +79,9 @@ public class BlkidBuildin extends AbstractCommand {
 	 * @throws NullPointerException
 	 *             if the specified path is {@code null}.
 	 */
-	public void setDevicePath(File path) {
+	public void setPath(File path) {
 		log.checkDevicePath(this, path);
-		this.devicePath = path;
+		this.path = path;
 		log.devicePathSet(this, path);
 	}
 
@@ -90,8 +90,8 @@ public class BlkidBuildin extends AbstractCommand {
 	 * 
 	 * @return the device {@link File} path.
 	 */
-	public File getTheDevicePath() {
-		return devicePath;
+	public File getThePath() {
+		return path;
 	}
 
 	/**
@@ -138,6 +138,6 @@ public class BlkidBuildin extends AbstractCommand {
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).appendSuper(super.toString())
-				.append("device path", devicePath).append(values).toString();
+				.append("path", path).append(values).toString();
 	}
 }
