@@ -18,6 +18,7 @@ import com.anrisoftware.globalpom.log.AbstractLogger;
 @Singleton
 class MountLogger extends AbstractLogger {
 
+	private static final String MOUNT_PATH_SET = "Mount path '{}' set for {}.";
 	private static final String MOUNT_MESSAGE = "Mount device '{}' on '{}'.";
 	private static final String MOUNT = "Mount {} on '{}'.";
 	private static final String DEVICE_MOUNTED = "Device %s already mounted on %s.";
@@ -52,18 +53,26 @@ class MountLogger extends AbstractLogger {
 	}
 
 	void checkNotMounted(Mount mount, boolean mounted, File path) {
-		isTrue(!mounted, DEVICE_MOUNTED, mount.getThePath(), path);
+		isTrue(!mounted, DEVICE_MOUNTED, mount.getTheDevice(), path);
 	}
 
 	void checkMounted(Mount mount, boolean mounted, File path) {
-		isTrue(mounted, DEVICE_NOT_MOUNTED, mount.getThePath(), path);
+		isTrue(mounted, DEVICE_NOT_MOUNTED, mount.getTheDevice(), path);
 	}
 
 	void mountDevice(Mount mount, File path) {
 		if (log.isDebugEnabled()) {
 			log.debug(MOUNT, mount, path);
 		} else {
-			log.info(MOUNT_MESSAGE, mount.getThePath(), path);
+			log.info(MOUNT_MESSAGE, mount.getTheDevice(), path);
+		}
+	}
+
+	void mountPathSet(Mount mount, File path) {
+		if (log.isDebugEnabled()) {
+			log.debug(MOUNT_PATH_SET, path, mount);
+		} else {
+			log.info(MOUNT_PATH_SET, path, mount.getTheDevice());
 		}
 	}
 }

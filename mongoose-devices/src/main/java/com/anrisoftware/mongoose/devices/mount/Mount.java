@@ -35,6 +35,8 @@ public class Mount extends AbstractCommand implements Mountable {
 
 	private FsckTask fsck;
 
+	private File device;
+
 	private File path;
 
 	@Inject
@@ -48,8 +50,9 @@ public class Mount extends AbstractCommand implements Mountable {
 
 	@Override
 	protected void doCall() throws Exception {
-		// TODO Auto-generated method stub
-
+		if (path != null) {
+			mount(path);
+		}
 	}
 
 	@Override
@@ -57,7 +60,10 @@ public class Mount extends AbstractCommand implements Mountable {
 			List<Object> unnamedArgs) throws Exception {
 		super.argumentsSet(args, unnamedArgs);
 		log.checkArgs(this, unnamedArgs.size());
-		setPath((File) unnamedArgs.get(0));
+		setDevice((File) unnamedArgs.get(0));
+		if (unnamedArgs.size() > 1) {
+			setPath((File) unnamedArgs.get(1));
+		}
 		this.fsck = fsckFactory.create(this);
 		this.mount = mountFactory.create(this);
 	}
@@ -65,16 +71,33 @@ public class Mount extends AbstractCommand implements Mountable {
 	/**
 	 * Sets the device path.
 	 * 
-	 * @param path
+	 * @param device
 	 *            the device {@link File} path.
 	 */
-	public void setPath(File path) {
-		this.path = path;
-		log.devicePathSet(this, path);
+	public void setDevice(File device) {
+		this.device = device;
+		log.devicePathSet(this, device);
 	}
 
-	public File getThePath() {
-		return path;
+	/**
+	 * Returns the device path.
+	 * 
+	 * @return the device {@link File} path.
+	 */
+	public File getTheDevice() {
+		return device;
+	}
+
+	/**
+	 * Sets the mount path.
+	 * 
+	 * @param path
+	 *            the mount {@link File} path.
+	 */
+	public void setPath(File path) {
+		log.checkPath(this, path);
+		this.path = path;
+		log.mountPathSet(this, path);
 	}
 
 	@Override

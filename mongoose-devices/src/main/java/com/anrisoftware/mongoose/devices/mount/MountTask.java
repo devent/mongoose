@@ -58,7 +58,7 @@ class MountTask {
 		this.mountMatchPattern = p.getProperty("mount_match_pattern");
 		this.loader = loader;
 		this.device = device;
-		this.devicePath = device.getThePath();
+		this.devicePath = device.getTheDevice();
 		this.environment = device.getTheEnvironment();
 	}
 
@@ -114,7 +114,7 @@ class MountTask {
 	public void umountDevice(File path) throws CommandException {
 		Command cmd = loader.createCommand(SUDO_COMMAND, environment,
 				device.getArgs(), device.getOutput(), device.getError(),
-				device.getInput(), format("%s %s %s", umountCommand, path));
+				device.getInput(), format("%s %s", umountCommand, path));
 		environment.executeCommandAndWait(cmd);
 	}
 

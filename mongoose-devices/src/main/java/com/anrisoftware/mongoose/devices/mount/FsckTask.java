@@ -57,7 +57,7 @@ class FsckTask {
 			CommandLoader loader, @Assisted Mount device) {
 		this.loader = loader;
 		this.device = device;
-		this.path = device.getThePath();
+		this.path = device.getTheDevice();
 		this.environment = device.getTheEnvironment();
 		this.fsckCommand = fsckCommand(p, environment);
 	}

@@ -29,6 +29,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import com.anrisoftware.mongoose.api.environment.Environment
+import com.anrisoftware.mongoose.api.exceptions.CommandException
 import com.anrisoftware.mongoose.devices.utils.TestDeviceUtil
 import com.anrisoftware.mongoose.environment.EnvironmentModule
 import com.anrisoftware.mongoose.resources.ResourcesModule
@@ -46,7 +47,7 @@ import com.google.inject.Injector
 class MountTest {
 
 	@Test
-	void "mount [check mounted, -mounted]"() {
+	void "mount [check mounted]"() {
 		def tmpdir = tmp.newFolder()
 		Mount mount = injector.getInstance Mount
 		mount.setEnvironment environment
@@ -55,29 +56,46 @@ class MountTest {
 	}
 
 	@Test
-	void "mount [check mounted, +mount]"() {
+	void "mount [check mounted, +unmount]"() {
 		def tmpdir = tmp.newFolder()
-		mount = mountFactory.create device.devicePath as File
+		Mount mount = injector.getInstance Mount
 		mount.setEnvironment environment
-		mount.mount tmpdir
+		mount device.devicePath as File, tmpdir
+		mount.isMounted(tmpdir) == true
+		mount.umount tmpdir
+		assert mount.isMounted(tmpdir) == false
+	}
+
+	@Test
+	void "mount [check mounted, +mount, different mount]"() {
+		def tmpdir = tmp.newFolder()
+		Mount mount = injector.getInstance Mount
+		mount.setEnvironment environment
+		mount device.devicePath as File, tmpdir
+
+		mount = injector.getInstance Mount
+		mount.setEnvironment environment
+		mount device.devicePath as File
 		assert mount.isMounted(tmpdir) == true
 		mount.umount tmpdir
 		assert mount.isMounted(tmpdir) == false
 	}
 
 	@Test
-	void "mount [check mounted, +mount] different mount"() {
+	void "mount [check mounted, +mount, different mount, already mounted]"() {
 		def tmpdir = tmp.newFolder()
-		mount = mountFactory.create device.devicePath as File
+		Mount mount = injector.getInstance Mount
 		mount.setEnvironment environment
-		mount.mount tmpdir
-		assert mount.isMounted(tmpdir) == true
+		mount device.devicePath as File, tmpdir
 
-		mount = mountFactory.create device.devicePath as File
-		mount.setEnvironment environment
-		assert mount.isMounted(tmpdir) == true
-		mount.umount tmpdir
-		assert mount.isMounted(tmpdir) == false
+		Mount mountb = injector.getInstance Mount
+		mountb.setEnvironment environment
+
+		shouldFailWith(CommandException) {
+			mountb device.devicePath as File, tmpdir
+		}
+
+		mount.umount()
 	}
 
 	@Test
