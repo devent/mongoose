@@ -3,6 +3,7 @@ package com.anrisoftware.mongoose.devices.api;
 import java.io.File;
 
 import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
  * The Linux device.
@@ -22,10 +23,13 @@ public interface Device extends Command {
 	/**
 	 * Converts to a different type of device.
 	 * 
-	 * @param type
-	 *            the {@link Class} type of the device to convert to.
+	 * @param name
+	 *            the name {@link String} of the device to convert to.
 	 * 
 	 * @return this {@link Device} converted to the new type.
+	 * 
+	 * @throws CommandException
+	 *             if there were some error converting the device.
 	 */
-	<T extends Device> T asType(Class<T> type);
+	<T extends Device> T as(String name) throws CommandException;
 }

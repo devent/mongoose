@@ -11,30 +11,29 @@ import java.io.IOException;
 public interface Resizeable {
 
 	/**
-	 * Returns the block size of the device.
+	 * Returns the size of the device.
 	 * 
-	 * @return the block size.
-	 */
-	long getTheBlockSize();
-
-	/**
-	 * Returns the byte size of the device.
+	 * @param unit
+	 *            the unit of the size, like bytes, blocks or logical extents.
 	 * 
-	 * @return the byte size.
+	 * @return the size in units.
+	 * 
+	 * @throws IOException
+	 *             if there was an error get the size of the device.
 	 */
-	long getTheByteSize();
+	long size(Object unit) throws IOException;
 
 	/**
 	 * Resize the device to the new size.
 	 * 
-	 * @param newSize
-	 *            the new size.
+	 * @param size
+	 *            the new size in units.
 	 * 
 	 * @param unit
-	 *            the {@link BlockUnit} unit.
+	 *            the unit of the size, like bytes, blocks or logical extents.
 	 * 
 	 * @throws IOException
-	 *             if there was an error re-sizing the device.
+	 *             if there was an error resizing the device.
 	 */
-	void resize(long newSize, BlockUnit unit) throws IOException;
+	void resize(long size, Object unit) throws IOException;
 }

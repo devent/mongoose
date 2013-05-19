@@ -8,11 +8,14 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
+import com.anrisoftware.mongoose.command.CommandLoader;
 import com.anrisoftware.mongoose.devices.api.Device;
 
 /**
- * Constructs a device with a name and path.
+ * Constructs a device from a path.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
@@ -22,6 +25,13 @@ public abstract class AbstractDevice extends AbstractCommand implements Device {
 	private File path;
 
 	private AbstractDeviceLogger log;
+
+	private CommandLoader loader;
+
+	@Inject
+	void setCommandLoader(CommandLoader loader) {
+		this.loader = loader;
+	}
 
 	@Inject
 	void setAbstractDeviceLogger(AbstractDeviceLogger logger) {
@@ -54,6 +64,20 @@ public abstract class AbstractDevice extends AbstractCommand implements Device {
 	@Override
 	public File getThePath() {
 		return path;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Device> T as(String name) throws CommandException {
+		try {
+			Command cmd = loader.createCommand(name, getTheEnvironment(),
+					getArgs(), getOutput(), getError(), getInput());
+			cmd.args(getUnnamedArgs().toArray());
+			getTheEnvironment().executeCommandAndWait(cmd);
+			return (T) cmd;
+		} catch (Exception e) {
+			throw log.errorConvert(this, e, name);
+		}
 	}
 
 	/**

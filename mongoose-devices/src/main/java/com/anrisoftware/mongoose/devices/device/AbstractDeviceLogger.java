@@ -7,6 +7,7 @@ import java.io.File;
 import javax.inject.Singleton;
 
 import com.anrisoftware.globalpom.log.AbstractLogger;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
  * Logging messages for {@link AbstractDevice}.
@@ -19,6 +20,8 @@ class AbstractDeviceLogger extends AbstractLogger {
 
 	private static final String SET_DEVICE_PATH = "Set device path {} for {}.";
 	private static final String DEVICE_PATH = "Need the device path.";
+	private static final String ERROR_CONVERT = "Error convert device";
+	private static final String ERROR_CONVERT_MESSAGE = "Error convert device %s to '%s'.";
 
 	/**
 	 * Create logger for {@link AbstractDevice}.
@@ -37,5 +40,13 @@ class AbstractDeviceLogger extends AbstractLogger {
 		} else {
 			log.info(SET_DEVICE_PATH, path, device.getTheName());
 		}
+	}
+
+	CommandException errorConvert(AbstractDevice device, Exception e,
+			String name) {
+		return logException(
+				new CommandException(ERROR_CONVERT)
+						.addContext("device", device).addContext("name", name),
+				ERROR_CONVERT_MESSAGE, name, device);
 	}
 }

@@ -1,17 +1,21 @@
 package com.anrisoftware.mongoose.devices.blockdevice;
 
+import static org.codehaus.groovy.runtime.InvokerHelper.getProperty;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.codehaus.groovy.runtime.InvokerHelper;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.CommandLoader;
 import com.anrisoftware.mongoose.devices.api.Block;
+import com.anrisoftware.mongoose.devices.api.Mountable;
 import com.anrisoftware.mongoose.devices.device.AbstractDevice;
 
 /**
@@ -28,8 +32,6 @@ public class BlockDevice extends AbstractDevice implements Block {
 
 	private final Map<String, ResizeTask> resizeTasks;
 
-	private String name;
-
 	private String label;
 
 	private String uuid;
@@ -40,10 +42,23 @@ public class BlockDevice extends AbstractDevice implements Block {
 
 	private ResizeTask task;
 
+	private Command mount;
+
+	private Mountable mountable;
+
 	@Inject
 	BlockDevice(CommandLoader loader, Map<String, ResizeTask> resizeTasks) {
 		this.loader = loader;
 		this.resizeTasks = resizeTasks;
+	}
+
+	@Override
+	protected void argumentsSet(Map<String, Object> args,
+			List<Object> unnamedArgs) throws Exception {
+		super.argumentsSet(args, unnamedArgs);
+		mount = loader.createCommand("mount", getTheEnvironment(), getArgs(),
+				getOutput(), getError(), getInput(), getThePath());
+		mountable = (Mountable) mount;
 	}
 
 	@Override
@@ -52,54 +67,54 @@ public class BlockDevice extends AbstractDevice implements Block {
 		Command cmd = loader.createCommand(BLKID_COMMAND, getTheEnvironment(),
 				getArgs(), getOutput(), getError(), getInput(), getThePath());
 		getTheEnvironment().executeCommandAndWait(cmd);
-		this.type = (String) InvokerHelper.getProperty(cmd, "theType");
-		this.label = (String) InvokerHelper.getProperty(cmd, "theLabel");
-		this.uuid = (String) InvokerHelper.getProperty(cmd, "theUUID");
+		this.type = (String) getProperty(cmd, "theType");
+		this.label = (String) getProperty(cmd, "theLabel");
+		this.uuid = (String) getProperty(cmd, "theUUID");
 	}
 
 	@Override
 	public void mount(File path) throws IOException {
-		mount.mount(path);
+		mountable.mount(path);
 	}
 
 	@Override
 	public void mount(boolean mount, File path) throws IOException {
-		this.mount.mount(mount, path);
+		mountable.mount(mount, path);
 	}
 
 	@Override
 	public void umount(File path) throws IOException {
-		mount.umount(path);
+		mountable.umount(path);
 	}
 
 	@Override
 	public void umount() throws IOException {
-		mount.umount();
+		mountable.umount();
 	}
 
 	@Override
 	public boolean isMounted(File path) throws IOException {
-		return mount.isMounted(path);
+		return mountable.isMounted(path);
 	}
 
 	@Override
 	public void fsck() throws IOException {
-		mount.fsck();
+		mountable.fsck();
 	}
 
 	@Override
 	public void fsck(boolean force) throws IOException {
-		mount.fsck(force);
+		mountable.fsck(force);
 	}
 
 	@Override
 	public void autoFsck() throws IOException {
-		mount.autoFsck();
+		mountable.autoFsck();
 	}
 
 	@Override
 	public void autoFsck(boolean force) throws IOException {
-		mount.autoFsck(force);
+		mountable.autoFsck(force);
 	}
 
 	@Override
@@ -137,7 +152,13 @@ public class BlockDevice extends AbstractDevice implements Block {
 
 	@Override
 	public String getTheName() {
-		return name;
+		return BlockDeviceService.ID;
 	}
 
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).appendSuper(super.toString())
+				.append("id", id).append("label", label).append("uuid", uuid)
+				.toString();
+	}
 }

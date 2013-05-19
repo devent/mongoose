@@ -12,12 +12,7 @@ import java.io.IOException;
 public interface Mountable {
 
 	/**
-	 * Mount or un-mount the device from a specified path.
-	 * 
-	 * @param mount
-	 *            {@code true} if the device should be mounted at the specified
-	 *            path. {@code false} if the device should be un-mounted from
-	 *            the specified path.
+	 * Mount the device from a specified path.
 	 * 
 	 * @param path
 	 *            the {@link File} path.
@@ -25,25 +20,47 @@ public interface Mountable {
 	 * @throws NullPointerException
 	 *             if the specified path is {@code null}.
 	 * 
+	 * @throws IllegalArgumentException
+	 *             if the specified path is not a directory; if the device is
+	 *             already mounted on the path.
+	 * 
 	 * @throws IOException
-	 *             if there was an error mounting or un-mounting the device.
+	 *             if there was an error mounting or unmount the device.
+	 */
+	void mount(File path) throws IOException;
+
+	/**
+	 * @see #mount(File)
+	 * 
+	 * @param mount
+	 *            {@code true} if the device should be mounted at the specified
+	 *            path; {@code false} if the device should be unmounted from the
+	 *            specified path.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the device is already mounted on the path; if the device
+	 *             is not mounted on the path.
 	 */
 	void mount(boolean mount, File path) throws IOException;
 
 	/**
-	 * Un-mount the device from a specified path.
-	 * 
-	 * @param mount
-	 *            {@code false} if the device should be un-mounted from the
-	 *            specified path.
+	 * Unmount the device from the specified path.
 	 * 
 	 * @throws IOException
-	 *             if there was an error un-mounting the device.
+	 *             if there was an error unmount the device.
 	 * 
-	 * @throws NullPointerException
-	 *             if the device should be mounted.
+	 * @throws IllegalArgumentException
+	 *             if the device is not mounted on the path.
 	 */
-	void mount(boolean mount) throws IOException;
+	void umount(File path) throws IOException;
+
+	/**
+	 * Unmount the device from mounted paths.
+	 * 
+	 * @throws IOException
+	 *             if there was an error unmount the device.
+	 */
+	void umount() throws IOException;
 
 	/**
 	 * Returns if the device is mounted on the specified path.
