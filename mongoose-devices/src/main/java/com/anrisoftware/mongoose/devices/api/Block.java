@@ -13,19 +13,19 @@ public interface Block extends Device, Mountable, Resizeable {
 	 * 
 	 * @return the ID of the device.
 	 */
-	String getId();
+	String getTheId();
 
 	/**
 	 * Returns the label of the device.
 	 * 
 	 * @return the label of the device.
 	 */
-	String getLabel();
+	String getTheLabel();
 
 	/**
 	 * Returns the unique identifier of the device.
 	 * 
 	 * @return the UUID of the device.
 	 */
-	String getUuid();
+	String getTheUUID();
 }
