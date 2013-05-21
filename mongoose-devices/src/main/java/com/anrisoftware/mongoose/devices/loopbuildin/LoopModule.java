@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.devices.lodevicebuildin;
+package com.anrisoftware.mongoose.devices.loopbuildin;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,28 +33,28 @@ import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Installs the {@code lodevice} build-in command factory.
+ * Installs the {@code loop} build-in command factory.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class LodeviceModule extends AbstractModule {
+class LoopModule extends AbstractModule {
 
-	private static final URL LODEVICE_PROPERTIES = LodeviceModule.class
-			.getResource("/lodevice.properties");
+	private static final URL LOOP_PROPERTIES = LoopModule.class
+			.getResource("/loop.properties");
 
 	@Override
 	protected void configure() {
 		install(new FactoryModuleBuilder().implement(Command.class,
-				LodeviceBuildin.class).build(CommandFactory.class));
+				LoopBuildin.class).build(CommandFactory.class));
 	}
 
 	@Provides
-	@Named("lodevice-properties")
+	@Named("loop-properties")
 	@Singleton
 	ContextProperties getLodeviceProperties() throws IOException {
-		return new ContextPropertiesFactory(LodeviceBuildin.class)
+		return new ContextPropertiesFactory(LoopBuildin.class)
 				.withDefaultProperties(System.getProperties()).fromResource(
-						LODEVICE_PROPERTIES);
+						LOOP_PROPERTIES);
 	}
 }

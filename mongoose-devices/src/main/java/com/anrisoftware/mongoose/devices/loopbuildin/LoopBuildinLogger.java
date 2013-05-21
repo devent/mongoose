@@ -1,4 +1,4 @@
-package com.anrisoftware.mongoose.devices.lodevicebuildin;
+package com.anrisoftware.mongoose.devices.loopbuildin;
 
 import static org.apache.commons.lang3.Validate.isTrue;
 import static org.apache.commons.lang3.Validate.notNull;
@@ -11,13 +11,13 @@ import com.anrisoftware.globalpom.log.AbstractLogger;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 
 /**
- * Logging messages for {@link LodeviceBuildin}.
+ * Logging messages for {@link LoopBuildin}.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
 @Singleton
-class LodeviceBuildinLogger extends AbstractLogger {
+class LoopBuildinLogger extends AbstractLogger {
 
 	private static final String BUILDIN = "buildin";
 	private static final String DEVICE_ALREADY_CREATED_MESSAGE = "Loop device '%s' already created";
@@ -29,21 +29,21 @@ class LodeviceBuildinLogger extends AbstractLogger {
 	private static final String DEVICE_ALREADY_DELETED_MESSAGE = "Loop device '%s' already deleted";
 
 	/**
-	 * Create logger for {@link LodeviceBuildin}.
+	 * Create logger for {@link LoopBuildin}.
 	 */
-	LodeviceBuildinLogger() {
-		super(LodeviceBuildin.class);
+	LoopBuildinLogger() {
+		super(LoopBuildin.class);
 	}
 
-	void checkArgs(LodeviceBuildin buildin, int size) {
+	void checkArgs(LoopBuildin buildin, int size) {
 		isTrue(size > 0, ARGS_NULL);
 	}
 
-	void checkDevicePath(LodeviceBuildin buildin, File path) {
+	void checkDevicePath(LoopBuildin buildin, File path) {
 		notNull(path, DEVICE_PATH_NULL);
 	}
 
-	void devicePathSet(LodeviceBuildin buildin, File path) {
+	void devicePathSet(LoopBuildin buildin, File path) {
 		if (log.isDebugEnabled()) {
 			log.debug(DEVICE_PATH_SET, path, buildin);
 		} else {
@@ -51,7 +51,7 @@ class LodeviceBuildinLogger extends AbstractLogger {
 		}
 	}
 
-	void checkCreated(LodeviceBuildin buildin, boolean created)
+	void checkCreated(LoopBuildin buildin, boolean created)
 			throws CommandException {
 		if (created) {
 			throw logException(
@@ -61,7 +61,7 @@ class LodeviceBuildinLogger extends AbstractLogger {
 		}
 	}
 
-	void checkDeleted(LodeviceBuildin buildin, boolean created)
+	void checkDeleted(LoopBuildin buildin, boolean created)
 			throws CommandException {
 		if (!created) {
 			throw logException(

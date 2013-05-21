@@ -1,22 +1,22 @@
 /*
  * Copyright 2012 Erwin Müller <erwin.mueller@deventm.org>
  * 
- * This file is part of groovybash-lodevices.
+ * This file is part of groovybash-loops.
  * 
- * groovybash-lodevices is free software: you can redistribute it and/or modify
+ * groovybash-loops is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
  * later version.
  * 
- * groovybash-lodevices is distributed in the hope that it will be useful, but
+ * groovybash-loops is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  * 
  * You should have received a copy of the GNU General Public License along with
- * groovybash-lodevices. If not, see <http://www.gnu.org/licenses/>.
+ * groovybash-loops. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.devices.lodevicebuildin;
+package com.anrisoftware.mongoose.devices.loopbuildin;
 
 import org.mangosdk.spi.ProviderFor;
 
@@ -28,21 +28,21 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Makes the build-in command {@code lodevice} available as a service.
+ * Makes the build-in command {@code loop} available as a service.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
 @ProviderFor(CommandService.class)
-public class LodeviceService implements CommandService {
+public class LoopBuildinService implements CommandService {
 
 	/**
-	 * The unique identifier of the build-in command {@code lodevice}.
+	 * The unique identifier of the build-in command {@code loop}.
 	 */
-	public static final String ID = "lodevice";
+	public static final String ID = "loop";
 
 	/**
-	 * The command information of the build-in command {@code lodevice}.
+	 * The command information of the build-in command {@code loop}.
 	 */
 	public static final CommandInfo INFO = new CommandInfo() {
 
@@ -52,7 +52,7 @@ public class LodeviceService implements CommandService {
 		}
 	};
 
-	private static final Module[] MODULES = new Module[] { new LodeviceModule() };
+	private static final Module[] MODULES = new Module[] { new LoopModule() };
 
 	@Override
 	public CommandInfo getInfo() {

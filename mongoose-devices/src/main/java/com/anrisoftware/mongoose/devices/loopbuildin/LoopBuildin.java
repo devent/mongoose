@@ -1,4 +1,4 @@
-package com.anrisoftware.mongoose.devices.lodevicebuildin;
+package com.anrisoftware.mongoose.devices.loopbuildin;
 
 import static com.anrisoftware.globalpom.arrays.ToList.toList;
 import static java.lang.String.format;
@@ -29,7 +29,9 @@ import com.anrisoftware.propertiesutils.ContextProperties;
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
-class LodeviceBuildin extends AbstractCommand {
+class LoopBuildin extends AbstractCommand {
+
+	private static final String SUDO_COMMAND = "sudo";
 
 	private static final String SETUP_ARGS = "--find --show";
 
@@ -37,7 +39,7 @@ class LodeviceBuildin extends AbstractCommand {
 
 	private static final String LOSETUP_COMMAND_VARIABLE = "LOSETUP_COMMAND";
 
-	private final LodeviceBuildinLogger log;
+	private final LoopBuildinLogger log;
 
 	private final CommandLoader loader;
 
@@ -50,9 +52,8 @@ class LodeviceBuildin extends AbstractCommand {
 	private boolean created;
 
 	@Inject
-	LodeviceBuildin(LodeviceBuildinLogger logger,
-			@Named("lodevice-properties") ContextProperties p,
-			CommandLoader loader) {
+	LoopBuildin(LoopBuildinLogger logger,
+			@Named("loop-properties") ContextProperties p, CommandLoader loader) {
 		this.log = logger;
 		this.loader = loader;
 		this.losetupCommand = p.getProperty(LOSETUP_COMMAND_PROPERTY);
@@ -81,9 +82,8 @@ class LodeviceBuildin extends AbstractCommand {
 	private void infoLoopDevice() throws CommandException, Exception {
 		String command = format("%s %s", losetupCommand, device);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		ByteArrayOutputStream error = new ByteArrayOutputStream();
 		int[] returnValues = new int[] { 0, 1 };
-		ExecCommand cmd = createCommand(command, returnValues, output, error);
+		ExecCommand cmd = execCommand(command, returnValues, output);
 		if (cmd.getTheExitValue() == 1) {
 			created = false;
 		} else {
@@ -101,6 +101,12 @@ class LodeviceBuildin extends AbstractCommand {
 		}
 	}
 
+	/**
+	 * Sets the image file.
+	 * 
+	 * @param file
+	 *            the image {@link File}.
+	 */
 	public void setFile(File file) {
 		this.file = file;
 	}
@@ -114,6 +120,12 @@ class LodeviceBuildin extends AbstractCommand {
 		return file;
 	}
 
+	/**
+	 * Sets the loop device.
+	 * 
+	 * @param device
+	 *            the loop device {@link File} path.
+	 */
 	public void setDevice(File device) {
 		this.device = device;
 	}
@@ -129,25 +141,30 @@ class LodeviceBuildin extends AbstractCommand {
 
 	@Override
 	public String getTheName() {
-		return "lodevice";
+		return LoopBuildinService.ID;
 	}
 
-	public void setup() throws Exception {
+	/**
+	 * Creates the loop device from the image file.
+	 * 
+	 * @throws CommandException
+	 */
+	public void setup() throws CommandException {
 		log.checkCreated(this, created);
 		createLoopDevice();
 		created = true;
 	}
 
-	private void createLoopDevice() throws Exception {
+	private void createLoopDevice() throws CommandException {
 		String command;
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		if (device == null) {
 			command = format("%s %s %s", losetupCommand, SETUP_ARGS, file);
-			createCommand(command, null, output, getError());
+			execCommand(command, null, output);
 			device = new File(substring(output.toString(), 0, -1));
 		} else {
 			command = format("%s %s %s", losetupCommand, device, file);
-			createCommand(command, null, output, getError());
+			execCommand(command, null, output);
 		}
 	}
 
@@ -161,19 +178,16 @@ class LodeviceBuildin extends AbstractCommand {
 	private void deleteLoopDevice() throws Exception {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		String command = format("%s -d %s", losetupCommand, device);
-		createCommand(command, null, output, getError());
+		execCommand(command, null, output);
 	}
 
-	private ExecCommand createCommand(String command, int[] returnValues,
-			OutputStream output, OutputStream error) throws CommandException,
-			Exception {
+	private ExecCommand execCommand(String command, int[] returnValues,
+			OutputStream output) throws CommandException {
 		Map<String, Object> args = argsMap();
 		seccuessExitValues(args, returnValues);
-		ExecCommand cmd = (ExecCommand) loader.loadCommand("sudo");
-		cmd.setEnvironment(getTheEnvironment());
-		cmd.setOutput(output);
-		cmd.setError(error);
-		cmd.args(args, command);
+		ExecCommand cmd = (ExecCommand) loader.createCommand(SUDO_COMMAND,
+				getTheEnvironment(), args, output, getError(), getInput(),
+				command);
 		getTheEnvironment().executeCommandAndWait(cmd);
 		return cmd;
 	}

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.anrisoftware.mongoose.devices.lodevicebuildin
+package com.anrisoftware.mongoose.devices.loopbuildin
 import static com.anrisoftware.globalpom.utils.TestUtils.*
 import static org.apache.commons.io.FileUtils.*
 import groovy.util.logging.Slf4j
@@ -36,17 +36,25 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
- * @see LodeviceBuildin
+ * @see LoopBuildin
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
 @Slf4j
-class LodeviceTest {
+class LoopTest {
 
 	@Test
 	void "image"() {
 		command device.testImage
+		assert command.theDevice.exists()
+		device.devicePath = command.theDevice
+		device.removeTestDevice()
+	}
+
+	@Test
+	void "image [+terminal]"() {
+		command "terminal": true, device.testImage
 		assert command.theDevice.exists()
 		device.devicePath = command.theDevice
 		device.removeTestDevice()
@@ -91,7 +99,7 @@ class LodeviceTest {
 		assert command.theDevice == null
 	}
 
-	LodeviceBuildin command
+	LoopBuildin command
 
 	Environment environment
 
@@ -101,7 +109,7 @@ class LodeviceTest {
 
 	@Before
 	void setupCommand() {
-		command = injector.getInstance(LodeviceBuildin)
+		command = injector.getInstance(LoopBuildin)
 		environment = injector.getInstance(Environment)
 		command.setEnvironment environment
 		byteOutput = new ByteArrayOutputStream()
@@ -112,7 +120,10 @@ class LodeviceTest {
 
 	@After
 	void logErrors() {
-		log.error output(byteError)
+		def err = output(byteError)
+		if (!err.empty) {
+			log.error err
+		}
 	}
 
 	TestDeviceUtil device
@@ -134,7 +145,7 @@ class LodeviceTest {
 	@BeforeClass
 	static void setupInjector() {
 		toStringStyle
-		injector = Guice.createInjector(new LodeviceModule(),
+		injector = Guice.createInjector(new LoopModule(),
 				new EnvironmentModule(), new ThreadsModule(), new ResourcesModule())
 	}
 
