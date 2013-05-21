@@ -26,7 +26,7 @@ public class DeviceBuildin extends AbstractCommand {
 
 	private static final String TYPE_KEY = "type";
 
-	private static final String LODEVICE_COMMAND = "lodevice";
+	private static final String LOOP_COMMAND = "loop";
 
 	private static final String FILE_TYPE = "file";
 
@@ -67,7 +67,7 @@ public class DeviceBuildin extends AbstractCommand {
 	}
 
 	private Command createLoDevice() throws Exception {
-		return loader.createCommand(LODEVICE_COMMAND, getTheEnvironment(),
+		return loader.createCommand(LOOP_COMMAND, getTheEnvironment(),
 				getArgs(), getOutput(), getError(), getInput(), deviceArgs);
 	}
 
