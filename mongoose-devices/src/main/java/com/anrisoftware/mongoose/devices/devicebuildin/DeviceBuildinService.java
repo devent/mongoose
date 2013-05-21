@@ -1,20 +1,20 @@
 /*
  * Copyright 2012 Erwin Müller <erwin.mueller@deventm.org>
  * 
- * This file is part of groovybash-blkids.
+ * This file is part of groovybash-devices.
  * 
- * groovybash-blkids is free software: you can redistribute it and/or modify
+ * groovybash-devices is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option) any
  * later version.
  * 
- * groovybash-blkids is distributed in the hope that it will be useful, but
+ * groovybash-devices is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  * 
  * You should have received a copy of the GNU General Public License along with
- * groovybash-blkids. If not, see <http://www.gnu.org/licenses/>.
+ * groovybash-devices. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.anrisoftware.mongoose.devices.devicebuildin;
 
@@ -28,7 +28,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Makes the build-in command {@code blkid} available as a service.
+ * Makes the build-in command {@code device} available as a service.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
@@ -37,12 +37,12 @@ import com.google.inject.Module;
 public class DeviceBuildinService implements CommandService {
 
 	/**
-	 * The unique identifier of the build-in command {@code blkid}.
+	 * The unique identifier of the build-in command {@code device}.
 	 */
-	public static final String ID = "blkid";
+	public static final String ID = "device";
 
 	/**
-	 * The command information of the build-in command {@code blkid}.
+	 * The command information of the build-in command {@code device}.
 	 */
 	public static final CommandInfo INFO = new CommandInfo() {
 

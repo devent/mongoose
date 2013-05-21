@@ -18,30 +18,18 @@
  */
 package com.anrisoftware.mongoose.devices.devicebuildin;
 
-import java.io.IOException;
-import java.net.URL;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.CommandFactory;
-import com.anrisoftware.propertiesutils.ContextProperties;
-import com.anrisoftware.propertiesutils.ContextPropertiesFactory;
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Installs the {@code blkid} build-in command factory.
+ * Installs the {@code device} build-in command factory.
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
 class DeviceModule extends AbstractModule {
-
-	private static final URL BLKID_PROPERTIES = DeviceModule.class
-			.getResource("/blkid.properties");
 
 	@Override
 	protected void configure() {
@@ -49,12 +37,4 @@ class DeviceModule extends AbstractModule {
 				DeviceBuildin.class).build(CommandFactory.class));
 	}
 
-	@Provides
-	@Named("blkid-properties")
-	@Singleton
-	ContextProperties getBlkidProperties() throws IOException {
-		return new ContextPropertiesFactory(DeviceBuildin.class)
-				.withDefaultProperties(System.getProperties()).fromResource(
-						BLKID_PROPERTIES);
-	}
 }
