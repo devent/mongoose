@@ -45,7 +45,7 @@ import com.google.inject.Injector
 class LoopTest {
 
 	@Test
-	void "image"() {
+	void "with image"() {
 		command device.testImage
 		assert command.theDevice.exists()
 		device.devicePath = command.theDevice
@@ -53,7 +53,7 @@ class LoopTest {
 	}
 
 	@Test
-	void "image [+terminal]"() {
+	void "with image, with terminal"() {
 		command "terminal": true, device.testImage
 		assert command.theDevice.exists()
 		device.devicePath = command.theDevice
@@ -66,14 +66,14 @@ class LoopTest {
 	}
 
 	@Test
-	void "image [delete]"() {
+	void "with image, delete device"() {
 		command device.testImage
 		command.delete()
 		assert command.theDevice == null
 	}
 
 	@Test
-	void "image [+device]"() {
+	void "with image, already device"() {
 		device.createTestDevice()
 		try {
 			command device.testImage, device.devicePath
@@ -84,7 +84,7 @@ class LoopTest {
 	}
 
 	@Test
-	void "image [-device, setup]"() {
+	void "with image, custom device, setup"() {
 		command device.testImage, "/dev/loop0"
 		assert command.theDevice.exists()
 		device.devicePath = command.theDevice
@@ -92,7 +92,15 @@ class LoopTest {
 	}
 
 	@Test
-	void "image [+device, delete]"() {
+	void "with image, custom device name, setup"() {
+		command device.testImage, "loop0"
+		assert command.theDevice.exists()
+		device.devicePath = command.theDevice
+		device.removeTestDevice()
+	}
+
+	@Test
+	void "with image, already +device, delete"() {
 		device.createTestDevice()
 		command device.testImage, device.devicePath
 		command.delete()

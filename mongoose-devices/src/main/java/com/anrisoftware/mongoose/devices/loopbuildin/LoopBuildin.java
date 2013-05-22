@@ -45,7 +45,7 @@ class LoopBuildin extends AbstractCommand {
 
 	private String losetupCommand;
 
-	private File device;
+	private String device;
 
 	private File file;
 
@@ -98,7 +98,7 @@ class LoopBuildin extends AbstractCommand {
 		log.checkArgs(this, unnamedArgs.size());
 		setFile(new File(unnamedArgs.get(0).toString()));
 		if (unnamedArgs.size() > 1) {
-			setDevice(new File(unnamedArgs.get(1).toString()));
+			setDevice(unnamedArgs.get(1).toString());
 		}
 	}
 
@@ -127,7 +127,7 @@ class LoopBuildin extends AbstractCommand {
 	 * @param device
 	 *            the loop device {@link File} path.
 	 */
-	public void setDevice(File device) {
+	public void setDevice(String device) {
 		this.device = device;
 	}
 
@@ -137,7 +137,14 @@ class LoopBuildin extends AbstractCommand {
 	 * @return the device {@link File} path.
 	 */
 	public File getTheDevice() {
-		return device;
+		if (device == null) {
+			return null;
+		}
+		if (device.startsWith("/")) {
+			return new File(device);
+		} else {
+			return new File("/dev/" + device);
+		}
 	}
 
 	@Override
@@ -162,7 +169,7 @@ class LoopBuildin extends AbstractCommand {
 		if (device == null) {
 			command = format("%s %s %s", losetupCommand, SETUP_ARGS, file);
 			execCommand(command, null, output, getError());
-			device = new File(substring(output.toString(), 0, -1));
+			device = substring(output.toString(), 0, -1);
 		} else {
 			command = format("%s %s %s", losetupCommand, device, file);
 			execCommand(command, null, output, getError());
