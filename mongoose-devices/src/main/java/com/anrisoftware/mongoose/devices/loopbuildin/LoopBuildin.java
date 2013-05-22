@@ -82,8 +82,9 @@ class LoopBuildin extends AbstractCommand {
 	private void infoLoopDevice() throws CommandException, Exception {
 		String command = format("%s %s", losetupCommand, device);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		ByteArrayOutputStream error = new ByteArrayOutputStream();
 		int[] returnValues = new int[] { 0, 1 };
-		ExecCommand cmd = execCommand(command, returnValues, output);
+		ExecCommand cmd = execCommand(command, returnValues, output, error);
 		if (cmd.getTheExitValue() == 1) {
 			created = false;
 		} else {
@@ -160,11 +161,11 @@ class LoopBuildin extends AbstractCommand {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		if (device == null) {
 			command = format("%s %s %s", losetupCommand, SETUP_ARGS, file);
-			execCommand(command, null, output);
+			execCommand(command, null, output, getError());
 			device = new File(substring(output.toString(), 0, -1));
 		} else {
 			command = format("%s %s %s", losetupCommand, device, file);
-			execCommand(command, null, output);
+			execCommand(command, null, output, getError());
 		}
 	}
 
@@ -178,16 +179,15 @@ class LoopBuildin extends AbstractCommand {
 	private void deleteLoopDevice() throws Exception {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		String command = format("%s -d %s", losetupCommand, device);
-		execCommand(command, null, output);
+		execCommand(command, null, output, getError());
 	}
 
 	private ExecCommand execCommand(String command, int[] returnValues,
-			OutputStream output) throws CommandException {
+			OutputStream output, OutputStream error) throws CommandException {
 		Map<String, Object> args = argsMap();
 		seccuessExitValues(args, returnValues);
 		ExecCommand cmd = (ExecCommand) loader.createCommand(SUDO_COMMAND,
-				getTheEnvironment(), args, output, getError(), getInput(),
-				command);
+				getTheEnvironment(), args, output, error, getInput(), command);
 		getTheEnvironment().executeCommandAndWait(cmd);
 		return cmd;
 	}
