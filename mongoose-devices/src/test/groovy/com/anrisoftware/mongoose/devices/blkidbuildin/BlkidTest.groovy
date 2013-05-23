@@ -83,6 +83,7 @@ class BlkidTest {
 	@Before
 	void loadTestDevice() {
 		device = new TestDeviceUtil()
+		device.createTestImage()
 		device.createTestDevice()
 	}
 
