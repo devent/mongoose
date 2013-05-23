@@ -24,6 +24,8 @@ import java.net.URL;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.commans.CommandFactory;
 import com.anrisoftware.propertiesutils.ContextProperties;
 import com.anrisoftware.propertiesutils.ContextPropertiesFactory;
 import com.google.inject.AbstractModule;
@@ -46,6 +48,9 @@ class MountModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		install(new FactoryModuleBuilder()
+				.implement(Command.class, Mount.class).build(
+						CommandFactory.class));
 		install(new FactoryModuleBuilder().implement(FsckTask.class,
 				FsckTask.class).build(FsckTaskFactory.class));
 		install(new FactoryModuleBuilder().implement(MountTask.class,
