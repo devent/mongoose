@@ -18,9 +18,18 @@
  */
 package com.anrisoftware.mongoose.devices.devicebuildin;
 
+import java.io.IOException;
+import java.net.URL;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.CommandFactory;
+import com.anrisoftware.propertiesutils.ContextProperties;
+import com.anrisoftware.propertiesutils.ContextPropertiesFactory;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
@@ -31,10 +40,20 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
  */
 class DeviceModule extends AbstractModule {
 
+	private static final URL DEVICE_PROPERTIES = DeviceModule.class
+			.getResource("/device.properties");
+
 	@Override
 	protected void configure() {
 		install(new FactoryModuleBuilder().implement(Command.class,
 				DeviceBuildin.class).build(CommandFactory.class));
 	}
 
+	@Provides
+	@Singleton
+	@Named("device-properties")
+	ContextProperties getDeviceProperties() throws IOException {
+		return new ContextPropertiesFactory(DeviceBuildin.class)
+				.fromResource(DEVICE_PROPERTIES);
+	}
 }

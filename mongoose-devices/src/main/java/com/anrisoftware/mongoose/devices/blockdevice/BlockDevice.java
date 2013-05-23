@@ -26,6 +26,8 @@ import com.anrisoftware.mongoose.devices.device.AbstractDevice;
  */
 public class BlockDevice extends AbstractDevice implements Block {
 
+	private static final String MOUNT_COMMAND = "mount";
+
 	private static final String BLKID_COMMAND = "blkid";
 
 	private final CommandLoader loader;
@@ -56,8 +58,8 @@ public class BlockDevice extends AbstractDevice implements Block {
 	protected void argumentsSet(Map<String, Object> args,
 			List<Object> unnamedArgs) throws Exception {
 		super.argumentsSet(args, unnamedArgs);
-		mount = loader.createCommand("mount", getTheEnvironment(), getArgs(),
-				getOutput(), getError(), getInput(), getThePath());
+		mount = loader.createCommand(MOUNT_COMMAND, getTheEnvironment(),
+				getArgs(), getOutput(), getError(), getInput(), getThePath());
 		mountable = (Mountable) mount;
 	}
 
