@@ -45,9 +45,12 @@ import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.anrisoftware.globalpom.threads.api.ListenableFuture;
+import com.anrisoftware.globalpom.threads.api.ThreadsException;
+import com.anrisoftware.globalpom.threads.properties.PropertiesThreads;
+import com.anrisoftware.globalpom.threads.properties.PropertiesThreadsFactory;
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.commans.CommandService;
-import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.environment.ExecutionMode;
@@ -55,9 +58,6 @@ import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.resources.LocaleHooks;
 import com.anrisoftware.mongoose.resources.TemplatesResources;
 import com.anrisoftware.mongoose.resources.TextsResources;
-import com.anrisoftware.mongoose.threads.PropertiesThreads;
-import com.anrisoftware.mongoose.threads.PropertiesThreadsFactory;
-import com.anrisoftware.mongoose.threads.ThreadsException;
 import com.anrisoftware.propertiesutils.ContextProperties;
 
 /**

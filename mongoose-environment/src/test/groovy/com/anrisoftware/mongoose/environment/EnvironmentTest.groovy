@@ -6,11 +6,11 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
+import com.anrisoftware.globalpom.threads.properties.PropertiesThreadsModule
 import com.anrisoftware.mongoose.api.environment.Environment
 import com.anrisoftware.mongoose.parser.ParserModule
 import com.anrisoftware.mongoose.parser.ScriptParserFactory
 import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
 import com.google.inject.Guice
 import com.google.inject.Injector
 
@@ -45,7 +45,9 @@ ENV = [MY: "my"]
 
 	@Before
 	void setupApp() {
-		injector = Guice.createInjector(new ParserModule(), new EnvironmentModule(), new ResourcesModule(), new ThreadsModule())
+		injector = Guice.createInjector(
+				new ParserModule(), new EnvironmentModule(),
+				new ResourcesModule(), new PropertiesThreadsModule())
 		scriptFactory = injector.getInstance(ScriptParserFactory)
 		environment = injector.getInstance(Environment)
 	}

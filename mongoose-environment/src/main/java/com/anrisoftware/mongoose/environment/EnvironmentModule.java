@@ -54,7 +54,8 @@ public class EnvironmentModule extends AbstractModule {
 	@Singleton
 	@Named("threads-properties")
 	Properties getThreadsProperties() throws IOException {
-		return new ContextPropertiesFactory("com.anrisoftware.mongoose.threads")
+		return new ContextPropertiesFactory(
+				"com.anrisoftware.globalpom.threads.properties")
 				.fromResource(THREADS_PROPERTIES);
 	}
 

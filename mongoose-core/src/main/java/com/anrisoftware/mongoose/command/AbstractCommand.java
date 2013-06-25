@@ -30,8 +30,8 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 
+import com.anrisoftware.globalpom.threads.api.ListenableFuture;
 import com.anrisoftware.mongoose.api.commans.Command;
-import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 

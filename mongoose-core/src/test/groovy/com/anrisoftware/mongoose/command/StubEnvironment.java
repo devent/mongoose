@@ -12,8 +12,9 @@ import java.util.concurrent.Future;
 import org.joda.time.Duration;
 import org.slf4j.Logger;
 
+import com.anrisoftware.globalpom.threads.api.ListenableFuture;
+import com.anrisoftware.globalpom.threads.listenablefuture.DefaultListenableFuture;
 import com.anrisoftware.mongoose.api.commans.Command;
-import com.anrisoftware.mongoose.api.commans.ListenableFuture;
 import com.anrisoftware.mongoose.api.environment.BackgroundCommandsPolicy;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.environment.ExecutionMode;
