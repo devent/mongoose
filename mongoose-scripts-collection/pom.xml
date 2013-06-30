@@ -6,11 +6,10 @@
 	<parent>
 		<groupId>com.anrisoftware.mongoose</groupId>
 		<artifactId>mongoose-parent</artifactId>
-		<version>1.0</version>
+		<version>1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mongoose-scripts-collection</artifactId>
-	<version>0.1-SNAPSHOT</version>
 	<name>Scripts Collection</name>
 
 </project>
