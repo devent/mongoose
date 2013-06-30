@@ -45,6 +45,7 @@ class BlkidModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		bind(Command.class).to(BlkidBuildin.class);
 		install(new FactoryModuleBuilder().implement(Command.class,
 				BlkidBuildin.class).build(CommandFactory.class));
 	}

@@ -34,7 +34,7 @@ class BlkidParserTest {
 	void "parse"() {
 		inputs.each {
 			def values = [:]
-			parser.withDevice it.device withString it.output withValues values build()
+			parser.withDevice it.device as File withString it.output withValues values build()
 			values.SEC_TYPE == it.sec_type
 			values.LABEL == it.label
 			values.UUID == it.uuid

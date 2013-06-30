@@ -17,11 +17,14 @@
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.anrisoftware.mongoose.devices.blkidbuildin
+
 import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.mongoose.devices.utils.DeviceUtil.*
 import static org.apache.commons.io.FileUtils.*
 import groovy.util.logging.Slf4j
 
 import org.junit.After
+import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
@@ -29,11 +32,6 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import com.anrisoftware.mongoose.api.environment.Environment
-import com.anrisoftware.mongoose.devices.utils.TestDeviceUtil
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
-import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
@@ -47,7 +45,7 @@ class BlkidTest {
 
 	@Test
 	void "image"() {
-		command device.devicePath
+		command testDevice
 		assert command.getTheUUID() == "c298c2a2-50d5-4a79-991b-90ac6d9265b3"
 		assert command.getTheType() == "ext2"
 	}
@@ -60,11 +58,19 @@ class BlkidTest {
 
 	ByteArrayOutputStream byteError
 
+	File testImage
+
+	String testDevice
+
+	@Rule
+	public TemporaryFolder tmp = new TemporaryFolder()
+
+	static Injector injector
+
 	@Before
 	void setupCommand() {
-		command = injector.getInstance(BlkidBuildin)
-		environment = injector.getInstance(Environment)
-		command.setEnvironment environment
+		environment = createEnvironment injector
+		command = createCommand injector, environment
 		byteOutput = new ByteArrayOutputStream()
 		byteError = new ByteArrayOutputStream()
 		command.setOutput(byteOutput)
@@ -73,39 +79,28 @@ class BlkidTest {
 
 	@After
 	void logErrors() {
-		log.info output(byteError)
+		def str = output byteError
+		str.empty ? null : log.error("{}", byteError)
 	}
-
-	File testImage
-
-	TestDeviceUtil device
 
 	@Before
 	void loadTestDevice() {
-		device = new TestDeviceUtil()
-		device.createTestImage()
-		device.createTestDevice()
+		testImage = createTestImage tmp.newFile()
+		testDevice = createTestDevice testImage
 	}
 
 	@After
 	void removeMountTestDevice() {
-		device.removeTestDevice()
+		removeTestDevice testDevice
 	}
-
-	@Rule
-	public TemporaryFolder tmp = new TemporaryFolder()
-
-	static Injector injector
 
 	@BeforeClass
 	static void setupInjector() {
-		toStringStyle
-		injector = Guice.createInjector(
-				new BlkidModule(), new EnvironmentModule(), new ThreadsModule(),
-				new ResourcesModule())
+		injector = createInjector().createChildInjector(new BlkidModule())
 	}
 
-	static String output(ByteArrayOutputStream stream) {
-		stream.toString()
+	@AfterClass
+	static void removeUnused() {
+		removeUnusedDevice()
 	}
 }

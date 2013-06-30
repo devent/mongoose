@@ -28,7 +28,7 @@ import org.junit.Test
 
 import com.anrisoftware.mongoose.api.environment.Environment
 import com.anrisoftware.mongoose.api.exceptions.CommandException
-import com.anrisoftware.mongoose.devices.utils.TestDeviceUtil
+import com.anrisoftware.mongoose.devices.utils.DeviceUtil
 import com.anrisoftware.mongoose.environment.EnvironmentModule
 import com.anrisoftware.mongoose.resources.ResourcesModule
 import com.anrisoftware.mongoose.threads.ThreadsModule
@@ -134,11 +134,11 @@ class LoopTest {
 		}
 	}
 
-	TestDeviceUtil device
+	DeviceUtil device
 
 	@Before
 	void loadTestDevice() {
-		device = new TestDeviceUtil()
+		device = new DeviceUtil()
 		device.createTestImage()
 	}
 
