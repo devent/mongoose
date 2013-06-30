@@ -18,16 +18,14 @@
  */
 package com.anrisoftware.mongoose.buildins.buildinbuildin
 
+import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.mongoose.buildins.utils.BuildinsTestUtils.*
+
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.globalpom.utils.TestUtils
 import com.anrisoftware.mongoose.api.environment.Environment
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
-import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
@@ -39,21 +37,20 @@ import com.google.inject.Injector
 class BuildinTest {
 
 	@Test
-	void "create [delegate property]"() {
+	void "delegate property to build-in command"() {
 		def str = "Foo"
 		def cmd = command name: "listFiles", str
 		assert cmd.theFiles == []
 	}
 
-	@Test(expected = IllegalArgumentException)
-	void "create [no args]"() {
-		command.args()
-		command()
+	@Test
+	void "no args"() {
+		shouldFailWith(IllegalArgumentException) { command.args() }
 	}
 
-	@Test(expected = NullPointerException)
-	void "create [no build-in command]"() {
-		command name: "unknown"
+	@Test
+	void "unknown build-in command"() {
+		shouldFailWith(NullPointerException) { command.call name: "unknown" }
 	}
 
 	BuildinBuildin command
@@ -62,18 +59,14 @@ class BuildinTest {
 
 	@Before
 	void setupCommand() {
-		command = injector.getInstance(BuildinBuildin)
-		environment = injector.getInstance(Environment)
-		command.setEnvironment environment
+		environment = createEnvironment injector
+		command = createCommand injector, environment
 	}
 
 	static Injector injector
 
 	@BeforeClass
 	static void setupInjector() {
-		TestUtils.toStringStyle
-		injector = Guice.createInjector(
-				new BuildinModule(), new EnvironmentModule(), new ThreadsModule(),
-				new ResourcesModule())
+		injector = createInjector().createChildInjector(new BuildinModule())
 	}
 }

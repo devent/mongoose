@@ -23,18 +23,19 @@
 
 	<property resource="logback.properties"/>
 
-	<appender name="MVN_STYLE" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="TEST_STYLE" class="ch.qos.logback.core.ConsoleAppender">
 		<target>System.err</target>
 		<encoder>
-			<pattern>[%level] %-4relative [%thread] %logger{20} - %msg %n%rEx{short}</pattern>
-			<immediateFlush>false</immediateFlush>
+			<pattern>[%level] %-4relative [%thread] %logger{0} - %msg %n%rEx{short}</pattern>
+			<immediateFlush>true</immediateFlush>
 		</encoder>
 	</appender>
 
 	<root level="ERROR">
-		<appender-ref ref="MVN_STYLE" />
+		<appender-ref ref="TEST_STYLE" />
 	</root>
 
-	<logger name="com.anrisoftware" level="TRACE" />
+    <logger name="com.anrisoftware" level="INFO" />
+	<logger name="com.anrisoftware.mongoose" level="ALL" />
 
 </configuration>

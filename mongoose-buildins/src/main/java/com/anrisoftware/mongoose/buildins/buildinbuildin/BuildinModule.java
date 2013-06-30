@@ -26,6 +26,9 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 /**
  * Installs the {@code buildin} build-in command factory.
  * 
+ * @see Command
+ * @see CommandFactory
+ * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
@@ -33,6 +36,7 @@ class BuildinModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		bind(Command.class).to(BuildinBuildin.class);
 		install(new FactoryModuleBuilder().implement(Command.class,
 				BuildinBuildin.class).build(CommandFactory.class));
 	}

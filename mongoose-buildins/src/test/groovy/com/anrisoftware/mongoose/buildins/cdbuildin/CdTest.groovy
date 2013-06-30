@@ -18,16 +18,14 @@
  */
 package com.anrisoftware.mongoose.buildins.cdbuildin
 
+import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.mongoose.buildins.utils.BuildinsTestUtils.*
+
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.globalpom.utils.TestUtils
-import com.anrisoftware.mongoose.api.environment.Environment;
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
-import com.google.inject.Guice
+import com.anrisoftware.mongoose.api.environment.Environment
 import com.google.inject.Injector
 
 /**
@@ -39,13 +37,13 @@ import com.google.inject.Injector
 class CdTest {
 
 	@Test
-	void "to user home"() {
+	void "change to user home"() {
 		command()
 		assert environment.workingDirectory == environment.userHome
 	}
 
 	@Test
-	void "to directory path"() {
+	void "change to directory path"() {
 		def dir = File.createTempDir()
 		command dir.absolutePath
 		assert environment.workingDirectory == dir
@@ -53,7 +51,7 @@ class CdTest {
 	}
 
 	@Test
-	void "to directory file"() {
+	void "change to directory file"() {
 		def dir = File.createTempDir()
 		command dir
 		assert environment.workingDirectory == dir
@@ -66,18 +64,14 @@ class CdTest {
 
 	@Before
 	void setupCommand() {
-		command = injector.getInstance(CdBuildin)
-		environment = injector.getInstance(Environment)
-		command.setEnvironment environment
+		environment = createEnvironment injector
+		command = createCommand injector, environment
 	}
 
 	static Injector injector
 
 	@BeforeClass
 	static void setupInjector() {
-		TestUtils.toStringStyle
-		injector = Guice.createInjector(
-				new CdModule(), new EnvironmentModule(), new ThreadsModule(),
-				new ResourcesModule())
+		injector = createInjector().createChildInjector(new CdModule())
 	}
 }
