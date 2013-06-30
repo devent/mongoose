@@ -1,9 +1,9 @@
 package com.anrisoftware.mongoose.app;
 
+import com.anrisoftware.globalpom.threads.properties.PropertiesThreadsModule;
 import com.anrisoftware.mongoose.environment.EnvironmentModule;
 import com.anrisoftware.mongoose.parser.ParserModule;
 import com.anrisoftware.mongoose.resources.ResourcesModule;
-import com.anrisoftware.mongoose.threads.ThreadsModule;
 import com.google.inject.AbstractModule;
 
 /**
@@ -19,6 +19,6 @@ class AppModule extends AbstractModule {
 		install(new ParserModule());
 		install(new EnvironmentModule());
 		install(new ResourcesModule());
-		install(new ThreadsModule());
+		install(new PropertiesThreadsModule());
 	}
 }
