@@ -19,17 +19,13 @@
 package com.anrisoftware.mongoose.buildins.echobuildin
 
 import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.mongoose.buildins.utils.BuildinsTestUtils.*
 
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.globalpom.utils.TestUtils
-import com.anrisoftware.mongoose.api.environment.Environment;
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
-import com.google.inject.Guice
+import com.anrisoftware.mongoose.api.environment.Environment
 import com.google.inject.Injector
 
 /**
@@ -82,9 +78,8 @@ class EchoTest  {
 
 	@Before
 	void setupCommand() {
-		command = injector.getInstance(EchoBuildin)
-		environment = injector.getInstance(Environment)
-		command.setEnvironment environment
+		environment = createEnvironment injector
+		command = createCommand injector, environment
 		byteOutput = new ByteArrayOutputStream()
 		command.setOutput(byteOutput)
 	}
@@ -93,10 +88,7 @@ class EchoTest  {
 
 	@BeforeClass
 	static void setupInjector() {
-		TestUtils.toStringStyle
-		injector = Guice.createInjector(
-				new EchoModule(), new EnvironmentModule(), new ThreadsModule(),
-				new ResourcesModule())
+		injector = createInjector().createChildInjector(new EchoModule())
 	}
 
 	static String output(ByteArrayOutputStream stream) {
