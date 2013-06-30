@@ -35,7 +35,10 @@ import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Installs the {@code run} build-in command factory.
+ * Installs the {@code exec} build-in command factory.
+ * 
+ * @see Command
+ * @see CommandFactory
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
@@ -47,6 +50,7 @@ class ExecModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		bind(Command.class).to(ExecBuildin.class);
 		install(new FactoryModuleBuilder().implement(Command.class,
 				ExecBuildin.class).build(CommandFactory.class));
 		bind(Executor.class).to(DefaultExecutor.class);

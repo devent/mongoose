@@ -76,6 +76,8 @@ class EchoTest  {
 
 	ByteArrayOutputStream byteOutput
 
+	static Injector injector
+
 	@Before
 	void setupCommand() {
 		environment = createEnvironment injector
@@ -84,14 +86,8 @@ class EchoTest  {
 		command.setOutput(byteOutput)
 	}
 
-	static Injector injector
-
 	@BeforeClass
 	static void setupInjector() {
 		injector = createInjector().createChildInjector(new EchoModule())
-	}
-
-	static String output(ByteArrayOutputStream stream) {
-		stream.toString()
 	}
 }

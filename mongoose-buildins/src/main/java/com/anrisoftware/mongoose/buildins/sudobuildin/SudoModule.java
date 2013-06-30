@@ -34,7 +34,10 @@ import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
- * Installs the {@code cd} build-in command factory.
+ * Installs the {@code sudo} build-in command factory.
+ * 
+ * @see Command
+ * @see CommandFactory
  * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
@@ -50,6 +53,7 @@ class SudoModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		bind(Command.class).to(SudoBuildin.class);
 		install(new FactoryModuleBuilder().implement(Command.class,
 				SudoBuildin.class).build(CommandFactory.class));
 		bindDefaultBackend();

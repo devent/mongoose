@@ -19,6 +19,7 @@
 package com.anrisoftware.mongoose.buildins.execbuildin
 
 import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.mongoose.buildins.utils.BuildinsTestUtils.*
 import static org.apache.commons.io.FileUtils.*
 
 import org.junit.Before
@@ -29,10 +30,6 @@ import org.junit.rules.TemporaryFolder
 
 import com.anrisoftware.mongoose.api.environment.Environment
 import com.anrisoftware.mongoose.api.exceptions.CommandException
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
-import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
@@ -120,31 +117,23 @@ class ExecTest {
 
 	ByteArrayOutputStream byteOutput
 
+	static String konsoleCmd = "konsole --nofork --hide-menubar --hide-tabbar -e {}"
+
+	static Injector injector
+
 	@Rule
-	public TemporaryFolder tmp = new TemporaryFolder();
+	public TemporaryFolder tmp = new TemporaryFolder()
 
 	@Before
 	void setupCommand() {
-		command = injector.getInstance(ExecBuildin)
-		environment = injector.getInstance(Environment)
-		command.setEnvironment environment
+		environment = createEnvironment injector
+		command = createCommand injector, environment
 		byteOutput = new ByteArrayOutputStream()
 		command.setOutput(byteOutput)
 	}
 
-	static Injector injector
-
-	static String konsoleCmd = "konsole --nofork --hide-menubar --hide-tabbar -e {}"
-
 	@BeforeClass
 	static void setupInjector() {
-		toStringStyle
-		injector = Guice.createInjector(
-				new ExecModule(), new EnvironmentModule(), new ThreadsModule(),
-				new ResourcesModule())
-	}
-
-	static String output(ByteArrayOutputStream stream) {
-		stream.toString()
+		injector = createInjector().createChildInjector(new ExecModule())
 	}
 }

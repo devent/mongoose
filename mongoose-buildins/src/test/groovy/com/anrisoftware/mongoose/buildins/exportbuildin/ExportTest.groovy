@@ -18,16 +18,14 @@
  */
 package com.anrisoftware.mongoose.buildins.exportbuildin
 
+import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.mongoose.buildins.utils.BuildinsTestUtils.*
+
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.globalpom.utils.TestUtils
 import com.anrisoftware.mongoose.api.environment.Environment
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
-import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
@@ -83,26 +81,18 @@ class ExportTest {
 
 	ByteArrayOutputStream byteOutput
 
+	static Injector injector
+
 	@Before
 	void setupCommand() {
-		command = injector.getInstance(ExportBuildin)
-		environment = injector.getInstance(Environment)
-		command.setEnvironment environment
+		environment = createEnvironment injector
+		command = createCommand injector, environment
 		byteOutput = new ByteArrayOutputStream()
 		command.setOutput(byteOutput)
 	}
 
-	static Injector injector
-
 	@BeforeClass
 	static void setupInjector() {
-		TestUtils.toStringStyle
-		injector = Guice.createInjector(
-				new ExportModule(), new EnvironmentModule(), new ThreadsModule(),
-				new ResourcesModule())
-	}
-
-	static String output(ByteArrayOutputStream stream) {
-		stream.toString()
+		injector = createInjector().createChildInjector(new ExportModule())
 	}
 }

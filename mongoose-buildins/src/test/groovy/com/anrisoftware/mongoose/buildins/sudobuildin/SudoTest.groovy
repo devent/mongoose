@@ -17,7 +17,9 @@
  * groovybash-buildins. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.anrisoftware.mongoose.buildins.sudobuildin
+
 import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.mongoose.buildins.utils.BuildinsTestUtils.*
 import static org.apache.commons.io.FileUtils.*
 import groovy.util.logging.Slf4j
 
@@ -29,10 +31,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 import com.anrisoftware.mongoose.api.environment.Environment
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
-import com.google.inject.Guice
+import com.anrisoftware.mongoose.api.exceptions.CommandException
 import com.google.inject.Injector
 
 /**
@@ -45,7 +44,15 @@ import com.google.inject.Injector
 class SudoTest {
 
 	@Test
-	void "cat file"() {
+	void "inline"() {
+		def string = "Test"
+		def file = tmp.newFile()
+		write file, string
+		shouldFailWith(CommandException) { command.call "cat $file" }
+	}
+
+	//@Test
+	void "with terminal"() {
 		def string = "Test"
 		def file = tmp.newFile()
 		write file, string
@@ -62,18 +69,7 @@ class SudoTest {
 	ByteArrayOutputStream byteError
 
 	@Rule
-	public TemporaryFolder tmp = new TemporaryFolder();
-
-	@Before
-	void setupCommand() {
-		command = injector.getInstance(SudoBuildin)
-		environment = injector.getInstance(Environment)
-		command.setEnvironment environment
-		byteOutput = new ByteArrayOutputStream()
-		byteError = new ByteArrayOutputStream()
-		command.setOutput(byteOutput)
-		command.setError(byteError)
-	}
+	public TemporaryFolder tmp = new TemporaryFolder()
 
 	@After
 	void logErrors() {
@@ -82,15 +78,19 @@ class SudoTest {
 
 	static Injector injector
 
-	@BeforeClass
-	static void setupInjector() {
-		toStringStyle
-		injector = Guice.createInjector(
-				new SudoModule(), new EnvironmentModule(), new ThreadsModule(),
-				new ResourcesModule())
+	@Before
+	void setupCommand() {
+		environment = createEnvironment injector
+		command = createCommand injector, environment
+		byteOutput = new ByteArrayOutputStream()
+		byteError = new ByteArrayOutputStream()
+		command.setOutput(byteOutput)
+		command.setError(byteError)
 	}
 
-	static String output(ByteArrayOutputStream stream) {
-		stream.toString()
+	@BeforeClass
+	static void setupInjector() {
+		injector = createInjector().createChildInjector(new SudoModule())
 	}
+
 }

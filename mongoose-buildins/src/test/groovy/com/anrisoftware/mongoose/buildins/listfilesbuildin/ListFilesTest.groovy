@@ -19,6 +19,7 @@
 package com.anrisoftware.mongoose.buildins.listfilesbuildin
 
 import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.mongoose.buildins.utils.BuildinsTestUtils.*
 
 import org.apache.commons.io.FileUtils
 import org.junit.AfterClass
@@ -26,11 +27,7 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.mongoose.api.environment.Environment;
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
-import com.google.inject.Guice
+import com.anrisoftware.mongoose.api.environment.Environment
 import com.google.inject.Injector
 
 
@@ -145,14 +142,9 @@ class ListFilesTest {
 
 	Environment environment
 
-	@Before
-	void setupCommand() {
-		command = injector.getInstance(ListFilesBuildin)
-		environment = injector.getInstance(Environment)
-		command.setEnvironment environment
-	}
-
 	static File directory
+
+	static Injector injector
 
 	@BeforeClass
 	static void setupFiles() {
@@ -187,13 +179,14 @@ class ListFilesTest {
 		new File(directory, name)
 	}
 
-	static Injector injector
+	@Before
+	void setupCommand() {
+		environment = createEnvironment injector
+		command = createCommand injector, environment
+	}
 
 	@BeforeClass
 	static void setupInjector() {
-		toStringStyle
-		injector = Guice.createInjector(
-				new ListFilesModule(), new EnvironmentModule(), new ThreadsModule(),
-				new ResourcesModule())
+		injector = createInjector().createChildInjector(new ListFilesModule())
 	}
 }

@@ -26,6 +26,9 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 /**
  * Installs the {@code pwd} build-in command factory.
  * 
+ * @see Command
+ * @see CommandFactory
+ * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
@@ -33,6 +36,7 @@ class PwdModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		bind(Command.class).to(PwdBuildin.class);
 		install(new FactoryModuleBuilder().implement(Command.class,
 				PwdBuildin.class).build(CommandFactory.class));
 	}

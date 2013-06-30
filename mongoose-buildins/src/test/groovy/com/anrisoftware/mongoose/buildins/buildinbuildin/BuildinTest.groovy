@@ -57,13 +57,13 @@ class BuildinTest {
 
 	Environment environment
 
+	static Injector injector
+
 	@Before
 	void setupCommand() {
 		environment = createEnvironment injector
 		command = createCommand injector, environment
 	}
-
-	static Injector injector
 
 	@BeforeClass
 	static void setupInjector() {

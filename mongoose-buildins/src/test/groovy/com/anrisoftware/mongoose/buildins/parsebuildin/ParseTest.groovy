@@ -19,6 +19,7 @@
 package com.anrisoftware.mongoose.buildins.parsebuildin
 
 import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.mongoose.buildins.utils.BuildinsTestUtils.*
 
 import org.junit.Before
 import org.junit.BeforeClass
@@ -29,10 +30,6 @@ import org.kohsuke.args4j.Option
 
 import com.anrisoftware.mongoose.api.environment.Environment
 import com.anrisoftware.mongoose.api.exceptions.CommandException
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
-import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
@@ -137,12 +134,7 @@ class ParseTest {
 
 	Environment environment
 
-	@Before
-	void setupCommand() {
-		command = injector.getInstance(ParseBuildin)
-		environment = injector.getInstance(Environment)
-		command.setEnvironment environment
-	}
+	static Injector injector
 
 	static a = "str"
 
@@ -162,13 +154,14 @@ class ParseTest {
 		"${args[1]}"
 	]
 
-	static Injector injector
+	@Before
+	void setupCommand() {
+		environment = createEnvironment injector
+		command = createCommand injector, environment
+	}
 
 	@BeforeClass
 	static void setupInjector() {
-		toStringStyle
-		injector = Guice.createInjector(
-				new ParseModule(), new EnvironmentModule(), new ThreadsModule(),
-				new ResourcesModule())
+		injector = createInjector().createChildInjector(new ParseModule())
 	}
 }

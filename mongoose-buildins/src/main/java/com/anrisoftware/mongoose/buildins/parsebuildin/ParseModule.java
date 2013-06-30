@@ -26,6 +26,9 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 /**
  * Installs the parse build-in command factory.
  * 
+ * @see Command
+ * @see CommandFactory
+ * 
  * @author Erwin Mueller, erwin.mueller@deventm.org
  * @since 1.0
  */
@@ -33,6 +36,7 @@ class ParseModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
+		bind(Command.class).to(ParseBuildin.class);
 		install(new FactoryModuleBuilder().implement(Command.class,
 				ParseBuildin.class).build(CommandFactory.class));
 	}

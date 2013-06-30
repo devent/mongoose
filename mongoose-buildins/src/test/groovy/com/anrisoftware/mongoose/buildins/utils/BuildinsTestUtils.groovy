@@ -43,6 +43,13 @@ class BuildinsTestUtils {
 				new ResourcesModule())
 	}
 
+	/**
+	 * Returns the content of the stream.
+	 */
+	static String output(ByteArrayOutputStream stream) {
+		stream.toString()
+	}
+
 	static {
 		TestUtils.toStringStyle
 	}
