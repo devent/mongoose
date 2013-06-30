@@ -48,8 +48,8 @@ class CreateBuildinLogger extends AbstractLogger {
 		}
 	}
 
-	void checkCommand(CreateBuildin buildin, Command command) {
-		notNull(command, NO_COMMAND, buildin.getTheCommandName());
+	void checkRunCommand(CreateBuildin buildin, Command command) {
+		notNull(command, NO_COMMAND, "exec");
 	}
 
 	void loadCommand(CreateBuildin buildin, String name) {

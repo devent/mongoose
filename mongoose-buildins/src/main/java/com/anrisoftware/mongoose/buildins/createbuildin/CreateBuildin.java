@@ -35,6 +35,8 @@ import com.anrisoftware.mongoose.command.CommandLoader;
  */
 class CreateBuildin extends AbstractCommand {
 
+	private static final String EXTERNAL_COMMAND = "exec";
+
 	private static final String NAME_KEY = "name";
 
 	private final CreateBuildinLogger log;
@@ -59,10 +61,10 @@ class CreateBuildin extends AbstractCommand {
 	protected void doCall() throws Exception {
 		command = loader.loadCommand(name);
 		if (command == null) {
-			command = loader.loadCommand("run");
+			command = loader.loadCommand(EXTERNAL_COMMAND);
+			log.checkRunCommand(this, command);
 			insertName(name);
 		}
-		log.checkCommand(this, command);
 		command.setEnvironment(getTheEnvironment());
 		command.args(getArgs(), getUnnamedArgs().toArray());
 		log.loadCommand(this, name);

@@ -18,17 +18,15 @@
  */
 package com.anrisoftware.mongoose.buildins.createbuildin
 
+import static com.anrisoftware.globalpom.utils.TestUtils.*
+import static com.anrisoftware.mongoose.buildins.utils.BuildinsTestUtils.*
+
 import org.apache.commons.io.FileUtils
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
-import com.anrisoftware.globalpom.utils.TestUtils
 import com.anrisoftware.mongoose.api.environment.Environment
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.anrisoftware.mongoose.threads.ThreadsModule
-import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
@@ -40,19 +38,18 @@ import com.google.inject.Injector
 class CreateTest {
 
 	@Test
-	void "create"() {
+	void "create command"() {
 		def created = command name: "cd" theCommand
 		assert created != null
 	}
 
-	@Test(expected = IllegalArgumentException)
-	void "create [no args]"() {
-		command.args()
-		command()
+	@Test
+	void "no args"() {
+		shouldFailWith(IllegalArgumentException) { command.args() }
 	}
 
 	@Test
-	void "create [external command]"() {
+	void "create external command"() {
 		def tmp = File.createTempFile("text", "txt")
 		FileUtils.write tmp, "Hello"
 
@@ -70,18 +67,14 @@ class CreateTest {
 
 	@Before
 	void setupCommand() {
-		command = injector.getInstance(CreateBuildin)
-		environment = injector.getInstance(Environment)
-		command.setEnvironment environment
+		environment = createEnvironment injector
+		command = createCommand injector, environment
 	}
 
 	static Injector injector
 
 	@BeforeClass
 	static void setupInjector() {
-		TestUtils.toStringStyle
-		injector = Guice.createInjector(
-				new CreateModule(), new EnvironmentModule(), new ThreadsModule(),
-				new ResourcesModule())
+		injector = createInjector().createChildInjector(new CreateModule())
 	}
 }
