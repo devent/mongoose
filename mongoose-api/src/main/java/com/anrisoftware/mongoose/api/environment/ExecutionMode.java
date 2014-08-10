@@ -12,24 +12,24 @@ import java.text.Format;
  */
 public enum ExecutionMode {
 
-	/**
-	 * Commands without arguments are executed when they are encountered in the
-	 * script; no parenthesis needed.
-	 */
-	IMPLICIT,
+    /**
+     * Commands without arguments are executed when they are encountered in the
+     * script; no parenthesis needed.
+     */
+    IMPLICIT,
 
-	/**
-	 * Commands without arguments are executed only if parenthesis are given.
-	 */
-	EXPLICIT;
+    /**
+     * Commands without arguments are executed only if parenthesis are given.
+     */
+    EXPLICIT;
 
-	/**
-	 * {@link Format} to parse and format the execution modes.
-	 */
-	public static final Format FORMAT = createEnumFormat(ExecutionMode.class);
+    /**
+     * {@link Format} to parse and format the execution modes.
+     */
+    public static final Format FORMAT = createEnumFormat(ExecutionMode.class);
 
-	/**
-	 * {@link Format} to parse and format the execution modes.
-	 */
-	public static final Format EXECUTION_MODE_FORMAT = FORMAT;
+    /**
+     * {@link Format} to parse and format the execution modes.
+     */
+    public static final Format EXECUTION_MODE_FORMAT = FORMAT;
 }
