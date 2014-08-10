@@ -31,7 +31,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+import com.anrisoftware.globalpom.threads.properties.PropertiesThreadsModule
 import com.anrisoftware.mongoose.api.environment.Environment
+import com.anrisoftware.mongoose.environment.EnvironmentModule
+import com.anrisoftware.mongoose.resources.ResourcesModule
+import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
@@ -60,7 +64,7 @@ class BlkidTest {
 
     File testImage
 
-    String testDevice
+    File testDevice
 
     @Rule
     public TemporaryFolder tmp = new TemporaryFolder()
@@ -69,10 +73,10 @@ class BlkidTest {
 
     @Before
     void setupCommand() {
-        environment = createEnvironment injector
-        command = createCommand injector, environment
+        environment = createEnvironment(injector)
         byteOutput = new ByteArrayOutputStream()
         byteError = new ByteArrayOutputStream()
+        command = createCommand(injector, BlkidBuildin, environment)
         command.setOutput(byteOutput)
         command.setError(byteError)
     }
@@ -85,18 +89,19 @@ class BlkidTest {
 
     @Before
     void loadTestDevice() {
-        testImage = createTestImage tmp.newFile()
-        testDevice = createTestDevice testImage
+        testImage = createTestImage(tmp.newFile())
+        testDevice = new File(createTestDevice(testImage))
     }
 
     @After
     void removeMountTestDevice() {
-        removeTestDevice testDevice
+        removeTestDevice(testDevice)
     }
 
     @BeforeClass
     static void setupInjector() {
-        injector = createInjector().createChildInjector(new BlkidModule())
+        injector = Guice.createInjector(new BlkidModule(),
+                new PropertiesThreadsModule(), new EnvironmentModule(), new ResourcesModule())
     }
 
     @AfterClass

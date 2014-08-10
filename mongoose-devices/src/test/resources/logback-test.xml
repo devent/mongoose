@@ -26,7 +26,7 @@
 	<appender name="TEST_STYLE" class="ch.qos.logback.core.ConsoleAppender">
 		<target>System.err</target>
 		<encoder>
-			<pattern>[%level] %-4relative [%thread] %logger{0} - %msg %n%rEx{short}</pattern>
+			<pattern>[%level] %-4relative [%thread] %logger{0} - %msg %n%rEx</pattern>
 			<immediateFlush>true</immediateFlush>
 		</encoder>
 	</appender>

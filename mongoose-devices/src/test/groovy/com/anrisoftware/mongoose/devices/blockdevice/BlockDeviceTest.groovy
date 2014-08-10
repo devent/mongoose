@@ -20,15 +20,18 @@ package com.anrisoftware.mongoose.devices.blockdevice
 
 import static com.anrisoftware.globalpom.utils.TestUtils.*
 import static com.anrisoftware.mongoose.devices.blockdevice.BlockDeviceUnits.*
+import static com.anrisoftware.mongoose.devices.utils.DeviceUtil.*
 import groovy.util.logging.Slf4j
 
 import org.junit.After
+import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+import com.anrisoftware.globalpom.threads.properties.PropertiesThreadsModule
 import com.anrisoftware.mongoose.api.environment.Environment
 import com.anrisoftware.mongoose.devices.utils.DeviceUtil
 import com.anrisoftware.mongoose.environment.EnvironmentModule
@@ -47,17 +50,15 @@ class BlockDeviceTest {
 
     @Test
     void "block device [properties]"() {
-        BlockDevice block = injector.getInstance BlockDevice
-        block.setEnvironment environment
-        block device.devicePath as File
+        BlockDevice block = createCommand injector, BlockDevice, environment
+        block testDevice
         assert block.theUUID == "c298c2a2-50d5-4a79-991b-90ac6d9265b3"
     }
 
     @Test
     void "block device [size]"() {
-        BlockDevice block = injector.getInstance BlockDevice
-        block.setEnvironment environment
-        block device.devicePath as File
+        BlockDevice block = createCommand injector, BlockDevice, environment
+        block testDevice
         assert block.size(BLOCK_SIZE) == 1024
         assert block.size(BLOCK_COUNT) == 1024
         assert block.size(BYTE_SIZE) == 1024 * 1024
@@ -66,35 +67,56 @@ class BlockDeviceTest {
 
     @Test
     void "block device [resize]"() {
-        BlockDevice block = injector.getInstance BlockDevice
-        block.setEnvironment environment
-        block device.devicePath as File
+        BlockDevice block = createCommand injector, BlockDevice, environment
+        block testDevice
         block.resize 800, BLOCK_COUNT
         assert block.size(BLOCK_COUNT) == 800
         block.resize 1024, BLOCK_COUNT
         assert block.size(BLOCK_COUNT) == 1024
     }
 
+    @Test
+    void "block device [mount]"() {
+        BlockDevice block = createCommand injector, BlockDevice, environment
+        block testDevice
+        assert block.isMounted(testMount) == false
+        block.mount(testMount)
+        assert block.isMounted(testMount) == true
+        assert new File(testMount, "lost+found").exists()
+        block.umount(testMount)
+        assert block.isMounted(testMount) == false
+    }
+
+    @Test
+    void "block device [fsck]"() {
+        BlockDevice block = createCommand injector, BlockDevice, environment
+        block testDevice
+        block.autoFsck()
+    }
+
     Environment environment
 
     DeviceUtil device
 
-    @Before
-    void setupEnvironment() {
-        environment = injector.getInstance(Environment)
-    }
+    File testImage
+
+    File testDevice
+
+    File testMount
 
     @Before
     void mountTestDevice() {
-        device = new DeviceUtil()
-        device.createTestImage()
-        device.createTestDevice()
+        environment = createEnvironment(injector)
+        testImage = tmp.newFile()
+        testMount = tmp.newFolder()
+        testImage = createTestImage(testImage)
+        testDevice = new File(createTestDevice(testImage))
     }
 
     @After
     void removeMountTestDevice() {
-        device.removeTestImage()
-        device.removeTestDevice()
+        umountTestDevice(testDevice)
+        removeTestDevice(testDevice)
     }
 
     @Rule
@@ -106,6 +128,11 @@ class BlockDeviceTest {
     static void setupInjector() {
         toStringStyle
         injector = Guice.createInjector(new BlockDeviceModule(),
-                new EnvironmentModule(), new ResourcesModule())
+                new PropertiesThreadsModule(), new EnvironmentModule(), new ResourcesModule())
+    }
+
+    @AfterClass
+    static void cleanUp() {
+        removeUnusedDevice()
     }
 }

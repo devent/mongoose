@@ -29,15 +29,15 @@ public class CommandLoader {
 		this.log = logger;
 	}
 
-	/**
-	 * Loads the command with the specified name.
-	 * 
-	 * @param name
-	 *            the {@link String} name of the command.
-	 * 
-	 * @return the {@link Command} or {@code null} if no such command can be
-	 *         found.
-	 */
+	    /**
+     * Loads the command with the specified name.
+     * 
+     * @param name
+     *            the {@link String} name of the command.
+     * 
+     * @return the {@link Command} or {@code null} if no such command can be
+     *         found.
+     */
 	public Command loadCommand(String name) {
 		CommandService service = loadCommandService(name);
 		return service == null ? null : service.getCommandFactory().create();
@@ -52,38 +52,38 @@ public class CommandLoader {
 		return null;
 	}
 
-	/**
-	 * Loads the commands and setups the output targets and input source.
-	 * 
-	 * @param command
-	 *            the command {@link String} name.
-	 * 
-	 * @param environment
-	 *            the {@link Environment} of the command.
-	 * 
-	 * @param named
-	 *            the named parameter {@link Map} of the command.
-	 * 
-	 * @param outputTarget
-	 *            the standard output target {@link OutputStream} stream, can be
-	 *            {@code null}.
-	 * 
-	 * @param errorTarget
-	 *            the standard error target {@link OutputStream} stream, can be
-	 *            {@code null}.
-	 * 
-	 * @param inputSource
-	 *            the standard input source {@link InputStream} stream, can be
-	 *            {@code null}.
-	 * 
-	 * @param args
-	 *            the arguments for the command.
-	 * 
-	 * @return the loaded {@link Command}.
-	 * 
-	 * @throws CommandException
-	 *             if there was an error loading the command.
-	 */
+	    /**
+     * Loads the commands and setups the output targets and input source.
+     * 
+     * @param command
+     *            the command {@link String} name.
+     * 
+     * @param environment
+     *            the {@link Environment} of the command.
+     * 
+     * @param named
+     *            the named parameter {@link Map} of the command.
+     * 
+     * @param outputTarget
+     *            the standard output target {@link OutputStream} stream, can be
+     *            {@code null}.
+     * 
+     * @param errorTarget
+     *            the standard error target {@link OutputStream} stream, can be
+     *            {@code null}.
+     * 
+     * @param inputSource
+     *            the standard input source {@link InputStream} stream, can be
+     *            {@code null}.
+     * 
+     * @param args
+     *            the arguments for the command.
+     * 
+     * @return the loaded {@link Command}.
+     * 
+     * @throws CommandException
+     *             if there was an error loading the command.
+     */
 	public Command createCommand(String command, Environment environment,
 			Map<String, Object> named, OutputStream outputTarget,
 			OutputStream errorTarget, InputStream inputSource, Object... args)

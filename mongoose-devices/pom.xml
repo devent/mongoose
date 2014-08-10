@@ -7,47 +7,55 @@
 		<groupId>com.anrisoftware.mongoose</groupId>
 		<artifactId>mongoose-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
+		<relativePath>../mongoose-parent</relativePath>
 	</parent>
 
 	<artifactId>mongoose-devices</artifactId>
 	<name>Mongoose :: Devices</name>
+	<inceptionYear>2013</inceptionYear>
+	<url>https://anrisoftware.com/projects/projects/mongoose-devices</url>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.anrisoftware.mongoose</groupId>
-			<artifactId>mongoose-api</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.anrisoftware.mongoose</groupId>
-			<artifactId>mongoose-core</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mangosdk</groupId>
-			<artifactId>spi</artifactId>
-			<optional>true</optional>
-		</dependency>
+		<!-- test dependencies -->
 		<dependency>
 			<groupId>com.anrisoftware.globalpom</groupId>
 			<artifactId>globalpom-groovytestutils</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.anrisoftware.mongoose</groupId>
+            <artifactId>mongoose-environment</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.anrisoftware.mongoose</groupId>
+            <artifactId>mongoose-buildins</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- own dependencies -->
+        <dependency>
+            <groupId>com.anrisoftware.mongoose</groupId>
+            <artifactId>mongoose-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.anrisoftware.mongoose</groupId>
+            <artifactId>mongoose-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+		<!-- other dependencies -->
 		<dependency>
-			<groupId>com.anrisoftware.mongoose</groupId>
-			<artifactId>mongoose-environment</artifactId>
-			<version>1.0-SNAPSHOT</version>
-			<scope>test</scope>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.anrisoftware.mongoose</groupId>
-			<artifactId>mongoose-buildins</artifactId>
-			<version>1.0-SNAPSHOT</version>
-			<scope>test</scope>
+			<groupId>org.mangosdk</groupId>
+			<artifactId>spi</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>

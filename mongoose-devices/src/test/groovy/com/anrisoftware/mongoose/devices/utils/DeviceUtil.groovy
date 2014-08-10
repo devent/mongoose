@@ -9,13 +9,9 @@ import org.apache.commons.lang3.StringUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import com.anrisoftware.globalpom.threads.properties.PropertiesThreadsModule
 import com.anrisoftware.globalpom.utils.TestUtils
 import com.anrisoftware.mongoose.api.commans.Command
 import com.anrisoftware.mongoose.api.environment.Environment
-import com.anrisoftware.mongoose.environment.EnvironmentModule
-import com.anrisoftware.mongoose.resources.ResourcesModule
-import com.google.inject.Guice
 import com.google.inject.Injector
 
 /**
@@ -37,29 +33,38 @@ class DeviceUtil {
     private final static Logger LOG = LoggerFactory.getLogger(DeviceUtil)
 
     /**
+     * Creates the test image.
+     */
+    static File createTestImage(File file) {
+        copyURLToFile deviceImage, file
+        return file
+    }
+
+    /**
      * Creates the test block device and returns the device path.
      */
-    static String createTestDevice(File testImage) {
-        def out = executeCommand("sudo /sbin/losetup --find --show ${testImage.absolutePath}")
+    static String createTestDevice(File file) {
+        def out = executeCommand("sudo /sbin/losetup --find --show ${file.absolutePath}")
         def devicePath = StringUtils.substring(out.out, 0, -1)
-        LOG.info "losetup: {}", devicePath
+        LOG.info "losetup: '{}' for file '{}'.", devicePath, file
         logErr out
         return devicePath
     }
 
     /**
-     * Creates the test image.
+     * Unmount the test block device.
      */
-    static File createTestImage(File testImage) {
-        copyURLToFile deviceImage, testImage
-        return testImage
+    static void umountTestDevice(File file) {
+        def out = executeCommand("sudo /usr/bin/umount ${file.absolutePath}")
+        logOut out
+        logErr out
     }
 
     /**
      * Removes the test block device.
      */
-    static void removeTestDevice(String devicePath) {
-        def out = executeCommand("sudo /sbin/losetup -d $devicePath")
+    static void removeTestDevice(File file) {
+        def out = executeCommand("sudo /sbin/losetup -d ${file.absolutePath}")
         logOut out
         logErr out
     }
@@ -119,8 +124,8 @@ class DeviceUtil {
     /**
      * Creates the build-in command.
      */
-    static Command createCommand(Injector injector, Environment environment) {
-        Command command = injector.getInstance(Command)
+    static Command createCommand(Injector injector, Class type, Environment environment) {
+        Command command = injector.getInstance(type)
         command.setEnvironment environment
         return command
     }
@@ -130,16 +135,6 @@ class DeviceUtil {
      */
     static Environment createEnvironment(Injector injector) {
         injector.getInstance(Environment)
-    }
-
-    /**
-     * Creates the Guice injector.
-     */
-    static Injector createInjector() {
-        Guice.createInjector(
-                new EnvironmentModule(),
-                new PropertiesThreadsModule(),
-                new ResourcesModule())
     }
 
     static {

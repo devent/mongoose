@@ -68,32 +68,32 @@ public class Mount extends AbstractCommand implements Mountable {
 		this.mount = mountFactory.create(this);
 	}
 
-	/**
-	 * Sets the device path.
-	 * 
-	 * @param device
-	 *            the device {@link File} path.
-	 */
+	    /**
+     * Sets the device path.
+     * 
+     * @param device
+     *            the device {@link File} path.
+     */
 	public void setDevice(File device) {
 		this.device = device;
 		log.devicePathSet(this, device);
 	}
 
-	/**
-	 * Returns the device path.
-	 * 
-	 * @return the device {@link File} path.
-	 */
+	    /**
+     * Returns the device path.
+     * 
+     * @return the device {@link File} path.
+     */
 	public File getTheDevice() {
 		return device;
 	}
 
-	/**
-	 * Sets the mount path.
-	 * 
-	 * @param path
-	 *            the mount {@link File} path.
-	 */
+	    /**
+     * Sets the mount path.
+     * 
+     * @param path
+     *            the mount {@link File} path.
+     */
 	public void setPath(File path) {
 		log.checkPath(this, path);
 		this.path = path;
@@ -109,7 +109,7 @@ public class Mount extends AbstractCommand implements Mountable {
 	public void mount(boolean mount, File path) throws IOException {
 		if (mount) {
 			log.checkPath(this, path);
-			log.checkNotMounted(this, mountedPaths.containsKey(path), path);
+            log.checkNotMounted(this, mountedPaths.get(path), path);
 			log.mountDevice(this, path);
 			this.mount.mountDevice(path);
 			mountedPaths.put(path, true);
