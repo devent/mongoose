@@ -55,7 +55,7 @@ class LoopBuildinLogger extends AbstractLogger {
 			throws CommandException {
 		if (created) {
 			throw logException(
-					new CommandException(DEVICE_ALREADY_CREATED).addContext(
+					new CommandException(DEVICE_ALREADY_CREATED).add(
 							BUILDIN, buildin), DEVICE_ALREADY_CREATED_MESSAGE,
 					buildin.getTheDevice());
 		}
@@ -65,7 +65,7 @@ class LoopBuildinLogger extends AbstractLogger {
 			throws CommandException {
 		if (!created) {
 			throw logException(
-					new CommandException(DEVICE_ALREADY_DELETED).addContext(
+					new CommandException(DEVICE_ALREADY_DELETED).add(
 							BUILDIN, buildin), DEVICE_ALREADY_DELETED_MESSAGE,
 					buildin.getTheDevice());
 		}

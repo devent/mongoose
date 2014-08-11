@@ -37,22 +37,22 @@ class CommandParserLogger extends AbstractLogger {
 
 	CommandException errorLoadScript(ExecBuildin buildin, IOException e, URL url) {
 		return logException(
-				new CommandException(LOAD_SCRIPT, e).addContext(BUILDIN,
-						buildin).addContext(RESOURCE, url),
+				new CommandException(LOAD_SCRIPT, e).add(BUILDIN,
+						buildin).add(RESOURCE, url),
 				LOAD_SCRIPT_MESSAGE, url, buildin.getTheName());
 	}
 
 	CommandException errorCreateTempFile(ExecBuildin buildin, IOException e) {
 		return logException(
-				new CommandException(CREATE_TMP_FILE, e).addContext(BUILDIN,
+				new CommandException(CREATE_TMP_FILE, e).add(BUILDIN,
 						buildin), CREATE_TMP_FILE_MESSAGE, buildin.getTheName());
 	}
 
 	CommandException errorSaveScript(ExecBuildin buildin, IOException e,
 			File file) {
 		return logException(
-				new CommandException(SAVE_SCRIPT, e).addContext(BUILDIN,
-						buildin).addContext(FILE, file), SAVE_SCRIPT_MESSAGE,
+				new CommandException(SAVE_SCRIPT, e).add(BUILDIN,
+						buildin).add(FILE, file), SAVE_SCRIPT_MESSAGE,
 				file, buildin.getTheName());
 	}
 }

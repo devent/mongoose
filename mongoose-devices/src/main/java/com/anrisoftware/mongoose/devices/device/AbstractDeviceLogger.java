@@ -46,7 +46,7 @@ class AbstractDeviceLogger extends AbstractLogger {
 			String name) {
 		return logException(
 				new CommandException(ERROR_CONVERT)
-						.addContext("device", device).addContext("name", name),
+						.add("device", device).add("name", name),
 				ERROR_CONVERT_MESSAGE, name, device);
 	}
 }

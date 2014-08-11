@@ -30,7 +30,7 @@ class CommandLoaderLogger extends AbstractLogger {
 
 	CommandException errorLoadCommand(Exception e, String name) {
 		return logException(
-				new CommandException(ERROR_LOAD_COMMAND, e).addContext("name",
+				new CommandException(ERROR_LOAD_COMMAND, e).add("name",
 						name), ERROR_LOAD_COMMAND_MESSAGE, name);
 	}
 

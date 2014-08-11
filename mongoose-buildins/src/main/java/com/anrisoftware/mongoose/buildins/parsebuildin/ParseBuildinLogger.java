@@ -62,7 +62,7 @@ class ParseBuildinLogger extends AbstractLogger {
 	CommandException errorParseArguments(CmdLineException e,
 			List<String> arguments) {
 		return logException(
-				new CommandException(ERROR_PARSE_ARGUMENTS, e).addContext(
+				new CommandException(ERROR_PARSE_ARGUMENTS, e).add(
 						ARGUMENTS, arguments), ERROR_PARSE_ARGUMENTS_MESSAGE,
 				arguments);
 	}

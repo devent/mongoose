@@ -26,141 +26,153 @@ import com.anrisoftware.mongoose.devices.device.AbstractDevice;
  */
 public class BlockDevice extends AbstractDevice implements Block {
 
-	private static final String MOUNT_COMMAND = "mount";
+    private static final String UUID = "uuid";
 
-	private static final String BLKID_COMMAND = "blkid";
+    private static final String LABEL = "label";
 
-	private final CommandLoader loader;
+    private static final String ID = "id";
 
-	private final Map<String, ResizeTask> resizeTasks;
+    private static final String THE_UUID_KEY = "theUUID";
 
-	private String label;
+    private static final String THE_LABEL_KEY = "theLabel";
 
-	private String uuid;
+    private static final String THE_TYPE_KEY = "theType";
 
-	private String id;
+    private static final String MOUNT_COMMAND = "mount";
 
-	private String type;
+    private static final String BLKID_COMMAND = "blkid";
 
-	private ResizeTask task;
+    private final CommandLoader loader;
 
-	private Command mount;
+    private final Map<String, ResizeTask> resizeTasks;
 
-	private Mountable mountable;
+    private String label;
 
-	@Inject
-	BlockDevice(CommandLoader loader, Map<String, ResizeTask> resizeTasks) {
-		this.loader = loader;
-		this.resizeTasks = resizeTasks;
-	}
+    private String uuid;
 
-	@Override
-	protected void argumentsSet(Map<String, Object> args,
-			List<Object> unnamedArgs) throws Exception {
-		super.argumentsSet(args, unnamedArgs);
-		mount = loader.createCommand(MOUNT_COMMAND, getTheEnvironment(),
-				getArgs(), getOutput(), getError(), getInput(), getThePath());
-		mountable = (Mountable) mount;
-	}
+    private String id;
 
-	@Override
-	protected void doCall() throws Exception {
-		super.doCall();
-		Command cmd = loader.createCommand(BLKID_COMMAND, getTheEnvironment(),
-				getArgs(), getOutput(), getError(), getInput(), getThePath());
-		getTheEnvironment().executeCommandAndWait(cmd);
-		this.type = (String) getProperty(cmd, "theType");
-		this.label = (String) getProperty(cmd, "theLabel");
-		this.uuid = (String) getProperty(cmd, "theUUID");
-	}
+    private String type;
 
-	@Override
-	public void mount(File path) throws IOException {
-		mountable.mount(path);
-	}
+    private ResizeTask task;
 
-	@Override
-	public void mount(boolean mount, File path) throws IOException {
-		mountable.mount(mount, path);
-	}
+    private Command mount;
 
-	@Override
-	public void umount(File path) throws IOException {
-		mountable.umount(path);
-	}
+    private Mountable mountable;
 
-	@Override
-	public void umount() throws IOException {
-		mountable.umount();
-	}
+    @Inject
+    BlockDevice(CommandLoader loader, Map<String, ResizeTask> resizeTasks) {
+        this.loader = loader;
+        this.resizeTasks = resizeTasks;
+    }
 
-	@Override
-	public boolean isMounted(File path) throws IOException {
-		return mountable.isMounted(path);
-	}
+    @Override
+    protected void argumentsSet(Map<String, Object> args,
+            List<Object> unnamedArgs) throws Exception {
+        super.argumentsSet(args, unnamedArgs);
+        mount = loader.createCommand(MOUNT_COMMAND, getTheEnvironment(),
+                getArgs(), getOutput(), getError(), getInput(), getThePath());
+        mountable = (Mountable) mount;
+    }
 
-	@Override
-	public void fsck() throws IOException {
-		mountable.fsck();
-	}
+    @Override
+    protected void doCall() throws Exception {
+        super.doCall();
+        Command cmd = loader.createCommand(BLKID_COMMAND, getTheEnvironment(),
+                getArgs(), getOutput(), getError(), getInput(), getThePath());
+        getTheEnvironment().executeCommandAndWait(cmd);
+        this.type = (String) getProperty(cmd, THE_TYPE_KEY);
+        this.label = (String) getProperty(cmd, THE_LABEL_KEY);
+        this.uuid = (String) getProperty(cmd, THE_UUID_KEY);
+    }
 
-	@Override
-	public void fsck(boolean force) throws IOException {
-		mountable.fsck(force);
-	}
+    @Override
+    public void mount(File path) throws IOException {
+        mountable.mount(path);
+    }
 
-	@Override
-	public void autoFsck() throws IOException {
-		mountable.autoFsck();
-	}
+    @Override
+    public void mount(boolean mount, File path) throws IOException {
+        mountable.mount(mount, path);
+    }
 
-	@Override
-	public void autoFsck(boolean force) throws IOException {
-		mountable.autoFsck(force);
-	}
+    @Override
+    public void umount(File path) throws IOException {
+        mountable.umount(path);
+    }
 
-	@Override
-	public long size(Object unit) throws CommandException {
-		return getTask().size(unit);
-	}
+    @Override
+    public void umount() throws IOException {
+        mountable.umount();
+    }
 
-	@Override
-	public void resize(long size, Object unit) throws IOException {
-		getTask().resize(size, unit);
-	}
+    @Override
+    public boolean isMounted(File path) throws IOException {
+        return mountable.isMounted(path);
+    }
 
-	private ResizeTask getTask() {
-		if (task == null) {
-			task = resizeTasks.get(type);
-			task.setDevice(this);
-		}
-		return task;
-	}
+    @Override
+    public void fsck() throws IOException {
+        mountable.fsck();
+    }
 
-	@Override
-	public String getTheId() {
-		return id;
-	}
+    @Override
+    public void fsck(boolean force) throws IOException {
+        mountable.fsck(force);
+    }
 
-	@Override
-	public String getTheLabel() {
-		return label;
-	}
+    @Override
+    public void autoFsck() throws IOException {
+        mountable.autoFsck();
+    }
 
-	@Override
-	public String getTheUUID() {
-		return uuid;
-	}
+    @Override
+    public void autoFsck(boolean force) throws IOException {
+        mountable.autoFsck(force);
+    }
 
-	@Override
-	public String getTheName() {
-		return BlockDeviceService.ID;
-	}
+    @Override
+    public long size(Object unit) throws CommandException {
+        return getTask().size(unit);
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).appendSuper(super.toString())
-				.append("id", id).append("label", label).append("uuid", uuid)
-				.toString();
-	}
+    @Override
+    public void resize(long size, Object unit) throws IOException {
+        getTask().resize(size, unit);
+    }
+
+    private ResizeTask getTask() {
+        if (task == null) {
+            task = resizeTasks.get(type);
+            task.setDevice(this);
+        }
+        return task;
+    }
+
+    @Override
+    public String getTheId() {
+        return id;
+    }
+
+    @Override
+    public String getTheLabel() {
+        return label;
+    }
+
+    @Override
+    public String getTheUUID() {
+        return uuid;
+    }
+
+    @Override
+    public String getTheName() {
+        return BlockDeviceService.ID;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).appendSuper(super.toString())
+                .append(ID, id).append(LABEL, label).append(UUID, uuid)
+                .toString();
+    }
 }

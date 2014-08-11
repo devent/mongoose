@@ -84,21 +84,21 @@ class AbstractCommandLogger extends AbstractLogger {
 	CommandException noDefaultCtor(AbstractCommand command,
 			ReflectiveOperationException e, Class<?> type) {
 		return logException(new CommandException(NO_DEFAULT_CONTRUCTOR, e)
-				.addContext(COMMAND, command).addContext(TYPE, type),
+				.add(COMMAND, command).add(TYPE, type),
 				NO_DEFAULT_CONTRUCTOR_MESSAGE, type);
 	}
 
 	CommandException errorInstantiate(AbstractCommand command,
 			ReflectiveOperationException e, Class<?> type) {
 		return logException(new CommandException(ERROR_INSTANTIATE, e)
-				.addContext(COMMAND, command).addContext(TYPE, type),
+				.add(COMMAND, command).add(TYPE, type),
 				ERROR_INSTANTIATE_MESSAGE, type);
 	}
 
 	CommandException classNotFound(AbstractCommand command,
 			ClassNotFoundException e, String name) {
 		return logException(new CommandException(ERROR_CLASS_NOT_FOUNT, e)
-				.addContext(COMMAND, command).addContext(NAME, name),
+				.add(COMMAND, command).add(NAME, name),
 				ERROR_CLASS_NOT_FOUNT_MESSAGE, name);
 	}
 

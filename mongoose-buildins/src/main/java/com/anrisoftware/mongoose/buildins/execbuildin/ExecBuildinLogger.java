@@ -62,8 +62,8 @@ class ExecBuildinLogger extends AbstractLogger {
 
 	CommandException errorHandlerType(ExecBuildin buildin, Object object) {
 		return logException(
-				new CommandException(HANDER_TYPE).addContext(BUILDIN, buildin)
-						.addContext(OBJECT, object), HANDER_TYPE_MESSAGE,
+				new CommandException(HANDER_TYPE).add(BUILDIN, buildin)
+						.add(OBJECT, object), HANDER_TYPE_MESSAGE,
 				object);
 	}
 
@@ -73,8 +73,8 @@ class ExecBuildinLogger extends AbstractLogger {
 
 	CommandException errorDestroyerType(ExecBuildin buildin, Object object) {
 		return logException(
-				new CommandException(DESTROYER_TYPE).addContext(BUILDIN,
-						buildin).addContext(OBJECT, object),
+				new CommandException(DESTROYER_TYPE).add(BUILDIN,
+						buildin).add(OBJECT, object),
 				DESTROYER_TYPE_MESSAGE, object);
 	}
 
@@ -85,8 +85,8 @@ class ExecBuildinLogger extends AbstractLogger {
 	CommandException errorWatchdogType(ExecBuildin buildin, Object object) {
 		return logException(
 				new CommandException(WATCHDOG_TYPE)
-						.addContext(BUILDIN, buildin)
-						.addContext(OBJECT, object), WATCHDOG_TYPE_MESSAGE,
+						.add(BUILDIN, buildin)
+						.add(OBJECT, object), WATCHDOG_TYPE_MESSAGE,
 				object);
 	}
 
@@ -116,7 +116,7 @@ class ExecBuildinLogger extends AbstractLogger {
 	}
 
 	CommandException errorCommand(ExecBuildin buildin, ExecuteException e) {
-		return logException(new CommandException(COMMAND_ERROR, e).addContext(
+		return logException(new CommandException(COMMAND_ERROR, e).add(
 				BUILDIN, buildin), COMMAND_ERROR_MESSAGE, buildin.getTheName());
 	}
 

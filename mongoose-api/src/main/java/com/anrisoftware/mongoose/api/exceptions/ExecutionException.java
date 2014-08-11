@@ -46,7 +46,7 @@ public class ExecutionException extends CommandException {
 	 */
 	public ExecutionException(String message, Throwable cause, int exitValue) {
 		super(message, cause);
-		addContext(EXIT_VALUE_KEY, exitValue);
+		add(EXIT_VALUE_KEY, exitValue);
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class ExecutionException extends CommandException {
 	 */
 	public ExecutionException(String message, int exitValue) {
 		super(message);
-		addContext(EXIT_VALUE_KEY, exitValue);
+		add(EXIT_VALUE_KEY, exitValue);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class ExecutionException extends CommandException {
 	 * @see Context#addContext(String, Object)
 	 */
 	@Override
-	public ExecutionException addContext(String name, Object value) {
+	public ExecutionException add(String name, Object value) {
 		return context.addContext(name, value);
 	}
 

@@ -84,20 +84,20 @@ class EnvironmentImplLogger extends AbstractLogger {
 
 	CommandException commandInterrupted(InterruptedException e, Command command) {
 		return logException(
-				new CommandException(COMMAND_INTERRUPTED, e).addContext(
+				new CommandException(COMMAND_INTERRUPTED, e).add(
 						COMMAND, command), COMMAND_INTERRUPTED_MESSAGE,
 				command.getTheName());
 	}
 
 	CommandException commandError(Throwable e, Command command) {
-		return logException(new CommandException(COMMAND_ERROR, e).addContext(
+		return logException(new CommandException(COMMAND_ERROR, e).add(
 				COMMAND, command), COMMAND_ERROR_MESSAGE, command.getTheName(),
 				e.getLocalizedMessage());
 	}
 
 	CommandException commandCanceled(CancellationException e, Command command) {
 		return logException(
-				new CommandException(COMMAND_CANCELED, e).addContext(COMMAND,
+				new CommandException(COMMAND_CANCELED, e).add(COMMAND,
 						command), CANCELED_COMMAND_MESSAGE,
 				command.getTheName());
 	}

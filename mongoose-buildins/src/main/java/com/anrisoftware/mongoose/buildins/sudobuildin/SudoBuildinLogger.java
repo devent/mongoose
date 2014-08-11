@@ -34,8 +34,8 @@ class SudoBuildinLogger extends AbstractLogger {
 
 	CommandException errorBackendType(SudoBuildin buildin, Object object) {
 		return logException(
-				new CommandException(BACKEND_TYPE).addContext(BUILDIN, buildin)
-						.addContext(OBJECT, object), BACKEND_TYPE_MESSAGE,
+				new CommandException(BACKEND_TYPE).add(BUILDIN, buildin)
+						.add(OBJECT, object), BACKEND_TYPE_MESSAGE,
 				object);
 	}
 

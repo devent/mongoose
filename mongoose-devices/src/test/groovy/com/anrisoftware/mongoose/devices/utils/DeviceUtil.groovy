@@ -52,6 +52,15 @@ class DeviceUtil {
     }
 
     /**
+     * Mount the test block device.
+     */
+    static void mountTestDevice(File device, File file) {
+        def out = executeCommand("sudo /usr/bin/mount ${device.absolutePath} ${file.absolutePath}")
+        logOut out
+        logErr out
+    }
+
+    /**
      * Unmount the test block device.
      */
     static void umountTestDevice(File file) {
