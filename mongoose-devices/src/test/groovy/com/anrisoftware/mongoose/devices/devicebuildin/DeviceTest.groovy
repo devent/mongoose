@@ -60,6 +60,53 @@ class DeviceTest {
     }
 
     @Test
+    void "block device, from lo-device, direct"() {
+        def testImage = createTestImage(tmp.newFile())
+        def testDevice = new File(createTestDevice(testImage))
+        try {
+            def dev = command type: "block", testDevice theDevice
+            assert dev.class == BlockDevice
+        } finally {
+            removeUnusedDevice()
+        }
+    }
+
+    @Test
+    void "block device, from lo-device, direct auto-fsck"() {
+        def testImage = createTestImage(tmp.newFile())
+        def testDevice = new File(createTestDevice(testImage))
+        try {
+            command type: "block", testDevice autoFsck()
+        } finally {
+            removeUnusedDevice()
+        }
+    }
+
+    @Test
+    void "block device, from lo-device, uri syntax"() {
+        def testImage = createTestImage(tmp.newFile())
+        def testDevice = new File(createTestDevice(testImage))
+        try {
+            command "block://${testDevice}"
+            assert command.theDevice.class == BlockDevice
+        } finally {
+            removeUnusedDevice()
+        }
+    }
+
+    @Test
+    void "block device, from lo-device, uri syntax, direct"() {
+        def testImage = createTestImage(tmp.newFile())
+        def testDevice = new File(createTestDevice(testImage))
+        try {
+            def dev = command "block://${testDevice}" theDevice
+            assert dev.class == BlockDevice
+        } finally {
+            removeUnusedDevice()
+        }
+    }
+
+    @Test
     void "block device, from image file"() {
         def testImage = createTestImage(tmp.newFile())
         try {

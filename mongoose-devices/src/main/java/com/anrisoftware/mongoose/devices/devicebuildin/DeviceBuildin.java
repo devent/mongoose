@@ -2,10 +2,12 @@ package com.anrisoftware.mongoose.devices.devicebuildin;
 
 import static java.lang.String.format;
 import static org.codehaus.groovy.runtime.InvokerHelper.getProperty;
+import groovy.lang.MetaClass;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +16,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.codehaus.groovy.runtime.InvokerHelper;
 
 import com.anrisoftware.mongoose.api.commans.Command;
 import com.anrisoftware.mongoose.api.environment.Environment;
 import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 import com.anrisoftware.mongoose.command.CommandLoader;
+import com.anrisoftware.mongoose.devices.api.Device;
 import com.anrisoftware.mongoose.devices.blockdevice.BlockDevice;
 import com.anrisoftware.propertiesutils.ContextProperties;
 
@@ -32,6 +36,8 @@ import com.anrisoftware.propertiesutils.ContextProperties;
  * @since 1.0
  */
 public class DeviceBuildin extends AbstractCommand {
+
+    private static final String DEVICE = "device";
 
     private static final String FILE_COMMAND_PROPERTY = "file_command";
 
@@ -55,11 +61,13 @@ public class DeviceBuildin extends AbstractCommand {
 
     private String type;
 
-    private Command device;
+    private Device device;
 
     private File devicePath;
 
     private String loop;
+
+    private MetaClass deviceMetaclass;
 
     @Inject
     DeviceBuildin(DeviceBuildinLogger logger, CommandLoader loader,
@@ -81,12 +89,12 @@ public class DeviceBuildin extends AbstractCommand {
 
     @Override
     protected void doCall() throws Exception {
-        Command cmd;
         if (!LOOP_TYPE.equals(type) && !isImageFile(devicePath)) {
             createLoDevice(devicePath);
         }
-        cmd = createDevice(type);
-        device = cmd;
+        Command cmd = createDevice(type);
+        this.device = (Device) cmd;
+        this.deviceMetaclass = InvokerHelper.getMetaClass(device);
         getTheEnvironment().executeCommandAndWait(cmd);
     }
 
@@ -197,8 +205,8 @@ public class DeviceBuildin extends AbstractCommand {
      */
     public void setDevice(Object path) {
         log.checkDevicePath(this, path);
-        String scheme;
-        File file;
+        String scheme = null;
+        File file = null;
         if (path instanceof URI) {
             URI uri = (URI) path;
             scheme = uri.getScheme();
@@ -207,8 +215,8 @@ public class DeviceBuildin extends AbstractCommand {
             scheme = null;
             file = (File) path;
         } else {
-            scheme = null;
-            file = new File(path.toString());
+            setDevice(createURI(path));
+            return;
         }
         if (type == null) {
             setType(scheme);
@@ -218,12 +226,20 @@ public class DeviceBuildin extends AbstractCommand {
         log.deviceSet(this, file);
     }
 
+    private URI createURI(Object path) {
+        try {
+            return new URI(path.toString());
+        } catch (URISyntaxException e) {
+            throw log.syntaxException(this, e, path);
+        }
+    }
+
     /**
      * Returns the device.
      * 
-     * @return the device {@link Command}.
+     * @return the device {@link Device}.
      */
-    public Command getTheDevice() {
+    public Device getTheDevice() {
         return device;
     }
 
@@ -232,9 +248,30 @@ public class DeviceBuildin extends AbstractCommand {
         return DeviceBuildinService.ID;
     }
 
+    /**
+     * Delegates the method to the device.
+     */
+    public Object methodMissing(String name, Object args) {
+        return deviceMetaclass.invokeMethod(device, name, args);
+    }
+
+    /**
+     * Delegates the property access to the device.
+     */
+    public Object propertyMissing(String name) {
+        return deviceMetaclass.getProperty(device, name);
+    }
+
+    /**
+     * Delegates the property access to the device.
+     */
+    public void propertyMissing(String name, Object value) {
+        deviceMetaclass.setProperty(device, name, value);
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).appendSuper(super.toString())
-                .append("device", device).toString();
+                .append(DEVICE, device).toString();
     }
 }

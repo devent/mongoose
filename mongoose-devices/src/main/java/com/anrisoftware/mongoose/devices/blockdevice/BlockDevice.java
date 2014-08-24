@@ -42,9 +42,11 @@ public class BlockDevice extends AbstractDevice implements Block {
 
     private static final String BLKID_COMMAND = "blkid";
 
-    private final CommandLoader loader;
+    @Inject
+    private CommandLoader loader;
 
-    private final Map<String, ResizeTask> resizeTasks;
+    @Inject
+    private Map<String, ResizeTask> resizeTasks;
 
     private String label;
 
@@ -59,12 +61,6 @@ public class BlockDevice extends AbstractDevice implements Block {
     private Command mount;
 
     private Mountable mountable;
-
-    @Inject
-    BlockDevice(CommandLoader loader, Map<String, ResizeTask> resizeTasks) {
-        this.loader = loader;
-        this.resizeTasks = resizeTasks;
-    }
 
     @Override
     protected void argumentsSet(Map<String, Object> args,
