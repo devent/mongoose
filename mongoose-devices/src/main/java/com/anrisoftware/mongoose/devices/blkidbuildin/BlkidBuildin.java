@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.anrisoftware.mongoose.api.commans.Command;
+import com.anrisoftware.mongoose.api.environment.Environment;
+import com.anrisoftware.mongoose.api.exceptions.CommandException;
 import com.anrisoftware.mongoose.command.AbstractCommand;
 import com.anrisoftware.mongoose.command.CommandLoader;
-import com.anrisoftware.propertiesutils.ContextProperties;
 
 /**
  * Execute the {@code blkid} command on a device path.
@@ -26,118 +26,144 @@ import com.anrisoftware.propertiesutils.ContextProperties;
  */
 public class BlkidBuildin extends AbstractCommand {
 
-	private static final String BLKID_COMMAND_PROPERTY = "blkid_command";
+    private static final String S_S = "%s %s";
 
-	private final BlkidBuildinLogger log;
+    private static final String SUDO_NAME = "sudo";
 
-	private final CommandLoader loader;
+    private static final String PATH = "path";
 
-	private final String blkidCommand;
+    private static final String BLKID_NAME = "blkid";
 
-	private final BlkidParser parser;
+    private static final String LABEL_KEY = "LABEL";
 
-	private final Map<String, String> values;
+    private static final String UUID_KEY = "UUID";
 
-	private Command cmd;
+    private static final String TYPE_KEY = "TYPE";
 
-	private File path;
+    private static final String SEC_TYPE_KEY = "SEC_TYPE";
 
-	@Inject
-	BlkidBuildin(BlkidBuildinLogger logger, BlkidParser parser,
-			@Named("blkid-properties") ContextProperties p, CommandLoader loader) {
-		this.log = logger;
-		this.loader = loader;
-		this.parser = parser;
-		this.blkidCommand = p.getProperty(BLKID_COMMAND_PROPERTY);
-		this.values = new HashMap<String, String>();
-	}
+    private static final String BLKID_COMMAND_PROPERTY = "blkid_command";
 
-	@Override
-	protected void doCall() throws Exception {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		cmd = loader.createCommand("sudo", getTheEnvironment(), getArgs(),
-				output, getError(), getInput(),
-				format("%s %s", blkidCommand, path));
-		getTheEnvironment().executeCommandAndWait(cmd);
-		parser.withDevice(path).withString(output.toString())
-				.withValues(values).build();
-	}
+    private static final String BLKID_COMMAND_KEY = "BLKID_COMMAND";
 
-	@Override
-	protected void argumentsSet(Map<String, Object> args,
-			List<Object> unnamedArgs) throws Exception {
-		log.checkArgs(this, unnamedArgs.size());
-		setPath(new File(unnamedArgs.get(0).toString()));
-	}
+    private final Map<String, String> values;
 
-	/**
-	 * Sets the device path.
-	 * 
-	 * @param path
-	 *            the device {@link File} path.
-	 * 
-	 * @throws NullPointerException
-	 *             if the specified path is {@code null}.
-	 */
-	public void setPath(File path) {
-		log.checkDevicePath(this, path);
-		this.path = path;
-		log.devicePathSet(this, path);
-	}
+    @Inject
+    private BlkidBuildinLogger log;
 
-	/**
-	 * Returns the device path.
-	 * 
-	 * @return the device {@link File} path.
-	 */
-	public File getThePath() {
-		return path;
-	}
+    @Inject
+    private CommandLoader loader;
 
-	/**
-	 * Returns the secondary type of the device.
-	 * 
-	 * @return the device {@link String} secondary type, or {@code null}.
-	 */
-	public String getTheSecondaryType() {
-		return values.get("SEC_TYPE");
-	}
+    @Inject
+    private BlkidParser parser;
 
-	/**
-	 * Returns the type of the device.
-	 * 
-	 * @return the device {@link String} type, or {@code null}.
-	 */
-	public String getTheType() {
-		return values.get("TYPE");
-	}
+    private String blkidCommand;
 
-	/**
-	 * Returns the UUID of the device.
-	 * 
-	 * @return the device {@link String} UUID, or {@code null}.
-	 */
-	public String getTheUUID() {
-		return values.get("UUID");
-	}
+    private Command cmd;
 
-	/**
-	 * Returns the label of the device.
-	 * 
-	 * @return the device {@link String} label, or {@code null}.
-	 */
-	public String getTheLabel() {
-		return values.get("LABEL");
-	}
+    private File path;
 
-	@Override
-	public String getTheName() {
-		return "blkid";
-	}
+    @Inject
+    BlkidBuildin(BlkidBuildinProperties p) {
+        this.blkidCommand = p.get().getProperty(BLKID_COMMAND_PROPERTY);
+        this.values = new HashMap<String, String>();
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).appendSuper(super.toString())
-				.append("path", path).append(values).toString();
-	}
+    @Override
+    public void setEnvironment(Environment environment) throws CommandException {
+        super.setEnvironment(environment);
+        Map<String, String> env = environment.getEnv();
+        if (env.containsKey(BLKID_COMMAND_KEY)) {
+            this.blkidCommand = env.get(BLKID_COMMAND_KEY);
+        }
+    }
+
+    @Override
+    protected void doCall() throws Exception {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        this.cmd = loader.createCommand(SUDO_NAME, getTheEnvironment(),
+                getArgs(), output, getError(), getInput(),
+                format(S_S, blkidCommand, path));
+        getTheEnvironment().executeCommandAndWait(cmd);
+        this.parser.withDevice(path).withString(output.toString())
+                .withValues(values).build();
+    }
+
+    @Override
+    protected void argumentsSet(Map<String, Object> args,
+            List<Object> unnamedArgs) throws Exception {
+        log.checkArgs(this, unnamedArgs.size());
+        setPath(new File(unnamedArgs.get(0).toString()));
+    }
+
+    /**
+     * Sets the device path.
+     * 
+     * @param path
+     *            the device {@link File} path.
+     * 
+     * @throws NullPointerException
+     *             if the specified path is {@code null}.
+     */
+    public void setPath(File path) {
+        log.checkDevicePath(this, path);
+        this.path = path;
+        log.devicePathSet(this, path);
+    }
+
+    /**
+     * Returns the device path.
+     * 
+     * @return the device {@link File} path.
+     */
+    public File getThePath() {
+        return path;
+    }
+
+    /**
+     * Returns the secondary type of the device.
+     * 
+     * @return the device {@link String} secondary type, or {@code null}.
+     */
+    public String getTheSecondaryType() {
+        return values.get(SEC_TYPE_KEY);
+    }
+
+    /**
+     * Returns the type of the device.
+     * 
+     * @return the device {@link String} type, or {@code null}.
+     */
+    public String getTheType() {
+        return values.get(TYPE_KEY);
+    }
+
+    /**
+     * Returns the UUID of the device.
+     * 
+     * @return the device {@link String} UUID, or {@code null}.
+     */
+    public String getTheUUID() {
+        return values.get(UUID_KEY);
+    }
+
+    /**
+     * Returns the label of the device.
+     * 
+     * @return the device {@link String} label, or {@code null}.
+     */
+    public String getTheLabel() {
+        return values.get(LABEL_KEY);
+    }
+
+    @Override
+    public String getTheName() {
+        return BLKID_NAME;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).appendSuper(super.toString())
+                .append(PATH, path).append(values).toString();
+    }
 }

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.groovy.runtime.InvokerHelper;
@@ -25,7 +24,6 @@ import com.anrisoftware.mongoose.command.AbstractCommand;
 import com.anrisoftware.mongoose.command.CommandLoader;
 import com.anrisoftware.mongoose.devices.api.Device;
 import com.anrisoftware.mongoose.devices.blockdevice.BlockDevice;
-import com.anrisoftware.propertiesutils.ContextProperties;
 
 /**
  * Maps a device path to a device.
@@ -36,6 +34,10 @@ import com.anrisoftware.propertiesutils.ContextProperties;
  * @since 1.0
  */
 public class DeviceBuildin extends AbstractCommand {
+
+    private static final String THE_DEVICE_PROPERTY = "theDevice";
+
+    private static final String FILE_COMMAND_KEY = "FILE_COMMAND";
 
     private static final String DEVICE = "device";
 
@@ -51,9 +53,11 @@ public class DeviceBuildin extends AbstractCommand {
 
     private static final String LOOP_KEY = "loop";
 
-    private final DeviceBuildinLogger log;
+    @Inject
+    private DeviceBuildinLogger log;
 
-    private final CommandLoader loader;
+    @Inject
+    private CommandLoader loader;
 
     private String fileCommand;
 
@@ -70,20 +74,17 @@ public class DeviceBuildin extends AbstractCommand {
     private MetaClass deviceMetaclass;
 
     @Inject
-    DeviceBuildin(DeviceBuildinLogger logger, CommandLoader loader,
-            @Named("device-properties") ContextProperties p) {
-        this.log = logger;
-        this.loader = loader;
+    DeviceBuildin(DeviceBuildinProperties p) {
         this.device = null;
         this.devicePath = null;
-        this.fileCommand = p.getProperty(FILE_COMMAND_PROPERTY);
+        this.fileCommand = p.get().getProperty(FILE_COMMAND_PROPERTY);
     }
 
     @Override
     public void setEnvironment(Environment environment) throws CommandException {
         super.setEnvironment(environment);
-        if (environment.getEnv().containsKey("FILE_COMMAND")) {
-            fileCommand = environment.getEnv().get("FILE_COMMAND");
+        if (environment.getEnv().containsKey(FILE_COMMAND_KEY)) {
+            fileCommand = environment.getEnv().get(FILE_COMMAND_KEY);
         }
     }
 
@@ -117,7 +118,7 @@ public class DeviceBuildin extends AbstractCommand {
         Command cmd = loader.createCommand(LOOP_COMMAND, getTheEnvironment(),
                 getArgs(), getOutput(), getError(), getInput(), args.toArray());
         getTheEnvironment().executeCommandAndWait(cmd);
-        File device = (File) getProperty(cmd, "theDevice");
+        File device = (File) getProperty(cmd, THE_DEVICE_PROPERTY);
         deviceArgs.set(0, device);
     }
 
