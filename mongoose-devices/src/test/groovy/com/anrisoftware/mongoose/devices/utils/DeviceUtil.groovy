@@ -35,8 +35,8 @@ class DeviceUtil {
     /**
      * Creates the test image.
      */
-    static File createTestImage(File file) {
-        copyURLToFile deviceImage, file
+    static File createTestImage(File file, URL image) {
+        copyURLToFile image, file
         return file
     }
 
@@ -64,6 +64,9 @@ class DeviceUtil {
      * Unmount the test block device.
      */
     static void umountTestDevice(File file) {
+        if (!file) {
+            return
+        }
         def out = executeCommand("sudo /usr/bin/umount ${file.absolutePath}")
         logOut out
         logErr out
@@ -73,6 +76,9 @@ class DeviceUtil {
      * Removes the test block device.
      */
     static void removeTestDevice(File file) {
+        if (!file) {
+            return
+        }
         def out = executeCommand("sudo /sbin/losetup -d ${file.absolutePath}")
         logOut out
         logErr out
@@ -105,6 +111,11 @@ class DeviceUtil {
      * Formatted test image.
      */
     static deviceImage = DeviceUtil.class.getResource("/test.dd")
+
+    /**
+     * LUKS formatted encrypted image.
+     */
+    static luksCryptDeviceImage = DeviceUtil.class.getResource("/lukscrypt.dd")
 
     /**
      * Executes the given command.

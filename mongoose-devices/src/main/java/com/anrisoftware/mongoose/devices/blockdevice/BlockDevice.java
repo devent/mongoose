@@ -30,8 +30,6 @@ public class BlockDevice extends AbstractDevice implements Block {
 
     private static final String LABEL = "label";
 
-    private static final String ID = "id";
-
     private static final String THE_UUID_KEY = "theUUID";
 
     private static final String THE_LABEL_KEY = "theLabel";
@@ -42,6 +40,11 @@ public class BlockDevice extends AbstractDevice implements Block {
 
     private static final String BLKID_COMMAND = "blkid";
 
+    private static final String TYPE = "type";
+
+    @Inject
+    private BlockDeviceLogger log;
+
     @Inject
     private CommandLoader loader;
 
@@ -51,8 +54,6 @@ public class BlockDevice extends AbstractDevice implements Block {
     private String label;
 
     private String uuid;
-
-    private String id;
 
     private String type;
 
@@ -140,14 +141,12 @@ public class BlockDevice extends AbstractDevice implements Block {
     private ResizeTask getTask() {
         if (task == null) {
             task = resizeTasks.get(type);
+            if (task == null) {
+                throw log.unsupportedFileSystem(this);
+            }
             task.setDevice(this);
         }
         return task;
-    }
-
-    @Override
-    public String getTheId() {
-        return id;
     }
 
     @Override
@@ -168,7 +167,7 @@ public class BlockDevice extends AbstractDevice implements Block {
     @Override
     public String toString() {
         return new ToStringBuilder(this).appendSuper(super.toString())
-                .append(ID, id).append(LABEL, label).append(UUID, uuid)
+                .append(LABEL, label).append(UUID, uuid).append(TYPE, type)
                 .toString();
     }
 }

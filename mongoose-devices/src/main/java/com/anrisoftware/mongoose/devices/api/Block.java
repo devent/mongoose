@@ -8,24 +8,17 @@ package com.anrisoftware.mongoose.devices.api;
  */
 public interface Block extends Device, Mountable, Resizeable {
 
-	/**
-	 * Returns the unique name depending on the hardware serial number.
-	 * 
-	 * @return the ID of the device.
-	 */
-	String getTheId();
+    /**
+     * Returns the label of the device.
+     * 
+     * @return the label of the device.
+     */
+    String getTheLabel();
 
-	/**
-	 * Returns the label of the device.
-	 * 
-	 * @return the label of the device.
-	 */
-	String getTheLabel();
-
-	/**
-	 * Returns the unique identifier of the device.
-	 * 
-	 * @return the UUID of the device.
-	 */
-	String getTheUUID();
+    /**
+     * Returns the unique identifier of the device.
+     * 
+     * @return the UUID of the device.
+     */
+    String getTheUUID();
 }

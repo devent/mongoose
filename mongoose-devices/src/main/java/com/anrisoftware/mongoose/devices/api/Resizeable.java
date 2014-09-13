@@ -10,30 +10,36 @@ import java.io.IOException;
  */
 public interface Resizeable {
 
-	/**
-	 * Returns the size of the device.
-	 * 
-	 * @param unit
-	 *            the unit of the size, like bytes, blocks or logical extents.
-	 * 
-	 * @return the size in units.
-	 * 
-	 * @throws IOException
-	 *             if there was an error get the size of the device.
-	 */
-	long size(Object unit) throws IOException;
+    /**
+     * Returns the size of the device.
+     * 
+     * @param unit
+     *            the unit of the size, like bytes, blocks or logical extents.
+     * 
+     * @return the size in units.
+     * 
+     * @throws UnsupportedOperationException
+     *             if the file system of the block device is not supported.
+     * 
+     * @throws IOException
+     *             if there was an error get the size of the device.
+     */
+    long size(Object unit) throws IOException;
 
-	/**
-	 * Resize the device to the new size.
-	 * 
-	 * @param size
-	 *            the new size in units.
-	 * 
-	 * @param unit
-	 *            the unit of the size, like bytes, blocks or logical extents.
-	 * 
-	 * @throws IOException
-	 *             if there was an error resizing the device.
-	 */
-	void resize(long size, Object unit) throws IOException;
+    /**
+     * Resizes the device to the new size.
+     * 
+     * @param size
+     *            the new size in units.
+     * 
+     * @param unit
+     *            the unit of the size, like bytes, blocks or logical extents.
+     * 
+     * @throws UnsupportedOperationException
+     *             if the file system of the block device is not supported.
+     * 
+     * @throws IOException
+     *             if there was an error resizing the device.
+     */
+    void resize(long size, Object unit) throws IOException;
 }

@@ -109,7 +109,7 @@ class BlockDeviceTest {
         environment = createEnvironment(injector)
         testImage = tmp.newFile()
         testMount = tmp.newFolder()
-        testImage = createTestImage(testImage)
+        testImage = createTestImage(testImage, deviceImage)
         testDevice = new File(createTestDevice(testImage))
     }
 
